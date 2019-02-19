@@ -1,1 +1,3 @@
 # Dance-Recognition aka MAGISTERKA...
+
+Repository for master thesis project
