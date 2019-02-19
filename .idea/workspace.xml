@@ -1,0 +1,583 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ChangeListManager">
+    <list default="true" id="d41d8c1f-8823-440c-8339-3f7a51fe88d1" name="Default Changelist" comment="Clean&#10;# Conflicts:&#10;#&#9;.idea/deployment.xml&#10;#&#9;src/two-stream-pytorch">
+      <change afterPath="$PROJECT_DIR$/letsdance/letsdance_split/test.txt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/letsdance/letsdance_split/train.txt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/two-stream-pytorch/LICENSE" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/two-stream-pytorch/README.md" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/two-stream-pytorch/datasets/__init__.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/two-stream-pytorch/datasets/build_file_list.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/two-stream-pytorch/datasets/build_file_list_letsdance.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/two-stream-pytorch/datasets/build_of.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/two-stream-pytorch/datasets/letsdance.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/two-stream-pytorch/datasets/letsdance_splits/classInd.txt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/two-stream-pytorch/datasets/settings/ucf101/train_flow_split1.txt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/two-stream-pytorch/datasets/settings/ucf101/train_flow_split2.txt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/two-stream-pytorch/datasets/settings/ucf101/train_flow_split3.txt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/two-stream-pytorch/datasets/settings/ucf101/train_rgb_split1.txt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/two-stream-pytorch/datasets/settings/ucf101/train_rgb_split2.txt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/two-stream-pytorch/datasets/settings/ucf101/train_rgb_split3.txt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/two-stream-pytorch/datasets/settings/ucf101/val_flow_split1.txt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/two-stream-pytorch/datasets/settings/ucf101/val_flow_split2.txt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/two-stream-pytorch/datasets/settings/ucf101/val_flow_split3.txt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/two-stream-pytorch/datasets/settings/ucf101/val_rgb_split1.txt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/two-stream-pytorch/datasets/settings/ucf101/val_rgb_split2.txt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/two-stream-pytorch/datasets/settings/ucf101/val_rgb_split3.txt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/two-stream-pytorch/datasets/ucf101.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/two-stream-pytorch/datasets/ucf101_splits/classInd.txt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/two-stream-pytorch/datasets/ucf101_splits/testlist01.txt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/two-stream-pytorch/datasets/ucf101_splits/testlist02.txt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/two-stream-pytorch/datasets/ucf101_splits/testlist03.txt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/two-stream-pytorch/datasets/ucf101_splits/trainlist01.txt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/two-stream-pytorch/datasets/ucf101_splits/trainlist02.txt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/two-stream-pytorch/datasets/ucf101_splits/trainlist03.txt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/two-stream-pytorch/main.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/two-stream-pytorch/main_cpu.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/two-stream-pytorch/main_single_gpu.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/two-stream-pytorch/models/__init__.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/two-stream-pytorch/models/flow_resnet.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/two-stream-pytorch/models/flow_vgg16.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/two-stream-pytorch/models/rgb_alexnet.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/two-stream-pytorch/models/rgb_resnet.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/two-stream-pytorch/models/rgb_vgg16.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/two-stream-pytorch/out.txt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/two-stream-pytorch/scripts/eval_ucf101_pytorch/VideoSpatialPrediction.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/two-stream-pytorch/scripts/eval_ucf101_pytorch/VideoTemporalPrediction.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/two-stream-pytorch/scripts/eval_ucf101_pytorch/spatial_demo.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/two-stream-pytorch/scripts/eval_ucf101_pytorch/spatial_testlist01_with_labels.txt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/two-stream-pytorch/scripts/eval_ucf101_pytorch/temporal_demo.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/two-stream-pytorch/scripts/eval_ucf101_pytorch/temporal_testlist01_with_labels.txt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/two-stream-pytorch/video_transforms.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/deployment.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/deployment.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/two-stream-pytorch" beforeDir="false" afterPath="$PROJECT_DIR$/src/two-stream-pytorch" afterDir="false" />
+    </list>
+    <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="CoverageDataManager">
+    <SUITE FILE_PATH="coverage/Dance_Recognition$main.coverage" NAME="main Coverage Results" MODIFIED="1549629584740" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/src/two-stream-pytorch" />
+    <SUITE FILE_PATH="coverage/Dance_Recognition$build_file_list_letsdance.coverage" NAME="build_file_list_letsdance Coverage Results" MODIFIED="1550527159391" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/src/two-stream-pytorch/datasets" />
+  </component>
+  <component name="DatabaseView">
+    <option name="SHOW_INTERMEDIATE" value="true" />
+    <option name="GROUP_DATA_SOURCES" value="true" />
+    <option name="GROUP_SCHEMA" value="true" />
+    <option name="GROUP_CONTENTS" value="false" />
+    <option name="SORT_POSITIONED" value="false" />
+    <option name="SHOW_EMPTY_GROUPS" value="false" />
+    <option name="AUTO_SCROLL_FROM_SOURCE" value="false" />
+    <option name="HIDDEN_KINDS">
+      <set />
+    </option>
+    <expand />
+    <select />
+  </component>
+  <component name="FUSProjectUsageTrigger">
+    <session id="271297316">
+      <usages-collector id="statistics.lifecycle.project">
+        <counts>
+          <entry key="project.closed" value="3" />
+          <entry key="project.open.time.0" value="1" />
+          <entry key="project.open.time.11" value="1" />
+          <entry key="project.open.time.12" value="1" />
+          <entry key="project.open.time.13" value="1" />
+          <entry key="project.open.time.9" value="2" />
+          <entry key="project.opened" value="6" />
+        </counts>
+      </usages-collector>
+      <usages-collector id="statistics.file.extensions.open">
+        <counts>
+          <entry key="gitignore" value="1" />
+          <entry key="iml" value="1" />
+          <entry key="jpg" value="2" />
+          <entry key="letsdance" value="1" />
+          <entry key="md" value="1" />
+          <entry key="py" value="26" />
+          <entry key="txt" value="8" />
+          <entry key="xml" value="5" />
+        </counts>
+      </usages-collector>
+      <usages-collector id="statistics.file.types.open">
+        <counts>
+          <entry key="IDEA_MODULE" value="1" />
+          <entry key="Image" value="2" />
+          <entry key="Markdown" value="1" />
+          <entry key="PLAIN_TEXT" value="9" />
+          <entry key="Python" value="27" />
+          <entry key="XML" value="5" />
+        </counts>
+      </usages-collector>
+      <usages-collector id="statistics.file.extensions.edit">
+        <counts>
+          <entry key="dummy" value="4" />
+          <entry key="py" value="2111" />
+          <entry key="txt" value="140" />
+        </counts>
+      </usages-collector>
+      <usages-collector id="statistics.file.types.edit">
+        <counts>
+          <entry key="PLAIN_TEXT" value="144" />
+          <entry key="Python" value="2111" />
+        </counts>
+      </usages-collector>
+    </session>
+  </component>
+  <component name="FileEditorManager">
+    <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/preprocessing/visualize_skeletons.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="17">
+              <caret line="1" column="18" selection-start-line="1" selection-start-column="18" selection-end-line="1" selection-end-column="18" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/two-stream-pytorch/main_single_gpu.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="-4513">
+              <caret line="35" column="31" selection-start-line="35" selection-start-column="31" selection-end-line="35" selection-end-column="31" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/src/two-stream-pytorch/datasets/build_file_list_letsdance.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="14">
+              <caret line="43" lean-forward="true" selection-start-line="43" selection-end-line="43" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+    </leaf>
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Python Script" />
+      </list>
+    </option>
+  </component>
+  <component name="FindInProjectRecents">
+    <findStrings>
+      <find>no s</find>
+      <find>alex</find>
+      <find>dura</find>
+      <find>no su</find>
+      <find>no such</find>
+      <find>readin</find>
+      <find>cuda</find>
+      <find>opti</find>
+      <find>nn</find>
+      <find>du</find>
+      <find>num</find>
+      <find>losses</find>
+      <find>class_</find>
+      <find>prin</find>
+      <find>buil</find>
+      <find>bui</find>
+      <find>dev</find>
+      <find>train_spl</find>
+      <find>pri</find>
+      <find>8</find>
+      <find>current l</find>
+      <find>train</find>
+      <find>res</find>
+    </findStrings>
+  </component>
+  <component name="Git.Settings">
+    <option name="PREVIOUS_COMMIT_AUTHORS">
+      <list>
+        <option value="wysoczanska &lt;moniawysoczanska@gmail.com&gt;" />
+      </list>
+    </option>
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="IdeDocumentHistory">
+    <option name="CHANGED_PATHS">
+      <list>
+        <option value="$PROJECT_DIR$/requirements.txt" />
+        <option value="$PROJECT_DIR$/src/two-stream-pytorch/datasets/letsdance_splits/classInd.txt" />
+        <option value="$PROJECT_DIR$/src/two-stream-pytorch/datasets/build_file_list.py" />
+        <option value="$PROJECT_DIR$/src/two-stream-pytorch/datasets/letsdance" />
+        <option value="$PROJECT_DIR$/src/two-stream-pytorch/models/__init__.py" />
+        <option value="$PROJECT_DIR$/src/two-stream-pytorch/datasets/__init__.py" />
+        <option value="$PROJECT_DIR$/src/two-stream-pytorch/main_cpu.py" />
+        <option value="$PROJECT_DIR$/src/two-stream-pytorch/models/rgb_alexnet.py" />
+        <option value="$PROJECT_DIR$/src/two-stream-pytorch/datasets/letsdance.py" />
+        <option value="$PROJECT_DIR$/src/two-stream-pytorch/main.py" />
+        <option value="$PROJECT_DIR$/src/two-stream-pytorch/main_single_gpu.py" />
+        <option value="$PROJECT_DIR$/src/two-stream-pytorch/datasets/build_file_list_letsdance.py" />
+      </list>
+    </option>
+  </component>
+  <component name="JsBuildToolGruntFileManager" detection-done="true" sorting="DEFINITION_ORDER" />
+  <component name="JsBuildToolPackageJson" detection-done="true" sorting="DEFINITION_ORDER" />
+  <component name="JsGulpfileManager">
+    <detection-done>true</detection-done>
+    <sorting>DEFINITION_ORDER</sorting>
+  </component>
+  <component name="ProjectFrameBounds" extendedState="6">
+    <option name="x" value="676" />
+    <option name="width" value="697" />
+    <option name="height" value="775" />
+  </component>
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
+  <component name="ProjectView">
+    <navigator proportions="" version="1">
+      <foldersAlwaysOnTop value="true" />
+    </navigator>
+    <panes>
+      <pane id="ProjectPane">
+        <subPane>
+          <expand>
+            <path>
+              <item name="Dance-Recognition" type="b2602c69:ProjectViewProjectNode" />
+              <item name="Dance-Recognition" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="Dance-Recognition" type="b2602c69:ProjectViewProjectNode" />
+              <item name="Dance-Recognition" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="Dance-Recognition" type="b2602c69:ProjectViewProjectNode" />
+              <item name="Dance-Recognition" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="two-stream-pytorch" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="Dance-Recognition" type="b2602c69:ProjectViewProjectNode" />
+              <item name="Dance-Recognition" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="two-stream-pytorch" type="462c0819:PsiDirectoryNode" />
+              <item name="datasets" type="462c0819:PsiDirectoryNode" />
+            </path>
+          </expand>
+          <select />
+        </subPane>
+      </pane>
+      <pane id="Scope">
+        <subPane subId="Scope 'Project Files'; set:Project Files; class com.intellij.psi.search.scope.ProjectFilesScope">
+          <expand>
+            <path>
+              <item name="Dance-Recognition" type="3d21c010:ScopeViewTreeModel$ProjectNode" />
+              <item name="" type="442cc68d:ScopeViewTreeModel$RootNode" />
+            </path>
+            <path>
+              <item name="Dance-Recognition" type="3d21c010:ScopeViewTreeModel$ProjectNode" />
+              <item name="" type="442cc68d:ScopeViewTreeModel$RootNode" />
+              <item name="src" type="9f88c78c:ScopeViewTreeModel$FileNode" />
+            </path>
+          </expand>
+          <select />
+        </subPane>
+      </pane>
+    </panes>
+  </component>
+  <component name="PropertiesComponent">
+    <property name="ChangesTree.GroupingKeys" value="repository" />
+    <property name="SearchEverywhereHistoryKey" value="no such mo&#9;null&#9;null" />
+    <property name="WebServerToolWindowFactoryState" value="true" />
+    <property name="WebServerToolWindowPanel.toolwindow.highlight.mappings" value="true" />
+    <property name="WebServerToolWindowPanel.toolwindow.highlight.symlinks" value="true" />
+    <property name="WebServerToolWindowPanel.toolwindow.show.date" value="false" />
+    <property name="WebServerToolWindowPanel.toolwindow.show.permissions" value="false" />
+    <property name="WebServerToolWindowPanel.toolwindow.show.size" value="false" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+    <property name="settings.editor.selected.configurable" value="project.propVCSSupport.Mappings" />
+  </component>
+  <component name="RunDashboard">
+    <option name="ruleStates">
+      <list>
+        <RuleState>
+          <option name="name" value="ConfigurationTypeDashboardGroupingRule" />
+        </RuleState>
+        <RuleState>
+          <option name="name" value="StatusDashboardGroupingRule" />
+        </RuleState>
+      </list>
+    </option>
+  </component>
+  <component name="SvnConfiguration">
+    <configuration />
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="d41d8c1f-8823-440c-8339-3f7a51fe88d1" name="Default Changelist" comment="" />
+      <created>1549303903623</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1549303903623</updated>
+    </task>
+    <task id="LOCAL-00001" summary="Create Letsdance data loader. Add files consistency checks.">
+      <created>1550573724795</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1550573724795</updated>
+    </task>
+    <task id="LOCAL-00002" summary="Create Letsdance data loader. Add files consistency checks.">
+      <created>1550576035842</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1550576035842</updated>
+    </task>
+    <option name="localTasksCounter" value="3" />
+    <servers />
+  </component>
+  <component name="TodoView">
+    <todo-panel id="selected-file">
+      <is-autoscroll-to-source value="true" />
+    </todo-panel>
+    <todo-panel id="all">
+      <are-packages-shown value="true" />
+      <is-autoscroll-to-source value="true" />
+    </todo-panel>
+  </component>
+  <component name="ToolWindowManager">
+    <frame x="-8" y="-8" width="1382" height="784" extended-state="6" />
+    <layout>
+      <window_info id="Favorites" order="0" side_tool="true" />
+      <window_info content_ui="combo" id="Project" order="1" visible="true" weight="0.2685325" />
+      <window_info id="Structure" order="2" side_tool="true" weight="0.25" />
+      <window_info anchor="bottom" id="Database Changes" order="0" show_stripe_button="false" />
+      <window_info active="true" anchor="bottom" id="Terminal" order="1" sideWeight="0.49848714" visible="true" weight="0.8923077" />
+      <window_info anchor="bottom" id="Event Log" order="2" sideWeight="0.5015129" side_tool="true" visible="true" weight="0.8923077" />
+      <window_info anchor="bottom" id="Version Control" order="3" weight="0.3276923" />
+      <window_info anchor="bottom" id="File Transfer" order="4" sideWeight="0.49924356" weight="0.3276923" />
+      <window_info anchor="bottom" id="Python Console" order="5" weight="0.3276923" />
+      <window_info anchor="bottom" id="Docker" order="6" show_stripe_button="false" />
+      <window_info anchor="bottom" id="Message" order="7" />
+      <window_info anchor="bottom" id="Find" order="8" />
+      <window_info anchor="bottom" id="Run" order="9" weight="0.3276923" />
+      <window_info anchor="bottom" id="Debug" order="10" weight="0.4" />
+      <window_info anchor="bottom" id="Cvs" order="11" weight="0.25" />
+      <window_info anchor="bottom" id="Inspection" order="12" weight="0.4" />
+      <window_info anchor="bottom" id="TODO" order="13" weight="0.32923076" />
+      <window_info anchor="right" id="Remote Host" order="0" visible="true" weight="0.21558245" />
+      <window_info anchor="right" id="Database" order="1" weight="0.32980332" />
+      <window_info anchor="right" id="Commander" internal_type="SLIDING" order="2" type="SLIDING" weight="0.4" />
+      <window_info anchor="right" id="Ant Build" order="3" weight="0.25" />
+      <window_info anchor="right" content_ui="combo" id="Hierarchy" order="4" weight="0.25" />
+      <window_info anchor="right" id="SciView" order="5" weight="0.32980332" />
+    </layout>
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="1" />
+  </component>
+  <component name="Vcs.Log.History.Properties">
+    <option name="COLUMN_ORDER">
+      <list>
+        <option value="0" />
+        <option value="2" />
+        <option value="3" />
+        <option value="1" />
+      </list>
+    </option>
+  </component>
+  <component name="VcsContentAnnotationSettings">
+    <option name="myLimit" value="2678400000" />
+  </component>
+  <component name="VcsManagerConfiguration">
+    <ignored-roots>
+      <path value="$PROJECT_DIR$/src/two-stream-pytorch" />
+    </ignored-roots>
+    <MESSAGE value="Create Letsdance data loader. Add files consistency checks." />
+    <MESSAGE value="Clean&#10;# Conflicts:&#10;#&#9;.idea/deployment.xml&#10;#&#9;src/two-stream-pytorch" />
+    <option name="LAST_COMMIT_MESSAGE" value="Clean&#10;# Conflicts:&#10;#&#9;.idea/deployment.xml&#10;#&#9;src/two-stream-pytorch" />
+    <option name="GROUP_MULTIFILE_MERGE_BY_DIRECTORY" value="true" />
+  </component>
+  <component name="editorHistoryManager">
+    <entry file="file://$PROJECT_DIR$/src/two-stream-pytorch/README.md">
+      <provider selected="true" editor-type-id="split-provider[text-editor;markdown-preview-editor]">
+        <state split_layout="SPLIT">
+          <first_editor relative-caret-position="-765" />
+          <second_editor />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/requirements.txt">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="204">
+          <caret line="12" selection-start-line="12" selection-end-line="12" selection-end-column="23" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/two-stream-pytorch/datasets/settings/ucf101/train_flow_split2.txt">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/two-stream-pytorch/datasets/settings/ucf101/train_flow_split1.txt">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/two-stream-pytorch/datasets/letsdance_splits/classInd.txt">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="170">
+          <caret line="10" selection-start-line="10" selection-end-line="10" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/two-stream-pytorch/datasets/ucf101_splits/classInd.txt">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="153">
+          <caret line="9" selection-start-line="9" selection-end-line="9" selection-end-column="13" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/two-stream-pytorch/models/flow_resnet.py">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/two-stream-pytorch/models/__init__.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="68">
+          <caret line="4" column="26" selection-start-line="4" selection-start-column="26" selection-end-line="4" selection-end-column="26" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/two-stream-pytorch/models/rgb_resnet.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="3995">
+          <caret line="235" column="39" selection-start-line="235" selection-start-column="39" selection-end-line="235" selection-end-column="39" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/two-stream-pytorch/models/rgb_vgg16.py">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/two-stream-pytorch/models/flow_vgg16.py">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/two-stream-pytorch/datasets/ucf101.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="49">
+          <caret line="126" column="26" lean-forward="true" selection-start-line="126" selection-start-column="26" selection-end-line="126" selection-end-column="26" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/two-stream-pytorch/datasets/__init__.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="17">
+          <caret line="1" column="32" selection-start-line="1" selection-start-column="32" selection-end-line="1" selection-end-column="32" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/two-stream-pytorch/datasets/build_file_list.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="34">
+          <caret line="7" selection-start-line="7" selection-end-line="35" selection-end-column="34" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/two-stream-pytorch/out.txt">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="187">
+          <caret line="11" column="20" selection-start-line="11" selection-start-column="20" selection-end-line="11" selection-end-column="20" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/two-stream-pytorch/datasets/letsdance.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="714">
+          <caret line="48" column="33" selection-start-line="48" selection-start-column="32" selection-end-line="48" selection-end-column="33" />
+          <folding>
+            <element signature="e#0#31#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/two-stream-pytorch/datasets/build_of.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="51">
+          <caret line="3" selection-start-line="3" selection-end-line="8" selection-end-column="49" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/two-stream-pytorch/main.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="2924">
+          <caret line="187" column="19" selection-start-line="187" selection-end-line="188" />
+          <folding>
+            <element signature="e#0#9#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/two-stream-pytorch/video_transforms.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1972">
+          <caret line="125" column="7" selection-start-line="125" selection-start-column="7" selection-end-line="125" selection-end-column="7" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/two-stream-pytorch/main_cpu.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1343">
+          <caret line="93" selection-start-line="93" selection-end-line="93" />
+          <folding>
+            <element signature="e#0#9#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/two-stream-pytorch/models/rgb_alexnet.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="272">
+          <caret line="17" column="15" selection-start-line="17" selection-start-column="15" selection-end-line="17" selection-end-column="65" />
+          <folding>
+            <element signature="e#0#21#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/.gitignore">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/.idea/misc.xml">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/.idea/Dance-Recognition.iml">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/.idea/webServers.xml">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/.idea/modules.xml">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/.idea/workspace.xml">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/.idea/vcs.xml">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/preprocessing/visualize_skeletons.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="17">
+          <caret line="1" column="18" selection-start-line="1" selection-start-column="18" selection-end-line="1" selection-end-column="18" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/two-stream-pytorch/main_single_gpu.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-4513">
+          <caret line="35" column="31" selection-start-line="35" selection-start-column="31" selection-end-line="35" selection-end-column="31" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/two-stream-pytorch/datasets/build_file_list_letsdance.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="14">
+          <caret line="43" lean-forward="true" selection-start-line="43" selection-end-line="43" />
+        </state>
+      </provider>
+    </entry>
+  </component>
+</project>
