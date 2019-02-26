@@ -1,13 +1,14 @@
 from __future__ import division
-import torch
-import random
-import numpy as np
-import numbers
-import types
-import cv2
+
 import math
-import os, sys
-import collections
+import numbers
+
+import cv2
+import numpy as np
+import random
+import torch
+import types
+
 
 class Compose(object):
     """Composes several video_transforms together.
@@ -27,7 +28,9 @@ class Compose(object):
 
     def __call__(self, clips):
         for t in self.video_transforms:
-            clips = t(clips)
+            for modality, frames in clips.items():
+                clips[modality] = t(frames)
+            # clips = t(clips)
         return clips
 
 class Lambda(object):
@@ -294,6 +297,7 @@ class MultiScaleCrop(object):
                 crop_w = int(base_size * scale_rates[w])
                 # append this cropping size into the list
                 if (np.absolute(h-w) <= self.max_distort):
+
                     crop_sizes.append((crop_h, crop_w))
 
         return crop_sizes

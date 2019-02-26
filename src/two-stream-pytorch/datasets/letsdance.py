@@ -1,14 +1,17 @@
+import sys
+
+import cv2
+import numpy as np
+import os
+import random
 import torch.utils.data as data
 
-import os
-import sys
-import random
-import numpy as np
-import cv2
-
+rgb_dir = 'letsdance_split'
+flow_dir = 'flow'
+skeleton_dir = 'skeleton'
 
 def find_classes(dir):
-    c_dir = os.path.join(dir, 'train')
+    c_dir = os.path.join(dir, rgb_dir, 'train')
     classes = [d for d in os.listdir(c_dir) if os.path.isdir(os.path.join(c_dir, d))]
     classes.sort()
     print(classes)
@@ -26,14 +29,14 @@ def make_dataset(root, source):
             data = split_f.readlines()
             for line in data:
                 line_info = line.split()
-                clip_path = os.path.join(root, line_info[0])
-                duration = 100
-                target = os.path.basename(os.path.dirname(line_info[0]))
+                clip_path = os.path.join(root, rgb_dir, line_info[0])
+                duration = int(line_info[2])
+                target = line_info[1]
                 item = (clip_path, duration, target)
                 clips.append(item)
     return clips
 
-def ReadSegmentRGB(path, offsets, new_height, new_width, new_length, is_color, name_pattern):
+def ReadSegment(path, root, offsets, new_height, new_width, new_length, is_color, name_pattern):
 
     if is_color:
         cv_read_flag = cv2.IMREAD_COLOR         # > 0
@@ -41,25 +44,46 @@ def ReadSegmentRGB(path, offsets, new_height, new_width, new_length, is_color, n
         cv_read_flag = cv2.IMREAD_GRAYSCALE     # = 0
     interpolation = cv2.INTER_LINEAR
 
-    sampled_list = []
+    sampled_list_rgb = []
+    sampled_list_flow = []
+    sampled_list_skeleton = []
+
     for offset_id in range(len(offsets)):
         offset = offsets[offset_id]
         for length_id in range(1, new_length+1):
-            frame_id = name_pattern % (length_id + offset)
-            frame_path = path[:-8] + frame_id
-            cv_img_origin = cv2.imread(frame_path, cv_read_flag)
+            cls, frame_name = os.path.split(path)
+            base, cls = os.path.split(cls)
+
+            # frame_id = name_pattern % (length_id + offset)
+            frame_id = frame_name[-9:]
+            print(frame_name)
+            clip_name = frame_name[:11]
+            cv_img_origin = cv2.imread(path, cv_read_flag)
+            cv_img_flow = cv2.imread(os.path.join(root, flow_dir, cls, clip_name + frame_id), cv_read_flag)
+            cv_img_skeleton = cv2.imread(os.path.join(root, skeleton_dir, cls, frame_name), cv_read_flag)
+
             if cv_img_origin is None:
-               print("Could not load file %s" % (frame_path))
+               print("Could not load file %s" % (path))
                sys.exit()
+            if cv_img_flow is None:
+                print("Could not load file flow %s" % (os.path.join(root, flow_dir, cls, clip_name + frame_id)))
+                sys.exit()
+            if cv_img_skeleton is None:
+                print("Could not load file skeleton %s" % (frame_name))
+                sys.exit()
                # TODO: error handling here
-            if new_width > 0 and new_height > 0:
-                # use OpenCV3, use OpenCV2.4.13 may have error
-                cv_img = cv2.resize(cv_img_origin, (new_width, new_height), interpolation)
-            else:
-                cv_img = cv_img_origin
-            cv_img = cv2.cvtColor(cv_img, cv2.COLOR_BGR2RGB)
-            sampled_list.append(cv_img)
-    clip_input = np.concatenate(sampled_list, axis=2)
+            # if new_width > 0 and new_height > 0:
+            #     # use OpenCV3, use OpenCV2.4.13 may have error
+            #     cv_img_rgb= cv2.resize(cv_img_origin, (new_width, new_height), interpolation)
+            # else:
+            #     cv_img = cv_img_origin
+            cv_img_rgb = cv2.cvtColor(cv_img_origin, cv2.COLOR_BGR2RGB)
+            cv_img_flow = cv2.cvtColor(cv_img_flow, cv2.COLOR_BGR2RGB)
+            cv_img_skeleton = cv2.cvtColor(cv_img_skeleton, cv2.COLOR_BGR2RGB)
+
+            sampled_list_rgb.append(cv_img_rgb), sampled_list_flow.append(cv_img_flow), sampled_list_skeleton.append(cv_img_skeleton)
+
+    clip_input = {'rgb': np.concatenate(sampled_list_rgb, axis=2), 'flow': np.concatenate(sampled_list_flow, axis=2), 'skeleton': np.concatenate(sampled_list_skeleton, axis=2)}
     return clip_input
 
 def ReadSegmentFlow(path, offsets, new_height, new_width, new_length, is_color, name_pattern):
@@ -168,8 +192,7 @@ class letsdance(data.Dataset):
             else:
                 print("Only phase train and val are supported.")
 
-        if self.modality == "rgb":
-            clip_input = ReadSegmentRGB(path,
+        clip_input = ReadSegment(path, self.root,
                                         offsets,
                                         self.new_height,
                                         self.new_width,
@@ -177,17 +200,6 @@ class letsdance(data.Dataset):
                                         self.is_color,
                                         self.name_pattern
                                         )
-        elif self.modality == "flow":
-            clip_input = ReadSegmentFlow(path,
-                                        offsets,
-                                        self.new_height,
-                                        self.new_width,
-                                        self.new_length,
-                                        self.is_color,
-                                        self.name_pattern
-                                        )
-        else:
-            print("No such modality %s" % (self.modality))
 
         if self.transform is not None:
             clip_input = self.transform(clip_input)

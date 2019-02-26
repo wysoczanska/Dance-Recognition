@@ -2,56 +2,17 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="d41d8c1f-8823-440c-8339-3f7a51fe88d1" name="Default Changelist" comment="Clean&#10;# Conflicts:&#10;#&#9;.idea/deployment.xml&#10;#&#9;src/two-stream-pytorch">
-      <change afterPath="$PROJECT_DIR$/letsdance/letsdance_split/test.txt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/letsdance/letsdance_split/train.txt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/two-stream-pytorch/LICENSE" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/two-stream-pytorch/README.md" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/two-stream-pytorch/datasets/__init__.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/two-stream-pytorch/datasets/build_file_list.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/two-stream-pytorch/datasets/build_file_list_letsdance.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/two-stream-pytorch/datasets/build_of.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/two-stream-pytorch/datasets/letsdance.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/two-stream-pytorch/datasets/letsdance_splits/classInd.txt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/two-stream-pytorch/datasets/settings/ucf101/train_flow_split1.txt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/two-stream-pytorch/datasets/settings/ucf101/train_flow_split2.txt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/two-stream-pytorch/datasets/settings/ucf101/train_flow_split3.txt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/two-stream-pytorch/datasets/settings/ucf101/train_rgb_split1.txt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/two-stream-pytorch/datasets/settings/ucf101/train_rgb_split2.txt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/two-stream-pytorch/datasets/settings/ucf101/train_rgb_split3.txt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/two-stream-pytorch/datasets/settings/ucf101/val_flow_split1.txt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/two-stream-pytorch/datasets/settings/ucf101/val_flow_split2.txt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/two-stream-pytorch/datasets/settings/ucf101/val_flow_split3.txt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/two-stream-pytorch/datasets/settings/ucf101/val_rgb_split1.txt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/two-stream-pytorch/datasets/settings/ucf101/val_rgb_split2.txt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/two-stream-pytorch/datasets/settings/ucf101/val_rgb_split3.txt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/two-stream-pytorch/datasets/ucf101.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/two-stream-pytorch/datasets/ucf101_splits/classInd.txt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/two-stream-pytorch/datasets/ucf101_splits/testlist01.txt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/two-stream-pytorch/datasets/ucf101_splits/testlist02.txt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/two-stream-pytorch/datasets/ucf101_splits/testlist03.txt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/two-stream-pytorch/datasets/ucf101_splits/trainlist01.txt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/two-stream-pytorch/datasets/ucf101_splits/trainlist02.txt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/two-stream-pytorch/datasets/ucf101_splits/trainlist03.txt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/two-stream-pytorch/main.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/two-stream-pytorch/main_cpu.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/two-stream-pytorch/main_single_gpu.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/two-stream-pytorch/models/__init__.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/two-stream-pytorch/models/flow_resnet.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/two-stream-pytorch/models/flow_vgg16.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/two-stream-pytorch/models/rgb_alexnet.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/two-stream-pytorch/models/rgb_resnet.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/two-stream-pytorch/models/rgb_vgg16.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/two-stream-pytorch/out.txt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/two-stream-pytorch/scripts/eval_ucf101_pytorch/VideoSpatialPrediction.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/two-stream-pytorch/scripts/eval_ucf101_pytorch/VideoTemporalPrediction.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/two-stream-pytorch/scripts/eval_ucf101_pytorch/spatial_demo.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/two-stream-pytorch/scripts/eval_ucf101_pytorch/spatial_testlist01_with_labels.txt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/two-stream-pytorch/scripts/eval_ucf101_pytorch/temporal_demo.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/two-stream-pytorch/scripts/eval_ucf101_pytorch/temporal_testlist01_with_labels.txt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/two-stream-pytorch/video_transforms.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/two-stream-pytorch/main_three_stream.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/two-stream-pytorch/models/three_stream_net.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/deployment.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/deployment.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/two-stream-pytorch" beforeDir="false" afterPath="$PROJECT_DIR$/src/two-stream-pytorch" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/two-stream-pytorch/datasets/build_file_list_letsdance.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/two-stream-pytorch/datasets/build_file_list_letsdance.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/two-stream-pytorch/datasets/letsdance.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/two-stream-pytorch/datasets/letsdance.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/two-stream-pytorch/main_single_gpu.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/two-stream-pytorch/main_single_gpu.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/two-stream-pytorch/models/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/two-stream-pytorch/models/__init__.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/two-stream-pytorch/models/rgb_alexnet.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/two-stream-pytorch/models/my_alexnet.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/two-stream-pytorch/video_transforms.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/two-stream-pytorch/video_transforms.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -81,48 +42,54 @@
     <session id="271297316">
       <usages-collector id="statistics.lifecycle.project">
         <counts>
-          <entry key="project.closed" value="3" />
+          <entry key="project.closed" value="4" />
           <entry key="project.open.time.0" value="1" />
-          <entry key="project.open.time.11" value="1" />
+          <entry key="project.open.time.11" value="2" />
           <entry key="project.open.time.12" value="1" />
           <entry key="project.open.time.13" value="1" />
+          <entry key="project.open.time.8" value="1" />
           <entry key="project.open.time.9" value="2" />
-          <entry key="project.opened" value="6" />
+          <entry key="project.opened" value="8" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.extensions.open">
         <counts>
           <entry key="gitignore" value="1" />
           <entry key="iml" value="1" />
-          <entry key="jpg" value="2" />
+          <entry key="jpg" value="4" />
           <entry key="letsdance" value="1" />
           <entry key="md" value="1" />
-          <entry key="py" value="26" />
-          <entry key="txt" value="8" />
+          <entry key="py" value="62" />
+          <entry key="txt" value="26" />
           <entry key="xml" value="5" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.types.open">
         <counts>
           <entry key="IDEA_MODULE" value="1" />
-          <entry key="Image" value="2" />
+          <entry key="Image" value="4" />
           <entry key="Markdown" value="1" />
-          <entry key="PLAIN_TEXT" value="9" />
-          <entry key="Python" value="27" />
+          <entry key="PLAIN_TEXT" value="27" />
+          <entry key="Python" value="63" />
           <entry key="XML" value="5" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.extensions.edit">
         <counts>
-          <entry key="dummy" value="4" />
-          <entry key="py" value="2111" />
+          <entry key="dummy" value="24" />
+          <entry key="py" value="5068" />
           <entry key="txt" value="140" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.types.edit">
         <counts>
-          <entry key="PLAIN_TEXT" value="144" />
-          <entry key="Python" value="2111" />
+          <entry key="PLAIN_TEXT" value="164" />
+          <entry key="Python" value="5068" />
+        </counts>
+      </usages-collector>
+      <usages-collector id="statistics.vcs.git.usages">
+        <counts>
+          <entry key="git.branch.create.new" value="1" />
         </counts>
       </usages-collector>
     </session>
@@ -130,28 +97,98 @@
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/preprocessing/visualize_skeletons.py">
+        <entry file="file://$PROJECT_DIR$/src/two-stream-pytorch/main_three_stream.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="17">
-              <caret line="1" column="18" selection-start-line="1" selection-start-column="18" selection-end-line="1" selection-end-column="18" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/two-stream-pytorch/main_single_gpu.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-4513">
-              <caret line="35" column="31" selection-start-line="35" selection-start-column="31" selection-end-line="35" selection-end-column="31" />
+            <state relative-caret-position="230">
+              <caret line="105" lean-forward="true" selection-start-line="105" selection-end-line="105" />
+              <folding>
+                <element signature="e#0#9#0" expanded="true" />
+              </folding>
             </state>
           </provider>
         </entry>
       </file>
       <file pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/src/two-stream-pytorch/models/__init__.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="51">
+              <caret line="3" column="26" selection-start-line="3" selection-start-column="26" selection-end-line="3" selection-end-column="26" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="true" current-in-tab="false">
+        <entry file="remoteDeploymentFS://&lt;091a619b-2247-4abc-9096-b057913f6057&gt;/home/mwysocz1/src/two-stream-pytorch/model.txt">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="293">
+              <caret line="19" column="25" lean-forward="true" selection-start-line="19" selection-start-column="25" selection-end-line="19" selection-end-column="25" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/two-stream-pytorch/datasets/letsdance.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="269">
+              <caret line="73" column="26" lean-forward="true" selection-start-line="73" selection-start-column="26" selection-end-line="73" selection-end-column="26" />
+              <folding>
+                <element signature="e#0#31#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/two-stream-pytorch/models/three_stream_net.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="178">
+              <caret line="20" column="25" lean-forward="true" selection-start-line="20" selection-start-column="25" selection-end-line="20" selection-end-column="25" />
+              <folding>
+                <element signature="e#0#12#0" expanded="true" />
+                <marker date="1551196635456" expanded="true" signature="826:1081" ph="..." />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/two-stream-pytorch/datasets/build_file_list_letsdance.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="14">
-              <caret line="43" lean-forward="true" selection-start-line="43" selection-end-line="43" />
+            <state relative-caret-position="180">
+              <caret line="60" column="63" selection-start-line="60" selection-start-column="63" selection-end-line="60" selection-end-column="63" />
+              <folding>
+                <element signature="e#0#9#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="true" current-in-tab="false">
+        <entry file="remoteDeploymentFS://&lt;091a619b-2247-4abc-9096-b057913f6057&gt;/home/mwysocz1/letsdance/wth.txt">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="-28719" />
+          </provider>
+        </entry>
+      </file>
+      <file pinned="true" current-in-tab="false">
+        <entry file="remoteDeploymentFS://&lt;091a619b-2247-4abc-9096-b057913f6057&gt;/home/mwysocz1/letsdance/letsdance_split/train/waltz/HJyQjQy9n-U_100_0209.jpg">
+          <provider selected="true" editor-type-id="images" />
+        </entry>
+      </file>
+      <file pinned="true" current-in-tab="false">
+        <entry file="remoteDeploymentFS://&lt;091a619b-2247-4abc-9096-b057913f6057&gt;/home/mwysocz1/src/two-stream-pytorch/datasets/mis.txt">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="68">
+              <caret line="4" selection-start-line="4" selection-end-line="4" selection-end-column="10" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="true" current-in-tab="false">
+        <entry file="remoteDeploymentFS://&lt;091a619b-2247-4abc-9096-b057913f6057&gt;/home/mwysocz1/src/two-stream-pytorch/datasets/no_flow.txt">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="221">
+              <caret line="13" column="10" lean-forward="true" selection-start-line="13" selection-start-column="10" selection-end-line="13" selection-end-column="10" />
             </state>
           </provider>
         </entry>
@@ -167,29 +204,36 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>no s</find>
-      <find>alex</find>
-      <find>dura</find>
-      <find>no su</find>
-      <find>no such</find>
-      <find>readin</find>
-      <find>cuda</find>
-      <find>opti</find>
-      <find>nn</find>
       <find>du</find>
       <find>num</find>
       <find>losses</find>
       <find>class_</find>
-      <find>prin</find>
       <find>buil</find>
       <find>bui</find>
       <find>dev</find>
       <find>train_spl</find>
-      <find>pri</find>
       <find>8</find>
       <find>current l</find>
       <find>train</find>
       <find>res</find>
+      <find>Model</find>
+      <find>save</find>
+      <find>22</find>
+      <find>iter_</find>
+      <find>name</find>
+      <find>fin</find>
+      <find>dist</find>
+      <find>find</find>
+      <find>ui0LwWviGeM</find>
+      <find>out</find>
+      <find>HJyQjQy9n-</find>
+      <find>JQQ-tZFe1f</find>
+      <find>_U7jIGZ7z-</find>
+      <find>H_Vq7JnN3c</find>
+      <find>prin</find>
+      <find>num_cl</find>
+      <find>pri</find>
+      <find>check</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -199,6 +243,11 @@
       </list>
     </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+    <option name="RECENT_BRANCH_BY_REPOSITORY">
+      <map>
+        <entry key="$PROJECT_DIR$" value="master" />
+      </map>
+    </option>
   </component>
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
@@ -207,14 +256,21 @@
         <option value="$PROJECT_DIR$/src/two-stream-pytorch/datasets/letsdance_splits/classInd.txt" />
         <option value="$PROJECT_DIR$/src/two-stream-pytorch/datasets/build_file_list.py" />
         <option value="$PROJECT_DIR$/src/two-stream-pytorch/datasets/letsdance" />
-        <option value="$PROJECT_DIR$/src/two-stream-pytorch/models/__init__.py" />
         <option value="$PROJECT_DIR$/src/two-stream-pytorch/datasets/__init__.py" />
         <option value="$PROJECT_DIR$/src/two-stream-pytorch/main_cpu.py" />
+        <option value="$PROJECT_DIR$/src/two-stream-pytorch/scripts/main_three_stream.py" />
         <option value="$PROJECT_DIR$/src/two-stream-pytorch/models/rgb_alexnet.py" />
-        <option value="$PROJECT_DIR$/src/two-stream-pytorch/datasets/letsdance.py" />
-        <option value="$PROJECT_DIR$/src/two-stream-pytorch/main.py" />
         <option value="$PROJECT_DIR$/src/two-stream-pytorch/main_single_gpu.py" />
+        <option value="$PROJECT_DIR$/src/two-stream-pytorch/models/late_fusion.py" />
+        <option value="$PROJECT_DIR$/src/two-stream-pytorch/main.py" />
+        <option value="&lt;ffdb41ad-f9d6-43ec-835d-2f751822670a&gt;/home/mwysocz1/src/two-stream-pytorch/datasets/build_file_list_letsdance.py" />
+        <option value="$PROJECT_DIR$/src/two-stream-pytorch/models/my_alexnet.py" />
+        <option value="$PROJECT_DIR$/src/two-stream-pytorch/video_transforms.py" />
+        <option value="$PROJECT_DIR$/src/two-stream-pytorch/datasets/letsdance.py" />
+        <option value="$PROJECT_DIR$/src/two-stream-pytorch/models/three_stream_net.py" />
         <option value="$PROJECT_DIR$/src/two-stream-pytorch/datasets/build_file_list_letsdance.py" />
+        <option value="$PROJECT_DIR$/src/two-stream-pytorch/main_three_stream.py" />
+        <option value="$PROJECT_DIR$/src/two-stream-pytorch/models/__init__.py" />
       </list>
     </option>
   </component>
@@ -225,7 +281,7 @@
     <sorting>DEFINITION_ORDER</sorting>
   </component>
   <component name="ProjectFrameBounds" extendedState="6">
-    <option name="x" value="676" />
+    <option name="x" value="-7" />
     <option name="width" value="697" />
     <option name="height" value="775" />
   </component>
@@ -235,35 +291,6 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="ProjectPane">
-        <subPane>
-          <expand>
-            <path>
-              <item name="Dance-Recognition" type="b2602c69:ProjectViewProjectNode" />
-              <item name="Dance-Recognition" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="Dance-Recognition" type="b2602c69:ProjectViewProjectNode" />
-              <item name="Dance-Recognition" type="462c0819:PsiDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="Dance-Recognition" type="b2602c69:ProjectViewProjectNode" />
-              <item name="Dance-Recognition" type="462c0819:PsiDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
-              <item name="two-stream-pytorch" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="Dance-Recognition" type="b2602c69:ProjectViewProjectNode" />
-              <item name="Dance-Recognition" type="462c0819:PsiDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
-              <item name="two-stream-pytorch" type="462c0819:PsiDirectoryNode" />
-              <item name="datasets" type="462c0819:PsiDirectoryNode" />
-            </path>
-          </expand>
-          <select />
-        </subPane>
-      </pane>
       <pane id="Scope">
         <subPane subId="Scope 'Project Files'; set:Project Files; class com.intellij.psi.search.scope.ProjectFilesScope">
           <expand>
@@ -280,11 +307,90 @@
           <select />
         </subPane>
       </pane>
+      <pane id="ProjectPane">
+        <subPane>
+          <expand>
+            <path>
+              <item name="Dance-Recognition" type="b2602c69:ProjectViewProjectNode" />
+              <item name="Dance-Recognition" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="Dance-Recognition" type="b2602c69:ProjectViewProjectNode" />
+              <item name="Dance-Recognition" type="462c0819:PsiDirectoryNode" />
+              <item name="letsdance" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="Dance-Recognition" type="b2602c69:ProjectViewProjectNode" />
+              <item name="Dance-Recognition" type="462c0819:PsiDirectoryNode" />
+              <item name="letsdance" type="462c0819:PsiDirectoryNode" />
+              <item name="letsdance_split" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="Dance-Recognition" type="b2602c69:ProjectViewProjectNode" />
+              <item name="Dance-Recognition" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="Dance-Recognition" type="b2602c69:ProjectViewProjectNode" />
+              <item name="Dance-Recognition" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="two-stream-pytorch" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="Dance-Recognition" type="b2602c69:ProjectViewProjectNode" />
+              <item name="Dance-Recognition" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="two-stream-pytorch" type="462c0819:PsiDirectoryNode" />
+              <item name="models" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="Dance-Recognition" type="b2602c69:ProjectViewProjectNode" />
+              <item name="External Libraries" type="cb654da1:ExternalLibrariesNode" />
+            </path>
+            <path>
+              <item name="Dance-Recognition" type="b2602c69:ProjectViewProjectNode" />
+              <item name="External Libraries" type="cb654da1:ExternalLibrariesNode" />
+              <item name="&lt; Remote Python 3.5.2 (sftp://mwysocz1@localhost:6000/home/mwysocz1/venv/bin/python3.5) &gt;" type="70bed36:NamedLibraryElementNode" />
+            </path>
+            <path>
+              <item name="Dance-Recognition" type="b2602c69:ProjectViewProjectNode" />
+              <item name="External Libraries" type="cb654da1:ExternalLibrariesNode" />
+              <item name="&lt; Remote Python 3.5.2 (sftp://mwysocz1@localhost:6000/home/mwysocz1/venv/bin/python3.5) &gt;" type="70bed36:NamedLibraryElementNode" />
+              <item name="825992662" type="d76c9d6b:PyRemoteLibrariesNode" />
+            </path>
+            <path>
+              <item name="Dance-Recognition" type="b2602c69:ProjectViewProjectNode" />
+              <item name="External Libraries" type="cb654da1:ExternalLibrariesNode" />
+              <item name="&lt; Remote Python 3.5.2 (sftp://mwysocz1@localhost:6000/home/mwysocz1/venv/bin/python3.5) &gt;" type="70bed36:NamedLibraryElementNode" />
+              <item name="825992662" type="d76c9d6b:PyRemoteLibrariesNode" />
+              <item name="319675167" type="788ab980:PyRemoteLibrariesNode$PyRemoteRootNode" />
+            </path>
+            <path>
+              <item name="Dance-Recognition" type="b2602c69:ProjectViewProjectNode" />
+              <item name="External Libraries" type="cb654da1:ExternalLibrariesNode" />
+              <item name="&lt; Remote Python 3.5.2 (sftp://mwysocz1@localhost:6000/home/mwysocz1/venv/bin/python3.5) &gt;" type="70bed36:NamedLibraryElementNode" />
+              <item name="825992662" type="d76c9d6b:PyRemoteLibrariesNode" />
+              <item name="319675167" type="788ab980:PyRemoteLibrariesNode$PyRemoteRootNode" />
+              <item name="torchvision" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="Dance-Recognition" type="b2602c69:ProjectViewProjectNode" />
+              <item name="External Libraries" type="cb654da1:ExternalLibrariesNode" />
+              <item name="&lt; Remote Python 3.5.2 (sftp://mwysocz1@localhost:6000/home/mwysocz1/venv/bin/python3.5) &gt;" type="70bed36:NamedLibraryElementNode" />
+              <item name="825992662" type="d76c9d6b:PyRemoteLibrariesNode" />
+              <item name="319675167" type="788ab980:PyRemoteLibrariesNode$PyRemoteRootNode" />
+              <item name="torchvision" type="462c0819:PsiDirectoryNode" />
+              <item name="models" type="462c0819:PsiDirectoryNode" />
+            </path>
+          </expand>
+          <select />
+        </subPane>
+      </pane>
     </panes>
   </component>
   <component name="PropertiesComponent">
     <property name="ChangesTree.GroupingKeys" value="repository" />
-    <property name="SearchEverywhereHistoryKey" value="no such mo&#9;null&#9;null" />
+    <property name="SearchEverywhereHistoryKey" value="nn&#9;FILE&#9;file://C:/Users/user/.PyCharm2018.2/system/remote_sources/825992662/319675167/torch/nn&#10;no such mo&#9;null&#9;null" />
     <property name="WebServerToolWindowFactoryState" value="true" />
     <property name="WebServerToolWindowPanel.toolwindow.highlight.mappings" value="true" />
     <property name="WebServerToolWindowPanel.toolwindow.highlight.symlinks" value="true" />
@@ -292,7 +398,12 @@
     <property name="WebServerToolWindowPanel.toolwindow.show.permissions" value="false" />
     <property name="WebServerToolWindowPanel.toolwindow.show.size" value="false" />
     <property name="last_opened_file_path" value="$PROJECT_DIR$" />
-    <property name="settings.editor.selected.configurable" value="project.propVCSSupport.Mappings" />
+    <property name="settings.editor.selected.configurable" value="web.server" />
+  </component>
+  <component name="RecentsManager">
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Users\user\Desktop\kto_ma_szkole_ten_ma_lzej\MGR\Dance-Recognition\src\two-stream-pytorch" />
+    </key>
   </component>
   <component name="RunDashboard">
     <option name="ruleStates">
@@ -345,29 +456,30 @@
   </component>
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="1382" height="784" extended-state="6" />
+    <editor active="true" />
     <layout>
       <window_info id="Favorites" order="0" side_tool="true" />
-      <window_info content_ui="combo" id="Project" order="1" visible="true" weight="0.2685325" />
+      <window_info content_ui="combo" id="Project" order="1" visible="true" weight="0.2753404" />
       <window_info id="Structure" order="2" side_tool="true" weight="0.25" />
       <window_info anchor="bottom" id="Database Changes" order="0" show_stripe_button="false" />
-      <window_info active="true" anchor="bottom" id="Terminal" order="1" sideWeight="0.49848714" visible="true" weight="0.8923077" />
-      <window_info anchor="bottom" id="Event Log" order="2" sideWeight="0.5015129" side_tool="true" visible="true" weight="0.8923077" />
-      <window_info anchor="bottom" id="Version Control" order="3" weight="0.3276923" />
+      <window_info anchor="bottom" id="Terminal" order="1" sideWeight="0.6429652" weight="0.30615383" />
+      <window_info anchor="bottom" id="Event Log" order="2" sideWeight="0.3570348" side_tool="true" weight="0.3353846" />
+      <window_info anchor="bottom" id="Version Control" order="3" sideWeight="0.49924356" weight="0.3276923" />
       <window_info anchor="bottom" id="File Transfer" order="4" sideWeight="0.49924356" weight="0.3276923" />
       <window_info anchor="bottom" id="Python Console" order="5" weight="0.3276923" />
       <window_info anchor="bottom" id="Docker" order="6" show_stripe_button="false" />
       <window_info anchor="bottom" id="Message" order="7" />
-      <window_info anchor="bottom" id="Find" order="8" />
+      <window_info active="true" anchor="bottom" id="Find" order="8" visible="true" weight="0.3276923" />
       <window_info anchor="bottom" id="Run" order="9" weight="0.3276923" />
       <window_info anchor="bottom" id="Debug" order="10" weight="0.4" />
       <window_info anchor="bottom" id="Cvs" order="11" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="12" weight="0.4" />
       <window_info anchor="bottom" id="TODO" order="13" weight="0.32923076" />
-      <window_info anchor="right" id="Remote Host" order="0" visible="true" weight="0.21558245" />
-      <window_info anchor="right" id="Database" order="1" weight="0.32980332" />
-      <window_info anchor="right" id="Commander" internal_type="SLIDING" order="2" type="SLIDING" weight="0.4" />
-      <window_info anchor="right" id="Ant Build" order="3" weight="0.25" />
-      <window_info anchor="right" content_ui="combo" id="Hierarchy" order="4" weight="0.25" />
+      <window_info anchor="right" id="Remote Host" order="0" visible="true" weight="0.2118003" />
+      <window_info anchor="right" id="Commander" internal_type="SLIDING" order="1" type="SLIDING" weight="0.4" />
+      <window_info anchor="right" id="Ant Build" order="2" weight="0.25" />
+      <window_info anchor="right" content_ui="combo" id="Hierarchy" order="3" weight="0.25" />
+      <window_info anchor="right" id="Database" order="4" weight="0.32980332" />
       <window_info anchor="right" id="SciView" order="5" weight="0.32980332" />
     </layout>
   </component>
@@ -432,29 +544,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/two-stream-pytorch/models/flow_resnet.py">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/two-stream-pytorch/models/__init__.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="68">
-          <caret line="4" column="26" selection-start-line="4" selection-start-column="26" selection-end-line="4" selection-end-column="26" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/two-stream-pytorch/models/rgb_resnet.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="3995">
-          <caret line="235" column="39" selection-start-line="235" selection-start-column="39" selection-end-line="235" selection-end-column="39" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/two-stream-pytorch/models/rgb_vgg16.py">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/two-stream-pytorch/models/flow_vgg16.py">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/two-stream-pytorch/datasets/ucf101.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="49">
@@ -469,13 +558,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/two-stream-pytorch/datasets/build_file_list.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="34">
-          <caret line="7" selection-start-line="7" selection-end-line="35" selection-end-column="34" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/two-stream-pytorch/out.txt">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="187">
@@ -483,57 +565,10 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/two-stream-pytorch/datasets/letsdance.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="714">
-          <caret line="48" column="33" selection-start-line="48" selection-start-column="32" selection-end-line="48" selection-end-column="33" />
-          <folding>
-            <element signature="e#0#31#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/two-stream-pytorch/datasets/build_of.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="51">
           <caret line="3" selection-start-line="3" selection-end-line="8" selection-end-column="49" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/two-stream-pytorch/main.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="2924">
-          <caret line="187" column="19" selection-start-line="187" selection-end-line="188" />
-          <folding>
-            <element signature="e#0#9#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/two-stream-pytorch/video_transforms.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1972">
-          <caret line="125" column="7" selection-start-line="125" selection-start-column="7" selection-end-line="125" selection-end-column="7" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/two-stream-pytorch/main_cpu.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1343">
-          <caret line="93" selection-start-line="93" selection-end-line="93" />
-          <folding>
-            <element signature="e#0#9#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/two-stream-pytorch/models/rgb_alexnet.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="272">
-          <caret line="17" column="15" selection-start-line="17" selection-start-column="15" selection-end-line="17" selection-end-column="65" />
-          <folding>
-            <element signature="e#0#21#0" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -565,17 +600,144 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/two-stream-pytorch/main_single_gpu.py">
+    <entry file="file://$PROJECT_DIR$/src/two-stream-pytorch/models/flow_resnet.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-4513">
-          <caret line="35" column="31" selection-start-line="35" selection-start-column="31" selection-end-line="35" selection-end-column="31" />
+        <state relative-caret-position="-236" />
+      </provider>
+    </entry>
+    <entry file="file://$USER_HOME$/.PyCharm2018.2/system/remote_sources/825992662/319675167/torchvision/models/alexnet.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="123">
+          <caret line="31" selection-start-line="31" selection-end-line="39" selection-end-column="9" />
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/src/two-stream-pytorch/main.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="64">
+          <caret line="173" lean-forward="true" selection-start-line="173" selection-end-line="173" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/two-stream-pytorch/models/flow_vgg16.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state>
+          <folding>
+            <element signature="e#0#21#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/two-stream-pytorch/main_cpu.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-958">
+          <caret line="93" selection-start-line="93" selection-end-line="93" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/two-stream-pytorch/models/my_alexnet.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="153">
+          <caret line="14" column="9" lean-forward="true" selection-start-line="14" selection-start-column="9" selection-end-line="14" selection-end-column="9" />
+          <folding>
+            <element signature="e#0#21#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/two-stream-pytorch/models/rgb_resnet.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="3614">
+          <caret line="235" column="39" selection-start-line="235" selection-start-column="39" selection-end-line="235" selection-end-column="39" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/two-stream-pytorch/main_single_gpu.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="867">
+          <caret line="173" column="50" selection-start-line="173" selection-start-column="50" selection-end-line="173" selection-end-column="50" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/two-stream-pytorch/video_transforms.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="278">
+          <caret line="34" column="21" lean-forward="true" selection-start-line="34" selection-start-column="21" selection-end-line="34" selection-end-column="21" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/letsdance/letsdance_split/train.txt">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="91">
+          <caret line="11" column="16" selection-start-line="11" selection-start-column="16" selection-end-line="11" selection-end-column="16" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/two-stream-pytorch/datasets/build_file_list.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="255">
+          <caret line="19" column="19" selection-start-line="19" selection-start-column="19" selection-end-line="19" selection-end-column="19" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/two-stream-pytorch/models/rgb_vgg16.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-93">
+          <caret line="10" lean-forward="true" selection-start-line="10" selection-end-line="10" />
+          <folding>
+            <element signature="e#0#21#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$USER_HOME$/.PyCharm2018.2/system/remote_sources/825992662/242176379/ntpath.py">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
     <entry file="file://$PROJECT_DIR$/src/two-stream-pytorch/datasets/build_file_list_letsdance.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="14">
-          <caret line="43" lean-forward="true" selection-start-line="43" selection-end-line="43" />
+        <state relative-caret-position="180">
+          <caret line="60" column="63" selection-start-line="60" selection-start-column="63" selection-end-line="60" selection-end-column="63" />
+          <folding>
+            <element signature="e#0#9#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/two-stream-pytorch/datasets/letsdance.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="269">
+          <caret line="73" column="26" lean-forward="true" selection-start-line="73" selection-start-column="26" selection-end-line="73" selection-end-column="26" />
+          <folding>
+            <element signature="e#0#31#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/two-stream-pytorch/models/three_stream_net.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="178">
+          <caret line="20" column="25" lean-forward="true" selection-start-line="20" selection-start-column="25" selection-end-line="20" selection-end-column="25" />
+          <folding>
+            <element signature="e#0#12#0" expanded="true" />
+            <marker date="1551196635456" expanded="true" signature="826:1081" ph="..." />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/two-stream-pytorch/main_three_stream.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="230">
+          <caret line="105" lean-forward="true" selection-start-line="105" selection-end-line="105" />
+          <folding>
+            <element signature="e#0#9#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/two-stream-pytorch/models/__init__.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="51">
+          <caret line="3" column="26" selection-start-line="3" selection-start-column="26" selection-end-line="3" selection-end-column="26" />
         </state>
       </provider>
     </entry>
