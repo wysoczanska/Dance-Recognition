@@ -58,4 +58,4 @@ def build_complete_files_list(path, split):
 
 if __name__ == '__main__':
 
-    build_complete_files_list('/home/mwysocz1/letsdance', 'test')
+    build_complete_files_list('/home/mwysocz1/letsdance', 'train')

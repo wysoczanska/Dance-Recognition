@@ -287,6 +287,7 @@ def validate(val_loader, model, criterion):
             with torch.no_grad():
                 input_var[modality] = torch.autograd.Variable(input_val)
         with torch.no_grad():
+            target = target.cuda(async=True)
             target_var = torch.autograd.Variable(target)
 
         # compute output
