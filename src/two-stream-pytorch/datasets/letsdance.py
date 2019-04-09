@@ -1,27 +1,28 @@
+import math
 import sys
 
 import cv2
 import numpy as np
 import os
-import random
 import torch.utils.data as data
 
-rgb_dir = 'letsdance_split'
-flow_dir = 'flow'
-skeleton_dir = 'skeleton'
+rgb_dir = 'rgb'
+flow_dir = 'flow_png'
+skeleton_dir = 'densepose/rgb'
 
 def find_classes(dir):
-    c_dir = os.path.join(dir, rgb_dir, 'train')
+    c_dir = os.path.join(dir, rgb_dir)
     classes = [d for d in os.listdir(c_dir) if os.path.isdir(os.path.join(c_dir, d))]
     classes.sort()
     print(classes)
     class_to_idx = {classes[i]: i for i in range(len(classes))}
     return classes, class_to_idx
 
-def make_dataset(root, source):
+
+def make_dataset(source, seg_length):
 
     if not os.path.exists(source):
-        print("Setting file %s for ucf101 dataset doesn't exist." % (source))
+        print("Setting file %s for Lets dance dataset doesn't exist." % (source))
         sys.exit()
     else:
         clips = []
@@ -29,178 +30,104 @@ def make_dataset(root, source):
             data = split_f.readlines()
             for line in data:
                 line_info = line.split()
-                clip_path = os.path.join(root, rgb_dir, line_info[0])
                 duration = int(line_info[2])
-                target = line_info[1]
-                item = (clip_path, duration, target)
-                clips.append(item)
+                num_segments = int(math.floor(duration/seg_length))
+                for seg_id in range(0, num_segments):
+                    init_frame_id = seg_id * seg_length + 1
+                    target = line_info[0]
+                    item = (line_info[1], init_frame_id, target)
+                    clips.append(item)
     return clips
 
-def ReadSegment(path, root, offsets, new_height, new_width, new_length, is_color, name_pattern):
+
+def read_segment(clip_id, init_frame_id, root, target, seg_length, is_color, name_pattern):
 
     if is_color:
         cv_read_flag = cv2.IMREAD_COLOR         # > 0
     else:
         cv_read_flag = cv2.IMREAD_GRAYSCALE     # = 0
-    interpolation = cv2.INTER_LINEAR
 
     sampled_list_rgb = []
     sampled_list_flow = []
     sampled_list_skeleton = []
+    rgb_extension = '.jpg'
+    rest_extension = '.png'
 
-    for offset_id in range(len(offsets)):
-        offset = offsets[offset_id]
-        for length_id in range(1, new_length+1):
-            cls, frame_name = os.path.split(path)
-            base, cls = os.path.split(cls)
+    for length_id in range(seg_length):
+        frame_id = name_pattern % (clip_id, init_frame_id + length_id)
 
-            # frame_id = name_pattern % (length_id + offset)
-            frame_id = frame_name[-9:]
-            print(frame_name)
-            clip_name = frame_name[:11]
-            cv_img_origin = cv2.imread(path, cv_read_flag)
-            cv_img_flow = cv2.imread(os.path.join(root, flow_dir, cls, clip_name + frame_id), cv_read_flag)
-            cv_img_skeleton = cv2.imread(os.path.join(root, skeleton_dir, cls, frame_name), cv_read_flag)
+        rgb_path = os.path.join(root, rgb_dir, target, frame_id + rgb_extension)
+        flow_path = os.path.join(root, flow_dir, target, frame_id + rest_extension)
+        skeleton_path = os.path.join(root, skeleton_dir, target, frame_id + rest_extension)
 
-            if cv_img_origin is None:
-               print("Could not load file %s" % (path))
-               sys.exit()
-            if cv_img_flow is None:
-                print("Could not load file flow %s" % (os.path.join(root, flow_dir, cls, clip_name + frame_id)))
-                sys.exit()
-            if cv_img_skeleton is None:
-                print("Could not load file skeleton %s" % (frame_name))
-                sys.exit()
-               # TODO: error handling here
-            # if new_width > 0 and new_height > 0:
-            #     # use OpenCV3, use OpenCV2.4.13 may have error
-            #     cv_img_rgb= cv2.resize(cv_img_origin, (new_width, new_height), interpolation)
-            # else:
-            #     cv_img = cv_img_origin
-            cv_img_rgb = cv2.cvtColor(cv_img_origin, cv2.COLOR_BGR2RGB)
-            cv_img_flow = cv2.cvtColor(cv_img_flow, cv2.COLOR_BGR2RGB)
-            cv_img_skeleton = cv2.cvtColor(cv_img_skeleton, cv2.COLOR_BGR2RGB)
+        # if not os.path.isfile(rgb_path):
+        #     print("Could not load file rgb %s, %s" % (target, frame_id))
+        #     sys.exit()
+        #
+        # if not os.path.isfile(flow_path):
+        #     print("Could not load file flow %s, %s" % (target, frame_id))
+        #     sys.exit()
+        #
+        # if not os.path.isfile(skeleton_path):
+        #     print("Could not load file skeleton %s, %s" % (target, frame_id))
+        #     sys.exit()
+    #
+        cv_img_origin = cv2.imread(rgb_path, cv_read_flag)
+        cv_img_flow = cv2.imread(flow_path, cv_read_flag)
+        cv_img_skeleton = cv2.imread(skeleton_path, cv_read_flag)
 
-            sampled_list_rgb.append(cv_img_rgb), sampled_list_flow.append(cv_img_flow), sampled_list_skeleton.append(cv_img_skeleton)
+        if cv_img_origin is None or cv_img_flow is None or cv_img_skeleton is None:
+            print("Could not load file %s, %s" % (target, frame_id))
+            sys.exit()
+        cv_img_rgb = cv2.cvtColor(cv_img_origin, cv2.COLOR_BGR2RGB)
+        cv_img_flow = cv2.cvtColor(cv_img_flow, cv2.COLOR_BGR2RGB)
+        cv_img_skeleton = cv2.cvtColor(cv_img_skeleton, cv2.COLOR_BGR2RGB)
 
-    clip_input = {'rgb': np.concatenate(sampled_list_rgb, axis=2), 'flow': np.concatenate(sampled_list_flow, axis=2), 'skeleton': np.concatenate(sampled_list_skeleton, axis=2)}
-    return clip_input
+        sampled_list_rgb.append(cv_img_rgb), sampled_list_flow.append(cv_img_flow), \
+        sampled_list_skeleton.append(cv_img_skeleton)
 
-def ReadSegmentFlow(path, offsets, new_height, new_width, new_length, is_color, name_pattern):
-    if is_color:
-        cv_read_flag = cv2.IMREAD_COLOR         # > 0
-    else:
-        cv_read_flag = cv2.IMREAD_GRAYSCALE     # = 0
-    interpolation = cv2.INTER_LINEAR
+    clip_input = {'rgb': np.concatenate(sampled_list_rgb, axis=2), 'flow': np.concatenate(sampled_list_flow, axis=2),
+                  'skeleton': np.concatenate(sampled_list_skeleton, axis=2)}
 
-    sampled_list = []
-    for offset_id in range(len(offsets)):
-        offset = offsets[offset_id]
-        for length_id in range(1, new_length+1):
-            frame_name_x = name_pattern % ("x", length_id + offset)
-            frame_path_x = path + "/" + frame_name_x
-            cv_img_origin_x = cv2.imread(frame_path_x, cv_read_flag)
-            frame_name_y = name_pattern % ("y", length_id + offset)
-            frame_path_y = path + "/" + frame_name_y
-            cv_img_origin_y = cv2.imread(frame_path_y, cv_read_flag)
-            if cv_img_origin_x is None or cv_img_origin_y is None:
-               print("Could not load file %s or %s" % (frame_path_x, frame_path_y))
-               sys.exit()
-               # TODO: error handling here
-            if new_width > 0 and new_height > 0:
-                cv_img_x = cv2.resize(cv_img_origin_x, (new_width, new_height), interpolation)
-                cv_img_y = cv2.resize(cv_img_origin_y, (new_width, new_height), interpolation)
-            else:
-                cv_img_x = cv_img_origin_x
-                cv_img_y = cv_img_origin_y
-            sampled_list.append(np.expand_dims(cv_img_x, 2))
-            sampled_list.append(np.expand_dims(cv_img_y, 2))
-
-    clip_input = np.concatenate(sampled_list, axis=2)
     return clip_input
 
 
-class letsdance(data.Dataset):
+class Letsdance(data.Dataset):
 
     def __init__(self,
                  root,
                  source,
                  phase,
-                 modality,
-                 name_pattern=None,
                  is_color=True,
-                 num_segments=1,
                  new_length=1,
-                 new_width=0,
-                 new_height=0,
                  transform=None,
                  target_transform=None,
                  video_transform=None):
 
         classes, class_to_idx = find_classes(root)
-        clips = make_dataset(root, source)
+        clips = make_dataset(source, new_length)
 
-        # if len(clips) == 0:
-        #     raise(RuntimeError("Found 0 video clips in subfolders of: " + root + "\n"
-        #                        "Check your data directory."))
-
+        if len(clips) == 0:
+            raise(RuntimeError("Found 0 video clips in subfolders of: " + root + "\n"
+                               "Check your data directory."))
         self.root = root
         self.source = source
         self.phase = phase
-        self.modality = "rgb"
-
         self.classes = classes
         self.class_to_idx = class_to_idx
         self.clips = clips
-
-        if name_pattern:
-            self.name_pattern = name_pattern
-        else:
-            if self.modality == "rgb":
-                self.name_pattern = "%04d.jpg"
-            elif self.modality == "flow":
-                self.name_pattern = "flow_%s_%05d.jpg"
-
         self.is_color = is_color
-        self.num_segments = num_segments
-        self.new_length = new_length
-        self.new_width = new_width
-        self.new_height = new_height
+        self.name_pattern = "%s_%04d"
+        self.seg_length = new_length
 
         self.transform = transform
         self.target_transform = target_transform
         self.video_transform = video_transform
 
     def __getitem__(self, index):
-        path, duration, target = self.clips[index]
-        target = self.class_to_idx[target]
-        average_duration = int(duration / self.num_segments)
-        offsets = []
-        for seg_id in range(self.num_segments):
-            if self.phase == "train":
-                if average_duration >= self.new_length:
-                    offset = random.randint(0, average_duration - self.new_length)
-                    # No +1 because randint(a,b) return a random integer N such that a <= N <= b.
-                    offsets.append(offset + seg_id * average_duration)
-                else:
-                    offsets.append(0)
-            elif self.phase == "val":
-                if average_duration >= self.new_length:
-                    offsets.append(int((average_duration - self.new_length + 1)/2 + seg_id * average_duration))
-                else:
-                    offsets.append(0)
-            else:
-                print("Only phase train and val are supported.")
-
-        clip_input = ReadSegment(path, self.root,
-                                        offsets,
-                                        self.new_height,
-                                        self.new_width,
-                                        self.new_length,
-                                        self.is_color,
-                                        self.name_pattern
-                                        )
-
+        clip_id, init_frame_id, cls = self.clips[index]
+        target = self.class_to_idx[cls]
+        clip_input = read_segment(clip_id, init_frame_id, self.root, cls, self.seg_length, self.is_color, self.name_pattern,)
         if self.transform is not None:
             clip_input = self.transform(clip_input)
         if self.target_transform is not None:
@@ -209,7 +136,6 @@ class letsdance(data.Dataset):
             clip_input = self.video_transform(clip_input)
 
         return clip_input, target
-
 
     def __len__(self):
         return len(self.clips)

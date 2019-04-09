@@ -33,8 +33,6 @@ def check_directories(path, split):
                         if (duration == flow_counts[clip]) and (duration == skeleton_counts[clip] == 300):
                             white_list.append(clip)
 
-
-
     return white_list
 
 
@@ -44,9 +42,6 @@ def build_complete_files_list(path, split):
         complete_clips = check_directories(path, split)
         classes = os.listdir(os.path.join(path, flow_dir))
 
-        if 'HJyQjQy9n-' in complete_clips: print('True')
-        print(complete_clips)
-
         for cls in classes:
             if os.path.isdir(os.path.join(path, rgb_dir, split, cls)):
                 rgb_files = os.listdir(os.path.join(path, rgb_dir, split, cls))
@@ -54,8 +49,5 @@ def build_complete_files_list(path, split):
                     if rgb_file[:10] in complete_clips:
                         fl.write(os.path.join(split, cls, rgb_file)+'   ' + cls + ' ' + str(300) + '\n')
 
-
-
 if __name__ == '__main__':
-
     build_complete_files_list('/home/mwysocz1/letsdance', 'train')

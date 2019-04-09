@@ -339,6 +339,16 @@ class MultiScaleCrop(object):
             return scaled_clips
 
 
+class Resize(object):
+    def __init__(self, size, interpolation=cv2.INTER_LINEAR):
+        self.height = size[0]
+        self.width = size[1]
+        self.interpolation = interpolation
+
+    def __call__(self, clips):
+        h, w, c = clips.shape
+        clips = cv2.resize(clips, (self.height, self.width), interpolation=self.interpolation)
+        return clips
 
 
 

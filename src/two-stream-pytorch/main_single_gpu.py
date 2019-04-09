@@ -1,21 +1,19 @@
-import os
-import time
 import argparse
-import shutil
-import numpy as np
+import time
 
+import datasets
+import models
+import numpy as np
+import os
+import shutil
 import torch
+import torch.backends.cudnn as cudnn
 import torch.nn as nn
 import torch.nn.parallel
-import torch.backends.cudnn as cudnn
 import torch.optim
 import torch.utils.data
-
 import video_transforms
 from torchvision import models
-
-# import models
-import datasets
 
 model_names = sorted(name for name in models.__dict__
     if name.islower() and not name.startswith("__")

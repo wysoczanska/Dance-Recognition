@@ -37,9 +37,6 @@ def my_alexnet(pretrained=True):
     return alexnet
 
 
-
-
-
 def three_stream_net(**kwargs):
     r"""AlexNet model architecture from the
     `"One weird trick..." <https://arxiv.org/abs/1404.5997>`_ paper.

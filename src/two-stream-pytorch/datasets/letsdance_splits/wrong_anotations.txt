@@ -1,0 +1,31 @@
+tango/HJyQjQy9n-U
+
+no flow
+swing/7O6kPEPOoaE_216
+latin/3Q-gQAuS4e8_129
+latin	3Q-gQAuS4e8_129	241
+quickstep	o9YtSG6CsG0_136	241
+swing	SxMxOa22PlM_050	251
+latin	RRLNRSUNrl0_103	241
+swing	jrEmJ70wfwg_011	251
+
+no densepose
+swing/ugH_5g1ZMWw_108
+/densepose/rgb/flamenco/NacCLcjuMFc_027_0013.png co zrobic?
+swing	ivcEbuMdhB0_020	241
+swing	t_R8Bazi0RI_041	301
+densepose/rgb/waltz/iqRzOOb94KM_100_0009.png
+swing	hlfUrVFsGI4_250	241
+/rumba/q1O9Qu2_fY4_050_0228.png
+waltz	azWcLosbIVY_105	602 -> densepose 300
+swing	O65KqT0Vby8_205	301
+tap	pkjkCpq-tnM_002	301 -> brak 158 ramki -> zmiana na 157
+quickstep	IqkDYzkBExw_048	301 -> brak 0215 -> zmiana na 214
+ballet	CNh2kHhY29Q_141	251 -> no 214 zmiana na 213
+ballet	KAfPbrhGKcU_120	251 -> no 129 zmiana na 128
+samba	ej_wdFU0duk_103	251 -> zaczyna sie od 3 klatki *brak 0001, 0002 -> na razie usuniete
+foxtrot	XR_Hwtfz5s4_018	602 -> brak 271 -> zmiana na 270
+swing	gisafTmbVd8_158	502 -> brak od 301 -> zmiana na 300
+ballet	HwvyKmpTEkg_120	301 -> brak 52 -> zmiana na 52
+quickstep	_6YXgJATdVU_044	301 0> 234 -> zmiana na 233
+

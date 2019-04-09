@@ -14,16 +14,6 @@ import torch.optim
 import torch.utils.data
 import video_transforms
 
-try:
-    from nvidia.dali.plugin.pytorch import DALIClassificationIterator
-    from nvidia.dali.pipeline import Pipeline
-    import nvidia.dali.ops as ops
-    import nvidia.dali.types as types
-except ImportError:
-    raise ImportError("Please install DALI from https://www.github.com/NVIDIA/DALI to run this example.")
-
-
-
 model_names = sorted(name for name in models.__dict__
     if name.islower() and not name.startswith("__")
     and callable(models.__dict__[name]))
@@ -37,22 +27,17 @@ parser.add_argument('--train_split_file', metavar='DIR',
                     help='path to train files list')
 parser.add_argument('--test_split_file', metavar='DIR',
                     help='path to test files list')
-parser.add_argument('--modality', '-m', metavar='MODALITY', default='rgb',
-                    choices=["rgb", "flow"],
-                    help='modality: rgb | flow')
 parser.add_argument('--dataset', '-d', default='ucf101',
-                    choices=["ucf101", "hmdb51", "letsdance"],
-                    help='dataset: ucf101 | hmdb51 | letsdance')
+                    choices=["ucf101", "Letsdance"],
+                    help='dataset: ucf101 | letsdance')
 parser.add_argument('--arch', '-a', metavar='ARCH', default='vgg16',
                     help='model architecture (default: alexnet)')
-parser.add_argument('-s', '--split', default=1, type=int, metavar='S',
-                    help='which split of data to work on (default: 1)')
 parser.add_argument('-j', '--workers', default=4, type=int, metavar='N',
                     help='number of data loading workers (default: 4)')
 parser.add_argument('--epochs', default=250, type=int, metavar='N',
                     help='number of total epochs to run')
 parser.add_argument('--start-epoch', default=0, type=int, metavar='N',
-                    help='manual epoch number (useful on restarts)')
+                    help='tmanual epoch number (useful on restarts)')
 parser.add_argument('-b', '--batch-size', default=25, type=int,
                     metavar='N', help='mini-batch size (default: 50)')
 parser.add_argument('--iter-size', default=5, type=int,
@@ -86,15 +71,17 @@ device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
 os.environ["CUDA_DEVICE_ORDER"]="PCI_BUS_ID"
 os.environ["CUDA_VISIBLE_DEVICES"]="0"
+print(device)
 
 
 def main():
     global args, best_prec1
     args = parser.parse_args()
+    num_classes = 16
 
     # create model
     print("Building model ... ")
-    model = build_model(num_classes=9, input_length=args.new_length*3)
+    model = build_model(num_classes=num_classes, input_length=args.new_length*3)
     model = model.to(device)
     print(model)
 
@@ -116,53 +103,47 @@ def main():
     cudnn.benchmark = True
 
     # Data transforming
-    if args.modality == "rgb":
-        is_color = True
-        scale_ratios = [1.0, 0.875, 0.75, 0.66]
-        clip_mean = [0.485, 0.456, 0.406] * args.new_length
-        clip_std = [0.229, 0.224, 0.225] * args.new_length
-    elif args.modality == "flow":
-        is_color = False
-        scale_ratios = [1.0, 0.875, 0.75]
-        clip_mean = [0.5, 0.5] * args.new_length
-        clip_std = [0.226, 0.226] * args.new_length
-    else:
-        print("No such modality. Only rgb and flow supported.")
+    # if args.modality == "rgb":
+    is_color = True
+    scale_ratios = [1.0, 0.875, 0.75, 0.66]
+    #     clip_mean = [0.485, 0.456, 0.406] * args.new_length
+    #     clip_std = [0.229, 0.224, 0.225] * args.new_length
+    # elif args.modality == "flow":
+    #     is_color = False
+    #     scale_ratios = [1.0, 0.875, 0.75]
+    #     clip_mean = [0.5, 0.5] * args.new_length
+    #     clip_std = [0.226, 0.226] * args.new_length
+    # else:
+    #     print("No such modality. Only rgb and flow supported.")
 
-    normalize = video_transforms.Normalize(mean=clip_mean,
-                                           std=clip_std)
+    # normalize = video_transforms.Normalize(mean=clip_mean,
+    #                                        std=clip_std)
     train_transform = video_transforms.Compose([
             # video_transforms.Scale((256)),
-            video_transforms.MultiScaleCrop((224, 224), scale_ratios),
-            video_transforms.RandomHorizontalFlip(),
+            video_transforms.Resize((224, 224)),
+            # video_transforms.RandomHorizontalFlip(),
             video_transforms.ToTensor(),
-            normalize,
+            # normalize,
         ])
 
     val_transform = video_transforms.Compose([
             # video_transforms.Scale((256)),
-            video_transforms.CenterCrop((224)),
+            video_transforms.Resize((224, 224)),
             video_transforms.ToTensor(),
-            normalize,
+            # normalize,
         ])
 
     train_dataset = datasets.__dict__[args.dataset](root=args.data,
                                                     source=args.train_split_file,
                                                     phase="train",
-                                                    modality=args.modality,
                                                     is_color=is_color,
                                                     new_length=args.new_length,
-                                                    new_width=args.new_width,
-                                                    new_height=args.new_height,
                                                     video_transform=train_transform)
     val_dataset = datasets.__dict__[args.dataset](root=args.data,
                                                   source=args.test_split_file,
                                                   phase="val",
-                                                  modality=args.modality,
                                                   is_color=is_color,
                                                   new_length=args.new_length,
-                                                  new_width=args.new_width,
-                                                  new_height=args.new_height,
                                                   video_transform=val_transform)
 
     print('{} samples found, {} train samples and {} test samples.'.format(len(val_dataset)+len(train_dataset),
@@ -171,7 +152,7 @@ def main():
 
     train_loader = torch.utils.data.DataLoader(
         train_dataset,
-        batch_size=args.batch_size, shuffle=True,
+        batch_size=args.batch_size, shuffle=False,
         num_workers=args.workers, pin_memory=True)
     val_loader = torch.utils.data.DataLoader(
         val_dataset,
@@ -229,21 +210,20 @@ def train(train_loader, model, criterion, optimizer, epoch):
     loss_mini_batch = 0.0
     acc_mini_batch = 0.0
 
-
     for i, (input, target) in enumerate(train_loader):
         input_var = input
         for modality, input_val in input.items():
-            input_val = input_val.float().cuda(async=True)
-            input_var[modality] = torch.autograd.Variable(input_val)
-        target = target.cuda(async=True)
-        target_var = torch.autograd.Variable(target)
+            # input_val = input_val.float().to(device)
+            input_var[modality] = input_val.to(device)
+        target = target.to(device)
+        # target_var = torch.autograd.Variable(target)
 
         output = model(input_var)
 
         # measure accuracy and record loss
         prec1, prec3 = accuracy(output.data, target, topk=(1, 3))
         acc_mini_batch += prec1.item()
-        loss = criterion(output, target_var)
+        loss = criterion(output, target)
         loss = loss / args.iter_size
         loss_mini_batch += loss.item()
         loss.backward()
