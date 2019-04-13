@@ -3,8 +3,11 @@ import sys
 
 import cv2
 import numpy as np
+import nvidia.dali.ops as ops
+import nvidia.dali.types as types
 import os
 import torch.utils.data as data
+from nvidia.dali.pipeline import Pipeline
 
 rgb_dir = 'rgb'
 flow_dir = 'flow_png'
@@ -139,3 +142,17 @@ class Letsdance(data.Dataset):
 
     def __len__(self):
         return len(self.clips)
+
+
+class SimplePipeline(Pipeline):
+    def __init__(self, batch_size, num_threads, device_id):
+        super(SimplePipeline, self).__init__(batch_size, num_threads, device_id, seed = 12)
+        self.input = ops.FileReader(file_root = image_dir)
+        # instead of path to file directory file with pairs image_name image_label_value can be provided
+        # self.input = ops.FileReader(file_root = image_dir, file_list = image_dir + '/file_list.txt')
+        self.decode = ops.HostDecoder(output_type = types.RGB)
+
+    def define_graph(self):
+        jpegs, labels = self.input()
+        images = self.decode(jpegs)
+        return (images, labels)

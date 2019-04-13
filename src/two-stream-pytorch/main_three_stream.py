@@ -3,7 +3,6 @@ import time
 
 import datasets
 import models
-import numpy as np
 import os
 import shutil
 import torch
@@ -12,6 +11,7 @@ import torch.nn as nn
 import torch.nn.parallel
 import torch.optim
 import torch.utils.data
+import torch.utils.data.distributed
 import video_transforms
 
 model_names = sorted(name for name in models.__dict__
@@ -66,12 +66,8 @@ parser.add_argument('-e', '--evaluate', dest='evaluate', action='store_true',
                     help='evaluate model on validation set')
 
 
-best_prec1 = 0
-device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
-
-os.environ["CUDA_DEVICE_ORDER"]="PCI_BUS_ID"
-os.environ["CUDA_VISIBLE_DEVICES"]="0"
-print(device)
+best_acc1 = 0
+ngpus = torch.cuda.device_count()
 
 
 def main():
@@ -79,11 +75,17 @@ def main():
     args = parser.parse_args()
     num_classes = 16
 
+    model = build_model(num_classes=num_classes, input_length=args.new_length*3)
+
+    print(model)
+
     # create model
     print("Building model ... ")
-    model = build_model(num_classes=num_classes, input_length=args.new_length*3)
-    model = model.to(device)
-    print(model)
+    if torch.cuda.device_count() > 1:
+        model.rgb = torch.nn.DataParallel(model.rgb)
+        model.skeleton = torch.nn.DataParallel(model.skeleton)
+        model.flow = torch.nn.DataParallel(model.skeleton)
+    model.cuda()
 
     if not os.path.exists(args.resume):
         os.makedirs(args.resume)
@@ -102,12 +104,10 @@ def main():
 
     cudnn.benchmark = True
 
-    # Data transforming
-    # if args.modality == "rgb":
     is_color = True
     scale_ratios = [1.0, 0.875, 0.75, 0.66]
-    #     clip_mean = [0.485, 0.456, 0.406] * args.new_length
-    #     clip_std = [0.229, 0.224, 0.225] * args.new_length
+    clip_mean = [0.485, 0.456, 0.406] * args.new_length
+    clip_std = [0.229, 0.224, 0.225] * args.new_length
     # elif args.modality == "flow":
     #     is_color = False
     #     scale_ratios = [1.0, 0.875, 0.75]
@@ -116,21 +116,21 @@ def main():
     # else:
     #     print("No such modality. Only rgb and flow supported.")
 
-    # normalize = video_transforms.Normalize(mean=clip_mean,
-    #                                        std=clip_std)
+    normalize = video_transforms.Normalize(mean=clip_mean,
+                                           std=clip_std)
     train_transform = video_transforms.Compose([
             # video_transforms.Scale((256)),
             video_transforms.Resize((224, 224)),
             # video_transforms.RandomHorizontalFlip(),
             video_transforms.ToTensor(),
-            # normalize,
+            normalize,
         ])
 
     val_transform = video_transforms.Compose([
             # video_transforms.Scale((256)),
             video_transforms.Resize((224, 224)),
             video_transforms.ToTensor(),
-            # normalize,
+            normalize,
         ])
 
     train_dataset = datasets.__dict__[args.dataset](root=args.data,
@@ -164,29 +164,25 @@ def main():
         return
 
     for epoch in range(args.start_epoch, args.epochs):
-        adjust_learning_rate(optimizer, epoch)
+        adjust_learning_rate(optimizer, epoch, args)
 
         # train for one epoch
-        train(train_loader, model, criterion, optimizer, epoch)
+        train(train_loader, model, criterion, optimizer, epoch, args)
 
         # evaluate on validation set
-        prec1 = 0.0
-        if (epoch + 1) % args.save_freq == 0:
-            prec1 = validate(val_loader, model, criterion)
+        acc1 = validate(val_loader, model, criterion, args)
 
-        # remember best prec@1 and save checkpoint
-        is_best = prec1 > best_prec1
-        best_prec1 = max(prec1, best_prec1)
+        # remember best acc@1 and save checkpoint
+        is_best = acc1 > best_acc1
+        best_acc1 = max(acc1, best_acc1)
 
-        if (epoch + 1) % args.save_freq == 0:
-            checkpoint_name = "%03d_%s" % (epoch + 1, "checkpoint.pth.tar")
-            save_checkpoint({
+        save_checkpoint({
                 'epoch': epoch + 1,
                 'arch': args.arch,
                 'state_dict': model.state_dict(),
-                'best_prec1': best_prec1,
-                'optimizer' : optimizer.state_dict(),
-            }, is_best, checkpoint_name, args.resume)
+                'best_acc1': best_acc1,
+                'optimizer': optimizer.state_dict(),
+            }, is_best)
 
 
 def build_model(input_length, num_classes):
@@ -197,97 +193,91 @@ def build_model(input_length, num_classes):
     model.cuda()
     return model
 
-def train(train_loader, model, criterion, optimizer, epoch):
-    batch_time = AverageMeter()
-    losses = AverageMeter()
-    top1 = AverageMeter()
+
+def train(train_loader, model, criterion, optimizer, epoch, args):
+    batch_time = AverageMeter('Time', ':6.3f')
+    data_time = AverageMeter('Data', ':6.3f')
+    losses = AverageMeter('Loss', ':.4e')
+    top1 = AverageMeter('Acc@1', ':6.2f')
+    top5 = AverageMeter('Acc@5', ':6.2f')
+    progress = ProgressMeter(len(train_loader), batch_time, data_time, losses, top1,
+                             top5, prefix="Epoch: [{}]".format(epoch))
 
     # switch to train mode
     model.train()
 
     end = time.time()
-    loss_mini_batch = 0.0
-    acc_mini_batch = 0.0
-
     for i, (input, target) in enumerate(train_loader):
+        # measure data loading time
+        data_time.update(time.time() - end)
         for modality, data in input.items():
-            input[modality] = data.to(device)
-        target = target.to(device)
-        optimizer.zero_grad()
-        output = model(input)
-
-        # measure accuracy and record loss
-        prec1, prec3 = accuracy(output.data, target, topk=(1, 3))
-        acc_mini_batch += prec1.item()
-        loss = criterion(output, target)
-        loss_mini_batch += loss.item()
-        loss.backward()
-
-        optimizer.step()
-
-        losses.update(loss_mini_batch, input[modality].size(0))
-        top1.update(acc_mini_batch/args.iter_size, input[modality].size(0))
-        batch_time.update(time.time() - end)
-        end = time.time()
-        loss_mini_batch = 0
-        acc_mini_batch = 0
-
-        if (i+1) % args.print_freq == 0:
-
-            print('Epoch: [{0}][{1}/{2}]\t'
-                  'Time {batch_time.val:.3f} ({batch_time.avg:.3f})\t'
-                  'Loss {loss.val:.4f} ({loss.avg:.4f})\t'
-                  'Prec@1 {top1.val:.3f} ({top1.avg:.3f})'.
-                  format(epoch, i+1, len(train_loader)+1, batch_time=batch_time, loss=losses, top1=top1))
-
-
-def validate(val_loader, model, criterion):
-    batch_time = AverageMeter()
-    losses = AverageMeter()
-    top1 = AverageMeter()
-    top3 = AverageMeter()
-
-    # switch to evaluate mode
-    model.eval()
-
-    end = time.time()
-    for i, (input, target) in enumerate(val_loader):
-        input_var = input
-        for modality, input_val in input.items():
-            input_val = input_val.float().cuda(async=True)
-            with torch.no_grad():
-                input_var[modality] = torch.autograd.Variable(input_val)
-        with torch.no_grad():
-            target = target.cuda(async=True)
-            target_var = torch.autograd.Variable(target)
+            input[modality] = data.cuda(non_blocking=True)
+        target = target.cuda(non_blocking=True)
 
         # compute output
-        output = model(input_var)
-        loss = criterion(output, target_var)
+        output = model(input)
+        loss = criterion(output, target)
 
         # measure accuracy and record loss
-        prec1, prec3 = accuracy(output.data, target, topk=(1, 3))
-        losses.update(loss.item(), input[modality].size(0))
-        top1.update(prec1.item(), input[modality].size(0))
-        top3.update(prec3.item(), input[modality].size(0))
+        acc1, acc5 = accuracy(output, target, topk=(1, 5))
+        losses.update(loss.item(), input.size(0))
+        top1.update(acc1[0], input.size(0))
+        top5.update(acc5[0], input.size(0))
+
+        # compute gradient and do SGD step
+        optimizer.zero_grad()
+        loss.backward()
+        optimizer.step()
 
         # measure elapsed time
         batch_time.update(time.time() - end)
         end = time.time()
 
         if i % args.print_freq == 0:
-            print('Test: [{0}/{1}]\t'
-                  'Time {batch_time.val:.3f} ({batch_time.avg:.3f})\t'
-                  'Loss {loss.val:.4f} ({loss.avg:.4f})\t'
-                  'Prec@1 {top1.val:.3f} ({top1.avg:.3f})\t'
-                  'Prec@3 {top3.val:.3f} ({top3.avg:.3f})'.format(
-                   i, len(val_loader), batch_time=batch_time, loss=losses,
-                   top1=top1, top3=top3))
+            progress.print(i)
 
-    print(' * Prec@1 {top1.avg:.3f} Prec@3 {top3.avg:.3f}'
-          .format(top1=top1, top3=top3))
+
+def validate(val_loader, model, criterion, args):
+    batch_time = AverageMeter('Time', ':6.3f')
+    losses = AverageMeter('Loss', ':.4e')
+    top1 = AverageMeter('Acc@1', ':6.2f')
+    top5 = AverageMeter('Acc@5', ':6.2f')
+    progress = ProgressMeter(len(val_loader), batch_time, losses, top1, top5,
+                             prefix='Test: ')
+
+    # switch to evaluate mode
+    model.eval()
+
+    with torch.no_grad():
+        end = time.time()
+        for i, (input, target) in enumerate(val_loader):
+            for modality, data in input.items():
+                input[modality] = data.cuda(non_blocking=True)
+            target = target.cuda(non_blocking=True)
+
+            # compute output
+            output = model(input)
+            loss = criterion(output, target)
+
+            # measure accuracy and record loss
+            acc1, acc5 = accuracy(output, target, topk=(1, 5))
+            losses.update(loss.item(), input.size(0))
+            top1.update(acc1[0], input.size(0))
+            top5.update(acc5[0], input.size(0))
+
+            # measure elapsed time
+            batch_time.update(time.time() - end)
+            end = time.time()
+
+            if i % args.print_freq == 0:
+                progress.print(i)
+
+        print(' * Acc@1 {top1.avg:.3f} Acc@5 {top5.avg:.3f}'
+              .format(top1=top1, top5=top5))
 
     return top1.avg
+
+
 
 def save_checkpoint(state, is_best, filename, resume_path):
     cur_path = os.path.join(resume_path, filename)
@@ -296,9 +286,12 @@ def save_checkpoint(state, is_best, filename, resume_path):
     if is_best:
         shutil.copyfile(cur_path, best_path)
 
+
 class AverageMeter(object):
     """Computes and stores the average and current value"""
-    def __init__(self):
+    def __init__(self, name, fmt=':f'):
+        self.name = name
+        self.fmt = fmt
         self.reset()
 
     def reset(self):
@@ -313,29 +306,48 @@ class AverageMeter(object):
         self.count += n
         self.avg = self.sum / self.count
 
-def adjust_learning_rate(optimizer, epoch):
-    """Sets the learning rate to the initial LR decayed by 10 every 150 epochs"""
+    def __str__(self):
+        fmtstr = '{name} {val' + self.fmt + '} ({avg' + self.fmt + '})'
+        return fmtstr.format(**self.__dict__)
 
-    decay = 0.1 ** (sum(epoch >= np.array(args.lr_steps)))
-    lr = args.lr * decay
-    print("Current learning rate is %4.6f:" % lr)
+class ProgressMeter(object):
+    def __init__(self, num_batches, *meters, prefix=""):
+        self.batch_fmtstr = self._get_batch_fmtstr(num_batches)
+        self.meters = meters
+        self.prefix = prefix
+
+    def print(self, batch):
+        entries = [self.prefix + self.batch_fmtstr.format(batch)]
+        entries += [str(meter) for meter in self.meters]
+        print('\t'.join(entries))
+
+    def _get_batch_fmtstr(self, num_batches):
+        num_digits = len(str(num_batches // 1))
+        fmt = '{:' + str(num_digits) + 'd}'
+        return '[' + fmt + '/' + fmt.format(num_batches) + ']'
+
+
+def adjust_learning_rate(optimizer, epoch, args):
+    """Sets the learning rate to the initial LR decayed by 10 every 30 epochs"""
+    lr = args.lr * (0.1 ** (epoch // 30))
     for param_group in optimizer.param_groups:
         param_group['lr'] = lr
 
 def accuracy(output, target, topk=(1,)):
-    """Computes the precision@k for the specified values of k"""
-    maxk = max(topk)
-    batch_size = target.size(0)
+    """Computes the accuracy over the k top predictions for the specified values of k"""
+    with torch.no_grad():
+        maxk = max(topk)
+        batch_size = target.size(0)
 
-    _, pred = output.topk(maxk, 1, True, True)
-    pred = pred.t()
-    correct = pred.eq(target.view(1, -1).expand_as(pred))
+        _, pred = output.topk(maxk, 1, True, True)
+        pred = pred.t()
+        correct = pred.eq(target.view(1, -1).expand_as(pred))
 
-    res = []
-    for k in topk:
-        correct_k = correct[:k].view(-1).float().sum(0)
-        res.append(correct_k.mul_(100.0 / batch_size))
-    return res
+        res = []
+        for k in topk:
+            correct_k = correct[:k].view(-1).float().sum(0, keepdim=True)
+            res.append(correct_k.mul_(100.0 / batch_size))
+        return res
 
 if __name__ == '__main__':
     main()
