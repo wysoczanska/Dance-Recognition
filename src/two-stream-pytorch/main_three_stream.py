@@ -206,49 +206,40 @@ def train(train_loader, model, criterion, optimizer, epoch):
     model.train()
 
     end = time.time()
-    optimizer.zero_grad()
     loss_mini_batch = 0.0
     acc_mini_batch = 0.0
 
     for i, (input, target) in enumerate(train_loader):
-        input_var = input
-        for modality, input_val in input.items():
-            # input_val = input_val.float().to(device)
-            input_var[modality] = input_val.to(device)
+        for modality, data in input.items():
+            input[modality] = data.to(device)
         target = target.to(device)
-        # target_var = torch.autograd.Variable(target)
-
-        output = model(input_var)
+        optimizer.zero_grad()
+        output = model(input)
 
         # measure accuracy and record loss
         prec1, prec3 = accuracy(output.data, target, topk=(1, 3))
         acc_mini_batch += prec1.item()
         loss = criterion(output, target)
-        loss = loss / args.iter_size
         loss_mini_batch += loss.item()
         loss.backward()
 
-        if (i+1) % args.iter_size == 0:
-            # compute gradient and do SGD step
-            optimizer.step()
-            optimizer.zero_grad()
+        optimizer.step()
 
-            # losses.update(loss_mini_batch/args.iter_size, input.size(0))
-            # top1.update(acc_mini_batch/args.iter_size, input.size(0))
-            losses.update(loss_mini_batch, input[modality].size(0))
-            top1.update(acc_mini_batch/args.iter_size, input[modality].size(0))
-            batch_time.update(time.time() - end)
-            end = time.time()
-            loss_mini_batch = 0
-            acc_mini_batch = 0
+        losses.update(loss_mini_batch, input[modality].size(0))
+        top1.update(acc_mini_batch/args.iter_size, input[modality].size(0))
+        batch_time.update(time.time() - end)
+        end = time.time()
+        loss_mini_batch = 0
+        acc_mini_batch = 0
 
-            if (i+1) % args.print_freq == 0:
+        if (i+1) % args.print_freq == 0:
 
-                print('Epoch: [{0}][{1}/{2}]\t'
-                      'Time {batch_time.val:.3f} ({batch_time.avg:.3f})\t'
-                      'Loss {loss.val:.4f} ({loss.avg:.4f})\t'
-                      'Prec@1 {top1.val:.3f} ({top1.avg:.3f})'.format(
-                       epoch, i+1, len(train_loader)+1, batch_time=batch_time, loss=losses, top1=top1))
+            print('Epoch: [{0}][{1}/{2}]\t'
+                  'Time {batch_time.val:.3f} ({batch_time.avg:.3f})\t'
+                  'Loss {loss.val:.4f} ({loss.avg:.4f})\t'
+                  'Prec@1 {top1.val:.3f} ({top1.avg:.3f})'.
+                  format(epoch, i+1, len(train_loader)+1, batch_time=batch_time, loss=losses, top1=top1))
+
 
 def validate(val_loader, model, criterion):
     batch_time = AverageMeter()
