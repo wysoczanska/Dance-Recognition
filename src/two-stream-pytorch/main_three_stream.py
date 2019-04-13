@@ -71,7 +71,7 @@ ngpus = torch.cuda.device_count()
 
 
 def main():
-    global args, best_prec1
+    global args, best_acc1
     args = parser.parse_args()
     num_classes = 16
 
@@ -82,9 +82,9 @@ def main():
     # create model
     print("Building model ... ")
     if torch.cuda.device_count() > 1:
-        model.rgb = torch.nn.DataParallel(model.rgb)
-        model.skeleton = torch.nn.DataParallel(model.skeleton)
-        model.flow = torch.nn.DataParallel(model.skeleton)
+        model.rgb.features = torch.nn.DataParallel(model.rgb.features)
+        model.skeleton.features = torch.nn.DataParallel(model.skeleton.features)
+        model.flow.features = torch.nn.DataParallel(model.flow.features)
     model.cuda()
 
     if not os.path.exists(args.resume):
@@ -190,7 +190,6 @@ def build_model(input_length, num_classes):
     model.rgb.features[0] = nn.Conv2d(input_length, 64, kernel_size=11, stride=4, padding=2)
     model.optical_flow.features[0] = nn.Conv2d(input_length, 64, kernel_size=11, stride=4, padding=2)
     model.skeleton.features[0] = nn.Conv2d(input_length, 64, kernel_size=11, stride=4, padding=2)
-    model.cuda()
     return model
 
 
@@ -221,8 +220,8 @@ def train(train_loader, model, criterion, optimizer, epoch, args):
         # measure accuracy and record loss
         acc1, acc5 = accuracy(output, target, topk=(1, 5))
         losses.update(loss.item(), input.size(0))
-        top1.update(acc1[0], input.size(0))
-        top5.update(acc5[0], input.size(0))
+        top1.update(acc1[0], input[modality].size(0))
+        top5.update(acc5[0], input[modality].size(0))
 
         # compute gradient and do SGD step
         optimizer.zero_grad()
@@ -262,8 +261,8 @@ def validate(val_loader, model, criterion, args):
             # measure accuracy and record loss
             acc1, acc5 = accuracy(output, target, topk=(1, 5))
             losses.update(loss.item(), input.size(0))
-            top1.update(acc1[0], input.size(0))
-            top5.update(acc5[0], input.size(0))
+            top1.update(acc1[0], input[modality].size(0))
+            top5.update(acc5[0], input[modality].size(0))
 
             # measure elapsed time
             batch_time.update(time.time() - end)
@@ -276,8 +275,6 @@ def validate(val_loader, model, criterion, args):
               .format(top1=top1, top5=top5))
 
     return top1.avg
-
-
 
 def save_checkpoint(state, is_best, filename, resume_path):
     cur_path = os.path.join(resume_path, filename)
