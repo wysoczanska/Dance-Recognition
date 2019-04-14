@@ -9,7 +9,7 @@ class ThreeStreamNet(nn.Module):
     def __init__(self, num_classes):
         super(ThreeStreamNet, self).__init__()
         self.rgb = my_alexnet(pretrained=True)
-        self.optical_flow = my_alexnet(pretrained=True)
+        self.flow = my_alexnet(pretrained=True)
         self.skeleton = my_alexnet(pretrained=True)
         self.classifier = nn.Sequential(
             nn.Dropout(),
@@ -30,10 +30,19 @@ class ThreeStreamNet(nn.Module):
 def my_alexnet(pretrained=True):
 
     alexnet = models.alexnet(pretrained=pretrained)
-    modules = list(alexnet.classifier.children())[:-4]
-    alexnet.classifier = nn.Sequential(*modules)
+    # freeze features layers
     for p in alexnet.features.parameters():
         p.requires_grad = False
+    # add batch norm layers
+    modules = list(alexnet.features.children())
+    modules.insert(3, nn.BatchNorm2d(64))
+    modules.insert(7, nn.BatchNorm2d(192))
+    alexnet.features = nn.Sequential(*modules)
+
+    # remove final layer
+    modules = list(alexnet.classifier.children())[:-4]
+    alexnet.classifier = nn.Sequential(*modules)
+
     return alexnet
 
 

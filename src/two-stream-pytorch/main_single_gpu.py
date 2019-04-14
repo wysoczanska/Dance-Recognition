@@ -2,7 +2,6 @@ import argparse
 import time
 
 import datasets
-import models
 import numpy as np
 import os
 import shutil
@@ -14,6 +13,7 @@ import torch.optim
 import torch.utils.data
 import video_transforms
 from torchvision import models
+from torchvision import transforms
 
 model_names = sorted(name for name in models.__dict__
     if name.islower() and not name.startswith("__")
@@ -32,7 +32,6 @@ parser.add_argument('--modality', '-m', metavar='MODALITY', default='rgb',
                     choices=["rgb", "flow"],
                     help='modality: rgb | flow')
 parser.add_argument('--dataset', '-d', default='ucf101',
-                    choices=["ucf101", "hmdb51", "letsdance"],
                     help='dataset: ucf101 | hmdb51 | letsdance')
 parser.add_argument('--arch', '-a', metavar='ARCH', default='vgg16',
                     help='model architecture (default: alexnet)')
@@ -50,13 +49,13 @@ parser.add_argument('--iter-size', default=5, type=int,
                     metavar='I', help='iter size as in Caffe to reduce memory usage (default: 5)')
 parser.add_argument('--new_length', default=1, type=int,
                     metavar='N', help='length of sampled video frames (default: 1)')
-parser.add_argument('--new_width', default=340, type=int,
+parser.add_argument('--new_width', default=224, type=int,
                     metavar='N', help='resize width (default: 340)')
-parser.add_argument('--new_height', default=256, type=int,
+parser.add_argument('--new_height', default=224, type=int,
                     metavar='N', help='resize height (default: 256)')
 parser.add_argument('--lr', '--learning-rate', default=0.001, type=float,
                     metavar='LR', help='initial learning rate')
-parser.add_argument('--lr_steps', default=[100, 200], type=float, nargs="+",
+parser.add_argument('--lr_steps', default=[100, 150, 200], type=float, nargs="+",
                     metavar='LRSteps', help='epochs to decay learning rate by 10')
 parser.add_argument('--momentum', default=0.9, type=float, metavar='M',
                     help='momentum')
@@ -83,10 +82,12 @@ def main():
 
     # create model
     print("Building model ... ")
-    model = build_model(num_classes=10, input_length=args.new_length*3)
+    model = build_model(num_classes=16, input_length=args.new_length*3)
     model = model.to(device)
     print(model)
-    print("Model %s is loaded. " % (args.modality + "_" + args.arch))
+    print("Model %s is loaded. " % ( args.arch))
+    for parameter in model.parameters():
+        print(parameter)
 
     if not os.path.exists(args.resume):
         os.makedirs(args.resume)
@@ -119,21 +120,18 @@ def main():
     else:
         print("No such modality. Only rgb and flow supported.")
 
-    normalize = video_transforms.Normalize(mean=clip_mean,
-                                           std=clip_std)
-    train_transform = video_transforms.Compose([
+    train_transform = transforms.Compose([
             # video_transforms.Scale((256)),
-            video_transforms.MultiScaleCrop((224, 224), scale_ratios),
-            video_transforms.RandomHorizontalFlip(),
+            video_transforms.Resize((224, 224)),
             video_transforms.ToTensor(),
-            normalize,
+            # normalize,
         ])
 
-    val_transform = video_transforms.Compose([
+    val_transform = transforms.Compose([
             # video_transforms.Scale((256)),
-            video_transforms.CenterCrop((224)),
+            video_transforms.Resize((224, 224)),
             video_transforms.ToTensor(),
-            normalize,
+            # normalize,
         ])
 
     # data loading
@@ -147,20 +145,14 @@ def main():
     train_dataset = datasets.__dict__[args.dataset](root=args.data,
                                                     source=args.train_split_file,
                                                     phase="train",
-                                                    modality=args.modality,
                                                     is_color=is_color,
                                                     new_length=args.new_length,
-                                                    new_width=args.new_width,
-                                                    new_height=args.new_height,
                                                     video_transform=train_transform)
     val_dataset = datasets.__dict__[args.dataset](root=args.data,
                                                   source=args.test_split_file,
                                                   phase="val",
-                                                  modality=args.modality,
                                                   is_color=is_color,
                                                   new_length=args.new_length,
-                                                  new_width=args.new_width,
-                                                  new_height=args.new_height,
                                                   video_transform=val_transform)
 
     print('{} samples found, {} train samples and {} test samples.'.format(len(val_dataset)+len(train_dataset),
@@ -169,8 +161,8 @@ def main():
 
     train_loader = torch.utils.data.DataLoader(
         train_dataset,
-        batch_size=args.batch_size, shuffle=True,
-        num_workers=args.workers, pin_memory=True)
+        batch_size=args.batch_size,
+        num_workers=args.workers, pin_memory=True, shuffle=True)
     val_loader = torch.utils.data.DataLoader(
         val_dataset,
         batch_size=args.batch_size, shuffle=True,
@@ -211,10 +203,11 @@ def build_model(input_length, num_classes ):
     model = models.__dict__[model_name](pretrained=True, num_classes=1000)
     if args.arch.endswith('alexnet') or args.arch.startswith('vgg'):
         model.features[0] = nn.Conv2d(input_length, 64, kernel_size=11, stride=4, padding=2)
-
-        model.features = torch.nn.DataParallel(model.features)
-
-        # model.cuda()
+        modules = list(model.features.children())
+        print(len(modules))
+        modules.insert(3, nn.BatchNorm2d(64))
+        modules.insert(7, nn.BatchNorm2d(192))
+        model.features = nn.Sequential(*modules)
     else:
         model = torch.nn.DataParallel(model).cuda()
 
@@ -248,25 +241,25 @@ def train(train_loader, model, criterion, optimizer, epoch):
         prec1, prec3 = accuracy(output.data, target, topk=(1, 3))
         acc_mini_batch += prec1.item()
         loss = criterion(output, target_var)
-        loss = loss / args.iter_size
+        loss = loss
         loss_mini_batch += loss.item()
         loss.backward()
 
-        if (i+1) % args.iter_size == 0:
+
             # compute gradient and do SGD step
-            optimizer.step()
-            optimizer.zero_grad()
+        optimizer.step()
+        optimizer.zero_grad()
 
             # losses.update(loss_mini_batch/args.iter_size, input.size(0))
             # top1.update(acc_mini_batch/args.iter_size, input.size(0))
-            losses.update(loss_mini_batch, input.size(0))
-            top1.update(acc_mini_batch/args.iter_size, input.size(0))
-            batch_time.update(time.time() - end)
-            end = time.time()
-            loss_mini_batch = 0
-            acc_mini_batch = 0
+        losses.update(loss_mini_batch, input.size(0))
+        top1.update(acc_mini_batch/args.iter_size, input.size(0))
+        batch_time.update(time.time() - end)
+        end = time.time()
+        loss_mini_batch = 0
+        acc_mini_batch = 0
 
-            if (i+1) % args.print_freq == 0:
+        if (i+1) % args.print_freq == 0:
 
                 print('Epoch: [{0}][{1}/{2}]\t'
                       'Time {batch_time.val:.3f} ({batch_time.avg:.3f})\t'
