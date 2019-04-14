@@ -20,7 +20,7 @@ class ThreeStreamNet(nn.Module):
 
     def forward(self, x):
         x1 = self.rgb(x['rgb'])
-        x2 = self.optical_flow(x['flow'])
+        x2 = self.flow(x['flow'])
         x3 = self.skeleton(x['skeleton'])
         x = torch.cat((x1, x2, x3), 1)
         x = self.classifier(x)

@@ -9,7 +9,7 @@ import os
 import torch.utils.data as data
 from nvidia.dali.pipeline import Pipeline
 
-rgb_dir = 'rgb'
+rgb_dir = 'rgb/rgb'
 flow_dir = 'flow_png'
 skeleton_dir = 'densepose/rgb'
 
