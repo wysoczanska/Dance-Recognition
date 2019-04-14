@@ -182,7 +182,7 @@ def main():
                 'state_dict': model.state_dict(),
                 'best_acc1': best_acc1,
                 'optimizer': optimizer.state_dict(),
-            }, is_best)
+            }, is_best, 'last_checkpoint.pth.tar', args.resume)
 
 
 def build_model(input_length, num_classes):
@@ -219,7 +219,7 @@ def train(train_loader, model, criterion, optimizer, epoch, args):
 
         # measure accuracy and record loss
         acc1, acc5 = accuracy(output, target, topk=(1, 5))
-        losses.update(loss.item(), input.size(0))
+        losses.update(loss.item(), input[modality].size(0))
         top1.update(acc1[0], input[modality].size(0))
         top5.update(acc5[0], input[modality].size(0))
 
@@ -260,7 +260,7 @@ def validate(val_loader, model, criterion, args):
 
             # measure accuracy and record loss
             acc1, acc5 = accuracy(output, target, topk=(1, 5))
-            losses.update(loss.item(), input.size(0))
+            losses.update(loss.item(), input[modality].size(0))
             top1.update(acc1[0], input[modality].size(0))
             top5.update(acc5[0], input[modality].size(0))
 
