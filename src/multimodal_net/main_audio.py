@@ -1,8 +1,8 @@
 import argparse
 import time
-
+from models import my_alexnet
 import datasets
-import numpy as np
+from tensorboardX import SummaryWriter
 import os
 import shutil
 import torch
@@ -21,9 +21,11 @@ model_names = sorted(name for name in models.__dict__
 
 dataset_names = sorted(name for name in datasets.__all__)
 
-parser = argparse.ArgumentParser(description='PyTorch Two-Stream Action Recognition')
+parser = argparse.ArgumentParser(description='PyTorch Lets dance audio data training')
 parser.add_argument('data', metavar='DIR',
                     help='path to dataset')
+parser.add_argument('--logdir',
+                    help='tensorboard log directory')
 parser.add_argument('--train_split_file', metavar='DIR',
                     help='path to train files list')
 parser.add_argument('--test_split_file', metavar='DIR',
@@ -55,7 +57,7 @@ parser.add_argument('--new_height', default=224, type=int,
                     metavar='N', help='resize height (default: 256)')
 parser.add_argument('--lr', '--learning-rate', default=0.001, type=float,
                     metavar='LR', help='initial learning rate')
-parser.add_argument('--lr_steps', default=[100, 150, 200], type=float, nargs="+",
+parser.add_argument('--lr_steps', default=[50, 100, 150, 200], type=float, nargs="+",
                     metavar='LRSteps', help='epochs to decay learning rate by 10')
 parser.add_argument('--momentum', default=0.9, type=float, metavar='M',
                     help='momentum')
@@ -79,15 +81,14 @@ os.environ["CUDA_VISIBLE_DEVICES"]="0"
 def main():
     global args, best_prec1
     args = parser.parse_args()
+    writer = SummaryWriter(args.logdir)
 
     # create model
     print("Building model ... ")
-    model = build_model(num_classes=16, input_length=args.new_length*3)
+    model = my_alexnet.build_model(num_classes=16, input_channels=3)
     model = model.to(device)
     print(model)
     print("Model %s is loaded. " % ( args.arch))
-    for parameter in model.parameters():
-        print(parameter)
 
     if not os.path.exists(args.resume):
         os.makedirs(args.resume)
@@ -134,14 +135,6 @@ def main():
             # normalize,
         ])
 
-    # data loading
-    # train_setting_file = "train_%s_split%d.txt" % (args.modality, args.split)
-    # train_split_file = os.path.join(args.settings, args.dataset, train_setting_file)
-    # val_setting_file = "val_%s_split%d.txt" % (args.modality, args.split)
-    # val_split_file = os.path.join(args.settings, args.dataset, val_setting_file)
-    # if not os.path.exists(train_split_file) or not os.path.exists(val_split_file):
-    #     print("No split file exists in %s directory. Preprocess the dataset first" % (args.settings))
-
     train_dataset = datasets.__dict__[args.dataset](root=args.data,
                                                     source=args.train_split_file,
                                                     phase="train",
@@ -169,148 +162,128 @@ def main():
         num_workers=args.workers, pin_memory=True)
 
     if args.evaluate:
-        validate(val_loader, model, criterion)
+        validate(val_loader, model, criterion, writer, 0)
         return
 
     for epoch in range(args.start_epoch, args.epochs):
-        adjust_learning_rate(optimizer, epoch)
+        adjust_learning_rate(optimizer, epoch, args)
 
         # train for one epoch
-        train(train_loader, model, criterion, optimizer, epoch)
+        train(train_loader, model, criterion, optimizer, epoch, writer)
 
         # evaluate on validation set
         prec1 = 0.0
         if (epoch + 1) % args.save_freq == 0:
-            prec1 = validate(val_loader, model, criterion)
+            prec1 = validate(val_loader, model, criterion, writer, epoch)
 
         # remember best prec@1 and save checkpoint
         is_best = prec1 > best_prec1
         best_prec1 = max(prec1, best_prec1)
 
         if (epoch + 1) % args.save_freq == 0:
-            checkpoint_name = "%03d_%s" % (epoch + 1, "checkpoint.pth.tar")
+            checkpoint_name = "last_checkpoint.pth.tar"
             save_checkpoint({
                 'epoch': epoch + 1,
                 'arch': args.arch,
                 'state_dict': model.state_dict(),
                 'best_prec1': best_prec1,
-                'optimizer' : optimizer.state_dict(),
+                'optimizer': optimizer.state_dict(),
             }, is_best, checkpoint_name, args.resume)
+    writer.close()
 
 
-def build_model(input_length, num_classes ):
-    model_name = args.arch
-    model = models.__dict__[model_name](pretrained=True, num_classes=1000)
-    if args.arch.endswith('alexnet') or args.arch.startswith('vgg'):
-        model.features[0] = nn.Conv2d(input_length, 64, kernel_size=11, stride=4, padding=2)
-        modules = list(model.features.children())
-        print(len(modules))
-        modules.insert(3, nn.BatchNorm2d(64))
-        modules.insert(7, nn.BatchNorm2d(192))
-        model.features = nn.Sequential(*modules)
-    else:
-        model = torch.nn.DataParallel(model).cuda()
-
-    model.classifier[6] = nn.Linear(4096, num_classes)
-    model.cuda()
-    return model
-
-def train(train_loader, model, criterion, optimizer, epoch):
-    batch_time = AverageMeter()
-    losses = AverageMeter()
-    top1 = AverageMeter()
+def train(train_loader, model, criterion, optimizer, epoch, writer):
+    batch_time = AverageMeter('Time', ':6.3f')
+    data_time = AverageMeter('Data', ':6.3f')
+    losses = AverageMeter('Loss', ':.4e')
+    top1 = AverageMeter('Acc@1', ':6.2f')
+    top3 = AverageMeter('Acc@3', ':6.2f')
+    progress = ProgressMeter(len(train_loader), batch_time, data_time, losses, top1,
+                             top3, prefix="Epoch: [{}]".format(epoch))
 
     # switch to train mode
     model.train()
 
     end = time.time()
-    optimizer.zero_grad()
-    loss_mini_batch = 0.0
-    acc_mini_batch = 0.0
-
     for i, (input, target) in enumerate(train_loader):
-
-        input = input.float().cuda(async=True)
+        # measure data loading time
+        data_time.update(time.time() - end)
+        input = input.cuda(async=True)
         target = target.cuda(async=True)
-        input_var = torch.autograd.Variable(input)
-        target_var = torch.autograd.Variable(target)
-
-        output = model(input_var)
-
-        # measure accuracy and record loss
-        prec1, prec3 = accuracy(output.data, target, topk=(1, 3))
-        acc_mini_batch += prec1.item()
-        loss = criterion(output, target_var)
-        loss = loss
-        loss_mini_batch += loss.item()
-        loss.backward()
-
-
-            # compute gradient and do SGD step
-        optimizer.step()
-        optimizer.zero_grad()
-
-            # losses.update(loss_mini_batch/args.iter_size, input.size(0))
-            # top1.update(acc_mini_batch/args.iter_size, input.size(0))
-        losses.update(loss_mini_batch, input.size(0))
-        top1.update(acc_mini_batch/args.iter_size, input.size(0))
-        batch_time.update(time.time() - end)
-        end = time.time()
-        loss_mini_batch = 0
-        acc_mini_batch = 0
-
-        if (i+1) % args.print_freq == 0:
-
-                print('Epoch: [{0}][{1}/{2}]\t'
-                      'Time {batch_time.val:.3f} ({batch_time.avg:.3f})\t'
-                      'Loss {loss.val:.4f} ({loss.avg:.4f})\t'
-                      'Prec@1 {top1.val:.3f} ({top1.avg:.3f})'.format(
-                       epoch, i+1, len(train_loader)+1, batch_time=batch_time, loss=losses, top1=top1))
-
-def validate(val_loader, model, criterion):
-    batch_time = AverageMeter()
-    losses = AverageMeter()
-    top1 = AverageMeter()
-    top3 = AverageMeter()
-
-    # switch to evaluate mode
-    model.eval()
-
-    end = time.time()
-    for i, (input, target) in enumerate(val_loader):
-        input = input.float().cuda(async=True)
-        target = target.cuda(async=True)
-        with torch.no_grad():
-            input_var = torch.autograd.Variable(input)
-            target_var = torch.autograd.Variable(target)
 
         # compute output
-        output = model(input_var)
-        loss = criterion(output, target_var)
+        output = model(input)
+        loss = criterion(output, target)
 
         # measure accuracy and record loss
-        prec1, prec3 = accuracy(output.data, target, topk=(1, 3))
+        acc1, acc3 = accuracy(output, target, topk=(1, 3))
         losses.update(loss.item(), input.size(0))
-        top1.update(prec1.item(), input.size(0))
-        top3.update(prec3.item(), input.size(0))
+        top1.update(acc1[0], input.size(0))
+        top3.update(acc3[0], input.size(0))
+
+        # compute gradient and do SGD step
+        optimizer.zero_grad()
+        loss.backward()
+        optimizer.step()
 
         # measure elapsed time
         batch_time.update(time.time() - end)
         end = time.time()
 
-        if i % args.print_freq == 0:
-            print('Test: [{0}/{1}]\t'
-                  'Time {batch_time.val:.3f} ({batch_time.avg:.3f})\t'
-                  'Loss {loss.val:.4f} ({loss.avg:.4f})\t'
-                  'Prec@1 {top1.val:.3f} ({top1.avg:.3f})\t'
-                  'Prec@3 {top3.val:.3f} ({top3.avg:.3f})'.format(
-                   i, len(val_loader), batch_time=batch_time, loss=losses,
-                   top1=top1, top3=top3))
+        writer.add_scalar('Train/Acc1', top1.avg, epoch*len(train_loader)+i)
+        writer.add_scalar('Train/Acc3', top3.avg, epoch*len(train_loader)+i)
+        writer.add_scalar('Train/Loss', losses.avg, epoch*len(train_loader)+i)
 
-    print(' * Prec@1 {top1.avg:.3f} Prec@3 {top3.avg:.3f}'
-          .format(top1=top1, top3=top3))
+        if i % args.print_freq == 0:
+            progress.print(i)
+
+
+
+def validate(val_loader, model, criterion, writer, epoch):
+    batch_time = AverageMeter('Time', ':6.3f')
+    losses = AverageMeter('Loss', ':.4e')
+    top1 = AverageMeter('Acc@1', ':6.2f')
+    top3 = AverageMeter('Acc@3', ':6.2f')
+    progress = ProgressMeter(len(val_loader), batch_time, losses, top1, top3,
+                             prefix='Test: ')
+
+    # switch to evaluate mode
+    model.eval()
+
+    with torch.no_grad():
+        end = time.time()
+
+        for i, (input, target) in enumerate(val_loader):
+            input = input.cuda(async=True)
+            target = target.cuda(async=True)
+
+            # compute output
+            output = model(input)
+            loss = criterion(output, target)
+
+            # measure accuracy and record loss
+            acc1, acc3 = accuracy(output, target, topk=(1, 3))
+            losses.update(loss.item(), input.size(0))
+            top1.update(acc1[0], input.size(0))
+            top3.update(acc3[0], input.size(0))
+
+            # measure elapsed time
+            batch_time.update(time.time() - end)
+            end = time.time()
+
+            if i % args.print_freq == 0:
+                progress.print(i)
+
+        print(' * Acc@1 {top1.avg:.3f} Acc@3 {top3.avg:.3f}'
+              .format(top1=top1, top3=top3))
+        writer.add_scalar('Test/Acc1', top1.avg, epoch)
+        writer.add_scalar('Test/Acc3', top3.avg, epoch)
+        writer.add_scalar('Test/Loss', losses.avg, epoch)
+
+
 
     return top1.avg
+
 
 def save_checkpoint(state, is_best, filename, resume_path):
     cur_path = os.path.join(resume_path, filename)
@@ -319,9 +292,12 @@ def save_checkpoint(state, is_best, filename, resume_path):
     if is_best:
         shutil.copyfile(cur_path, best_path)
 
+
 class AverageMeter(object):
     """Computes and stores the average and current value"""
-    def __init__(self):
+    def __init__(self, name, fmt=':f'):
+        self.name = name
+        self.fmt = fmt
         self.reset()
 
     def reset(self):
@@ -336,29 +312,49 @@ class AverageMeter(object):
         self.count += n
         self.avg = self.sum / self.count
 
-def adjust_learning_rate(optimizer, epoch):
-    """Sets the learning rate to the initial LR decayed by 10 every 150 epochs"""
+    def __str__(self):
+        fmtstr = '{name} {val' + self.fmt + '} ({avg' + self.fmt + '})'
+        return fmtstr.format(**self.__dict__)
 
-    decay = 0.1 ** (sum(epoch >= np.array(args.lr_steps)))
-    lr = args.lr * decay
-    print("Current learning rate is %4.6f:" % lr)
+
+class ProgressMeter(object):
+    def __init__(self, num_batches, *meters, prefix=""):
+        self.batch_fmtstr = self._get_batch_fmtstr(num_batches)
+        self.meters = meters
+        self.prefix = prefix
+
+    def print(self, batch):
+        entries = [self.prefix + self.batch_fmtstr.format(batch)]
+        entries += [str(meter) for meter in self.meters]
+        print('\t'.join(entries))
+
+    def _get_batch_fmtstr(self, num_batches):
+        num_digits = len(str(num_batches // 1))
+        fmt = '{:' + str(num_digits) + 'd}'
+        return '[' + fmt + '/' + fmt.format(num_batches) + ']'
+
+
+def adjust_learning_rate(optimizer, epoch, args):
+    """Sets the learning rate to the initial LR decayed by 10 every 30 epochs"""
+    lr = args.lr * (0.1 ** (epoch // 30))
     for param_group in optimizer.param_groups:
         param_group['lr'] = lr
 
+
 def accuracy(output, target, topk=(1,)):
-    """Computes the precision@k for the specified values of k"""
-    maxk = max(topk)
-    batch_size = target.size(0)
+    """Computes the accuracy over the k top predictions for the specified values of k"""
+    with torch.no_grad():
+        maxk = max(topk)
+        batch_size = target.size(0)
 
-    _, pred = output.topk(maxk, 1, True, True)
-    pred = pred.t()
-    correct = pred.eq(target.view(1, -1).expand_as(pred))
+        _, pred = output.topk(maxk, 1, True, True)
+        pred = pred.t()
+        correct = pred.eq(target.view(1, -1).expand_as(pred))
 
-    res = []
-    for k in topk:
-        correct_k = correct[:k].view(-1).float().sum(0)
-        res.append(correct_k.mul_(100.0 / batch_size))
-    return res
-
+        res = []
+        for k in topk:
+            correct_k = correct[:k].view(-1).float().sum(0, keepdim=True)
+            res.append(correct_k.mul_(100.0 / batch_size))
+        return res
 if __name__ == '__main__':
     main()
