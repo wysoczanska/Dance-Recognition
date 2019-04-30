@@ -1,6 +1,7 @@
 import argparse
 import time
-
+from tensorboardX import SummaryWriter
+from torchvision import transforms, utils
 import datasets
 import models
 import os
@@ -13,6 +14,8 @@ import torch.optim
 import torch.utils.data
 import torch.utils.data.distributed
 import video_transforms
+from torch.optim.lr_scheduler import ReduceLROnPlateau
+
 
 model_names = sorted(name for name in models.__dict__
     if name.islower() and not name.startswith("__")
@@ -30,6 +33,8 @@ parser.add_argument('--test_split_file', metavar='DIR',
 parser.add_argument('--dataset', '-d', default='ucf101',
                     choices=["ucf101", "Letsdance"],
                     help='dataset: ucf101 | letsdance')
+parser.add_argument('--logdir',
+                    help='tensorboard log directory')
 parser.add_argument('--out_dir', type=str, help='Directory with saved models', default='./checkpoints')
 parser.add_argument('--model_path', type=str, help='Absolute path to the checkpoint. Only valid when resume or eval'
                                                    '', default='./checkpoints/model_best.pth.tar')
@@ -75,6 +80,7 @@ def main():
     args = parser.parse_args()
     num_classes = 16
     start_epoch=0
+    writer = SummaryWriter(args.logdir)
 
     model = build_model(num_classes=num_classes, input_length=args.new_length*3)
 
@@ -98,6 +104,7 @@ def main():
     optimizer = torch.optim.SGD(model.parameters(), args.lr,
                                 momentum=args.momentum,
                                 weight_decay=args.weight_decay)
+    scheduler = ReduceLROnPlateau(optimizer, 'max')
 
     # if resume set to True, load the model and continue training
     if args.resume:
@@ -155,17 +162,18 @@ def main():
         num_workers=args.workers, pin_memory=True)
 
     if args.evaluate:
-        validate(val_loader, model, criterion)
+        validate(val_loader, model, criterion, epoch=0, writer=writer)
         return
 
     for epoch in range(start_epoch, args.epochs):
-        adjust_learning_rate(optimizer, epoch, args)
+        # adjust_learning_rate(optimizer, epoch, args)
 
         # train for one epoch
-        train(train_loader, model, criterion, optimizer, epoch, args)
+        train(train_loader, model, criterion, optimizer, epoch, args, writer)
 
         # evaluate on validation set
-        acc1 = validate(val_loader, model, criterion)
+        acc1 = validate(val_loader, model, criterion, epoch, writer)
+        scheduler.step(acc1)
 
         # remember best acc@1 and save checkpoint
         is_best = acc1 > best_acc1
@@ -179,6 +187,8 @@ def main():
                 'optimizer': optimizer.state_dict(),
             }, is_best, 'last_checkpoint.pth.tar', args.out_dir)
 
+    writer.close()
+
 
 def build_model(input_length, num_classes):
     model = models.three_stream_net(num_classes=num_classes)
@@ -188,20 +198,21 @@ def build_model(input_length, num_classes):
     return model
 
 
-def train(train_loader, model, criterion, optimizer, epoch, args):
+def train(train_loader, model, criterion, optimizer, epoch, args, writer):
     batch_time = AverageMeter('Time', ':6.3f')
     data_time = AverageMeter('Data', ':6.3f')
     losses = AverageMeter('Loss', ':.4e')
     top1 = AverageMeter('Acc@1', ':6.2f')
-    top5 = AverageMeter('Acc@5', ':6.2f')
+    top3 = AverageMeter('Acc@3', ':6.2f')
     progress = ProgressMeter(len(train_loader), batch_time, data_time, losses, top1,
-                             top5, prefix="Epoch: [{}]".format(epoch))
+                             top3, prefix="Epoch: [{}]".format(epoch))
 
     # switch to train mode
     model.train()
 
     end = time.time()
     for i, (input, target) in enumerate(train_loader):
+
         # measure data loading time
         data_time.update(time.time() - end)
         for modality, data in input.items():
@@ -213,10 +224,10 @@ def train(train_loader, model, criterion, optimizer, epoch, args):
         loss = criterion(output, target)
 
         # measure accuracy and record loss
-        acc1, acc5 = accuracy(output, target, topk=(1, 5))
+        acc1, acc3 = accuracy(output, target, topk=(1, 3))
         losses.update(loss.item(), input[modality].size(0))
         top1.update(acc1[0], input[modality].size(0))
-        top5.update(acc5[0], input[modality].size(0))
+        top3.update(acc3[0], input[modality].size(0))
 
         # compute gradient and do SGD step
         optimizer.zero_grad()
@@ -227,16 +238,23 @@ def train(train_loader, model, criterion, optimizer, epoch, args):
         batch_time.update(time.time() - end)
         end = time.time()
 
+        writer.add_scalar('Train/Acc1', top1.avg, epoch*len(train_loader)+i)
+        writer.add_scalar('Train/Acc3', top3.avg, epoch*len(train_loader)+i)
+        writer.add_scalar('Train/Loss', losses.avg, epoch*len(train_loader)+i)
         if i % args.print_freq == 0:
             progress.print(i)
+    if epoch < 1:
+        writer.add_image('Input RGB', utils.make_grid(input['rgb'][0].view(15,3,224, 224)).cpu(), epoch)
+        writer.add_image('Input Flow', utils.make_grid(input['flow'][0].view(15,3,224, 224)).cpu(), epoch)
+        writer.add_image('Input Skeleton', utils.make_grid(input['skeleton'][0].view(15,3,224, 224)).cpu(), epoch)
 
 
-def validate(val_loader, model, criterion):
+def validate(val_loader, model, criterion, epoch, writer):
     batch_time = AverageMeter('Time', ':6.3f')
     losses = AverageMeter('Loss', ':.4e')
     top1 = AverageMeter('Acc@1', ':6.2f')
-    top5 = AverageMeter('Acc@5', ':6.2f')
-    progress = ProgressMeter(len(val_loader), batch_time, losses, top1, top5,
+    top3 = AverageMeter('Acc@3', ':6.2f')
+    progress = ProgressMeter(len(val_loader), batch_time, losses, top1, top3,
                              prefix='Test: ')
 
     # switch to evaluate mode
@@ -254,10 +272,10 @@ def validate(val_loader, model, criterion):
             loss = criterion(output, target)
 
             # measure accuracy and record loss
-            acc1, acc5 = accuracy(output, target, topk=(1, 5))
+            acc1, acc3 = accuracy(output, target, topk=(1, 3))
             losses.update(loss.item(), input[modality].size(0))
             top1.update(acc1[0], input[modality].size(0))
-            top5.update(acc5[0], input[modality].size(0))
+            top3.update(acc3[0], input[modality].size(0))
 
             # measure elapsed time
             batch_time.update(time.time() - end)
@@ -266,8 +284,11 @@ def validate(val_loader, model, criterion):
             if i % args.print_freq == 0:
                 progress.print(i)
 
-        print(' * Acc@1 {top1.avg:.3f} Acc@5 {top5.avg:.3f}'
-              .format(top1=top1, top5=top5))
+        print(' * Acc@1 {top1.avg:.3f} Acc@3 {top3.avg:.3f}'
+              .format(top1=top1, top3=top3))
+        writer.add_scalar('Test/Acc1', top1.avg, epoch)
+        writer.add_scalar('Test/Acc3', top3.avg, epoch)
+        writer.add_scalar('Test/Loss', losses.avg, epoch)
 
     return top1.avg
 
@@ -354,6 +375,7 @@ def accuracy(output, target, topk=(1,)):
             correct_k = correct[:k].view(-1).float().sum(0, keepdim=True)
             res.append(correct_k.mul_(100.0 / batch_size))
         return res
+
 
 if __name__ == '__main__':
     main()

@@ -1,6 +1,6 @@
 import argparse
 import time
-from models import my_alexnet
+import models
 import datasets
 from tensorboardX import SummaryWriter
 import os
@@ -12,8 +12,8 @@ import torch.nn.parallel
 import torch.optim
 import torch.utils.data
 import video_transforms
-from torchvision import models
-from torchvision import transforms
+import visualization_utils as vis
+from torchvision import transforms, utils
 
 model_names = sorted(name for name in models.__dict__
     if name.islower() and not name.startswith("__")
@@ -78,6 +78,17 @@ device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 os.environ["CUDA_DEVICE_ORDER"]="PCI_BUS_ID"   
 os.environ["CUDA_VISIBLE_DEVICES"]="0"
 
+
+def build_model(num_classes, model_name):
+    model = models.__dict__[model_name]( num_classes=1000)
+    # model.fc_action = nn.Linear(4096, num_classes)
+    if args.arch.endswith('alexnet') or args.arch.startswith('vgg'):
+        model.features = torch.nn.DataParallel(model.features)
+    else:
+        model = torch.nn.DataParallel(model)
+    return model
+
+
 def main():
     global args, best_prec1
     args = parser.parse_args()
@@ -85,7 +96,8 @@ def main():
 
     # create model
     print("Building model ... ")
-    model = my_alexnet.build_model(num_classes=16, input_channels=3)
+
+    model = build_model(num_classes=16, model_name=args.arch)
     model = model.to(device)
     print(model)
     print("Model %s is loaded. " % ( args.arch))
@@ -111,8 +123,8 @@ def main():
     if args.modality == "rgb":
         is_color = True
         scale_ratios = [1.0, 0.875, 0.75, 0.66]
-        clip_mean = [0.485, 0.456, 0.406] * args.new_length
-        clip_std = [0.229, 0.224, 0.225] * args.new_length
+        clip_mean = [0.5, 0.5, 0.5]
+        clip_std = [0.25, 0.25, 0.25]
     elif args.modality == "flow":
         is_color = False
         scale_ratios = [1.0, 0.875, 0.75]
@@ -121,18 +133,21 @@ def main():
     else:
         print("No such modality. Only rgb and flow supported.")
 
+    normalize = video_transforms.Normalize(mean=clip_mean,
+                                           std=clip_std)
+
     train_transform = transforms.Compose([
             # video_transforms.Scale((256)),
-            video_transforms.Resize((224, 224)),
+            video_transforms.Resize((96, 44)),
             video_transforms.ToTensor(),
-            # normalize,
+            normalize,
         ])
 
     val_transform = transforms.Compose([
             # video_transforms.Scale((256)),
-            video_transforms.Resize((224, 224)),
+            video_transforms.Resize((96, 44)),
             video_transforms.ToTensor(),
-            # normalize,
+            normalize,
         ])
 
     train_dataset = datasets.__dict__[args.dataset](root=args.data,
@@ -162,7 +177,7 @@ def main():
         num_workers=args.workers, pin_memory=True)
 
     if args.evaluate:
-        validate(val_loader, model, criterion, writer, 0)
+        validate(val_loader, model, criterion, writer, epoch=0)
         return
 
     for epoch in range(args.start_epoch, args.epochs):
@@ -236,7 +251,7 @@ def train(train_loader, model, criterion, optimizer, epoch, writer):
 
         if i % args.print_freq == 0:
             progress.print(i)
-
+    writer.add_image('Input', utils.make_grid(input), epoch)
 
 
 def validate(val_loader, model, criterion, writer, epoch):
@@ -279,8 +294,7 @@ def validate(val_loader, model, criterion, writer, epoch):
         writer.add_scalar('Test/Acc1', top1.avg, epoch)
         writer.add_scalar('Test/Acc3', top3.avg, epoch)
         writer.add_scalar('Test/Loss', losses.avg, epoch)
-
-
+        vis.visualize_filter(list(model.children())[0], writer, epoch)
 
     return top1.avg
 
@@ -356,5 +370,7 @@ def accuracy(output, target, topk=(1,)):
             correct_k = correct[:k].view(-1).float().sum(0, keepdim=True)
             res.append(correct_k.mul_(100.0 / batch_size))
         return res
+
+
 if __name__ == '__main__':
     main()

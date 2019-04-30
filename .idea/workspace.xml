@@ -2,37 +2,36 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="d41d8c1f-8823-440c-8339-3f7a51fe88d1" name="Default Changelist" comment="Fix forward">
-      <change afterPath="$PROJECT_DIR$/src/multimodal_net/datasets/letsdance_splits/train_audio.csv" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/multimodal_net/datasets/letsdance_splits/wrong_anotations.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/deployment.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/deployment.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/multimodal_net/eval.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/multimodal_net/models/audio_baseline_model.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/multimodal_net/visualization_utils.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/preprocessing/mfcc_extraction.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/preprocessing/mfcc_extraction.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/two-stream-pytorch/LICENSE" beforeDir="false" afterPath="$PROJECT_DIR$/src/multimodal_net/LICENSE" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/two-stream-pytorch/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/src/multimodal_net/README.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/two-stream-pytorch/datasets/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/multimodal_net/datasets/__init__.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/two-stream-pytorch/datasets/build_file_list.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/multimodal_net/datasets/build_file_list.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/two-stream-pytorch/datasets/build_file_list_letsdance.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/multimodal_net/datasets/build_file_list_letsdance.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/two-stream-pytorch/datasets/build_of.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/multimodal_net/datasets/build_of.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/two-stream-pytorch/datasets/letsdance.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/multimodal_net/datasets/letsdance.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/two-stream-pytorch/datasets/letsdance_splits/test.csv" beforeDir="false" afterPath="$PROJECT_DIR$/src/multimodal_net/datasets/letsdance_splits/test.csv" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/two-stream-pytorch/datasets/letsdance_splits/train_final.csv" beforeDir="false" afterPath="$PROJECT_DIR$/src/multimodal_net/datasets/letsdance_splits/train_final.csv" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/two-stream-pytorch/datasets/letsdance_splits/val.csv" beforeDir="false" afterPath="$PROJECT_DIR$/src/multimodal_net/datasets/letsdance_splits/val.csv" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/two-stream-pytorch/datasets/letsdance_splits/wrong_anotations.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/two-stream-pytorch/datasets/list_videos.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/multimodal_net/datasets/list_videos.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/two-stream-pytorch/datasets/settings/letsdance_split.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/multimodal_net/models/my_alexnet.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/multimodal_net/datasets/letsdance.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/multimodal_net/datasets/letsdance.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/multimodal_net/datasets/letsdance_splits/test.csv" beforeDir="false" afterPath="$PROJECT_DIR$/src/multimodal_net/datasets/letsdance_splits/test.csv" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/multimodal_net/datasets/letsdance_splits/train_audio.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/multimodal_net/datasets/letsdance_splits/train_final.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/multimodal_net/datasets/letsdance_splits/val.csv" beforeDir="false" afterPath="$PROJECT_DIR$/src/multimodal_net/datasets/letsdance_splits/val.csv" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/multimodal_net/datasets/letsdance_splits/wrong_anotations.txt" beforeDir="false" afterPath="$PROJECT_DIR$/src/multimodal_net/datasets/letsdance_splits/wrong_anotations.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/multimodal_net/main_audio.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/multimodal_net/main_audio.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/multimodal_net/main_three_stream.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/multimodal_net/main_three_stream.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/multimodal_net/models/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/multimodal_net/models/__init__.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/multimodal_net/models/my_alexnet.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/multimodal_net/models/my_alexnet.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/multimodal_net/models/rgb_vgg16.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/multimodal_net/models/rgb_vgg16.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/notebooks/Data Exploration.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/src/notebooks/Data Exploration.ipynb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/notebooks/audio.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/src/notebooks/audio.ipynb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/notebooks/split_file.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/src/notebooks/split_file.ipynb" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/two-stream-pytorch/datasets/settings/ucf101/train_flow_split1.txt" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/src/two-stream-pytorch/datasets/settings/ucf101/train_flow_split2.txt" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/src/two-stream-pytorch/datasets/settings/ucf101/train_flow_split3.txt" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/src/two-stream-pytorch/datasets/settings/ucf101/train_rgb_split1.txt" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/src/two-stream-pytorch/datasets/settings/ucf101/train_rgb_split2.txt" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/src/two-stream-pytorch/datasets/settings/ucf101/train_rgb_split3.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/two-stream-pytorch/datasets/settings/ucf101/val_flow_split1.txt" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/src/two-stream-pytorch/datasets/settings/ucf101/val_flow_split2.txt" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/src/two-stream-pytorch/datasets/settings/ucf101/val_flow_split3.txt" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/src/two-stream-pytorch/datasets/settings/ucf101/val_rgb_split1.txt" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/src/two-stream-pytorch/datasets/settings/ucf101/val_rgb_split2.txt" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/src/two-stream-pytorch/datasets/settings/ucf101/val_rgb_split3.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/two-stream-pytorch/datasets/ucf101.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/multimodal_net/datasets/ucf101.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/two-stream-pytorch/datasets/ucf101_splits/classInd.txt" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/src/two-stream-pytorch/datasets/ucf101_splits/testlist01.txt" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/src/two-stream-pytorch/datasets/ucf101_splits/testlist02.txt" beforeDir="false" />
@@ -40,25 +39,6 @@
       <change beforePath="$PROJECT_DIR$/src/two-stream-pytorch/datasets/ucf101_splits/trainlist01.txt" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/src/two-stream-pytorch/datasets/ucf101_splits/trainlist02.txt" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/src/two-stream-pytorch/datasets/ucf101_splits/trainlist03.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/two-stream-pytorch/main.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/two-stream-pytorch/main_cpu.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/two-stream-pytorch/main_single_gpu.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/two-stream-pytorch/main_single_gpu.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/multimodal_net/main_audio.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/two-stream-pytorch/main_three_stream.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/multimodal_net/main_three_stream.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/two-stream-pytorch/models/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/multimodal_net/models/__init__.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/two-stream-pytorch/models/flow_resnet.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/multimodal_net/models/flow_resnet.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/two-stream-pytorch/models/flow_vgg16.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/multimodal_net/models/flow_vgg16.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/two-stream-pytorch/models/rgb_resnet.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/multimodal_net/models/rgb_resnet.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/two-stream-pytorch/models/rgb_vgg16.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/multimodal_net/models/rgb_vgg16.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/two-stream-pytorch/models/three_stream_net.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/multimodal_net/models/three_stream_net.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/two-stream-pytorch/out.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/two-stream-pytorch/scripts/eval_ucf101_pytorch/VideoSpatialPrediction.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/multimodal_net/scripts/eval_ucf101_pytorch/VideoSpatialPrediction.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/two-stream-pytorch/scripts/eval_ucf101_pytorch/VideoTemporalPrediction.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/multimodal_net/scripts/eval_ucf101_pytorch/VideoTemporalPrediction.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/two-stream-pytorch/scripts/eval_ucf101_pytorch/spatial_demo.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/multimodal_net/scripts/eval_ucf101_pytorch/spatial_demo.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/two-stream-pytorch/scripts/eval_ucf101_pytorch/spatial_testlist01_with_labels.txt" beforeDir="false" afterPath="$PROJECT_DIR$/src/multimodal_net/scripts/eval_ucf101_pytorch/spatial_testlist01_with_labels.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/two-stream-pytorch/scripts/eval_ucf101_pytorch/temporal_demo.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/multimodal_net/scripts/eval_ucf101_pytorch/temporal_demo.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/two-stream-pytorch/scripts/eval_ucf101_pytorch/temporal_testlist01_with_labels.txt" beforeDir="false" afterPath="$PROJECT_DIR$/src/multimodal_net/scripts/eval_ucf101_pytorch/temporal_testlist01_with_labels.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/two-stream-pytorch/video_transforms.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/multimodal_net/video_transforms.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -69,7 +49,7 @@
   <component name="CoverageDataManager">
     <SUITE FILE_PATH="coverage/Dance_Recognition$mfcc_extraction.coverage" NAME="mfcc_extraction Coverage Results" MODIFIED="1555309369754" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/src/preprocessing" />
     <SUITE FILE_PATH="coverage/Dance_Recognition$main.coverage" NAME="main Coverage Results" MODIFIED="1549629584740" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/src/two-stream-pytorch" />
-    <SUITE FILE_PATH="coverage/Dance_Recognition$dzupiterek.coverage" NAME="dzupiterek Coverage Results" MODIFIED="1553896627188" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/Dance_Recognition$dzupiterek.coverage" NAME="dzupiterek Coverage Results" MODIFIED="1556274473278" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/Dance_Recognition$build_file_list_letsdance.coverage" NAME="build_file_list_letsdance Coverage Results" MODIFIED="1550527159391" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/src/two-stream-pytorch/datasets" />
   </component>
   <component name="DatabaseView">
@@ -96,30 +76,34 @@
           <entry key="project.open.time.10" value="1" />
           <entry key="project.open.time.11" value="4" />
           <entry key="project.open.time.12" value="3" />
-          <entry key="project.open.time.13" value="2" />
-          <entry key="project.open.time.14" value="2" />
+          <entry key="project.open.time.13" value="4" />
+          <entry key="project.open.time.14" value="3" />
           <entry key="project.open.time.15" value="1" />
+          <entry key="project.open.time.16" value="1" />
           <entry key="project.open.time.17" value="2" />
+          <entry key="project.open.time.18" value="1" />
           <entry key="project.open.time.25" value="1" />
           <entry key="project.open.time.8" value="1" />
           <entry key="project.open.time.9" value="3" />
-          <entry key="project.opened" value="22" />
+          <entry key="project.opened" value="27" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.extensions.open">
         <counts>
+          <entry key="LICENSE" value="1" />
           <entry key="check_consistency" value="1" />
-          <entry key="csv" value="29" />
+          <entry key="csv" value="47" />
           <entry key="gitignore" value="1" />
+          <entry key="html" value="1" />
           <entry key="iml" value="1" />
-          <entry key="ipynb" value="4" />
+          <entry key="ipynb" value="6" />
           <entry key="jpg" value="43" />
           <entry key="letsdance" value="1" />
           <entry key="md" value="1" />
-          <entry key="png" value="64" />
-          <entry key="py" value="148" />
+          <entry key="png" value="73" />
+          <entry key="py" value="184" />
           <entry key="sh" value="3" />
-          <entry key="txt" value="153" />
+          <entry key="txt" value="195" />
           <entry key="xml" value="5" />
           <entry key="ytdl" value="1" />
         </counts>
@@ -127,31 +111,32 @@
       <usages-collector id="statistics.file.types.open">
         <counts>
           <entry key="Bash" value="2" />
-          <entry key="CSV" value="29" />
+          <entry key="CSV" value="47" />
+          <entry key="HTML" value="1" />
           <entry key="IDEA_MODULE" value="1" />
-          <entry key="IPNB" value="4" />
-          <entry key="Image" value="107" />
+          <entry key="IPNB" value="6" />
+          <entry key="Image" value="116" />
           <entry key="Markdown" value="1" />
-          <entry key="PLAIN_TEXT" value="157" />
-          <entry key="Python" value="149" />
+          <entry key="PLAIN_TEXT" value="200" />
+          <entry key="Python" value="185" />
           <entry key="XML" value="5" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.extensions.edit">
         <counts>
           <entry key="check_consistency" value="27" />
-          <entry key="csv" value="134" />
+          <entry key="csv" value="147" />
           <entry key="dummy" value="33" />
-          <entry key="py" value="11257" />
+          <entry key="py" value="14038" />
           <entry key="sh" value="159" />
-          <entry key="txt" value="954" />
+          <entry key="txt" value="996" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.types.edit">
         <counts>
-          <entry key="CSV" value="134" />
-          <entry key="PLAIN_TEXT" value="1146" />
-          <entry key="Python" value="11284" />
+          <entry key="CSV" value="147" />
+          <entry key="PLAIN_TEXT" value="1188" />
+          <entry key="Python" value="14065" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.vcs.git.usages">
@@ -165,41 +150,11 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file pinned="true" current-in-tab="false">
-        <entry file="remoteDeploymentFS://&lt;091a619b-2247-4abc-9096-b057913f6057&gt;/home/mwysocz1/src/multimodal_net/audio05.txt">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="72127">
-              <caret line="4384" column="59" lean-forward="true" selection-start-line="4384" selection-start-column="59" selection-end-line="4384" selection-end-column="59" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/multimodal_net/datasets/letsdance.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-3252">
-              <caret line="39" column="34" lean-forward="true" selection-start-line="39" selection-start-column="34" selection-end-line="39" selection-end-column="34" />
-              <folding>
-                <element signature="e#0#11#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/multimodal_net/models/my_alexnet.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="163">
-              <caret line="12" column="38" lean-forward="true" selection-start-line="12" selection-start-column="38" selection-end-line="12" selection-end-column="38" />
-            </state>
-          </provider>
-        </entry>
-      </file>
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/multimodal_net/main_three_stream.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="3995">
-              <caret line="235" column="33" selection-start-line="235" selection-start-column="33" selection-end-line="235" selection-end-column="33" />
+            <state relative-caret-position="178">
+              <caret line="16" column="54" lean-forward="true" selection-start-line="16" selection-start-column="54" selection-end-line="16" selection-end-column="54" />
               <folding>
                 <element signature="e#0#15#0" expanded="true" />
               </folding>
@@ -208,24 +163,46 @@
         </entry>
       </file>
       <file pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/src/multimodal_net/main_audio.py">
+        <entry file="file://$PROJECT_DIR$/src/multimodal_net/eval.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="85">
-              <caret line="83" column="38" selection-start-line="83" selection-start-column="38" selection-end-line="83" selection-end-column="38" />
+            <state relative-caret-position="397">
+              <caret line="189" column="29" selection-start-line="189" selection-start-column="29" selection-end-line="189" selection-end-column="29" />
               <folding>
-                <element signature="e#0#15#0" expanded="true" />
+                <element signature="e#0#37#0" expanded="true" />
+                <marker date="1556653919089" expanded="true" signature="4238:4239" ph="..." />
               </folding>
             </state>
           </provider>
         </entry>
       </file>
-      <file pinned="true" current-in-tab="false">
-        <entry file="remoteDeploymentFS://&lt;11eaafb2-e8e7-4379-a82c-58cf8e61d72e&gt;/home/m.wysoczanska/jersey_number_recognition/src/train.py">
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/multimodal_net/models/rgb_vgg16.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1230">
-              <caret line="93" column="45" selection-start-line="93" selection-end-line="94" />
+            <state relative-caret-position="136">
+              <caret line="58" column="32" selection-start-line="58" selection-start-column="32" selection-end-line="58" selection-end-column="32" />
               <folding>
-                <element signature="e#24#61#0" expanded="true" />
+                <element signature="e#0#21#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/multimodal_net/models/three_stream_net.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="211">
+              <caret line="24" column="36" selection-start-line="24" selection-start-column="36" selection-end-line="24" selection-end-column="36" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/multimodal_net/models/audio_baseline_model.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="171">
+              <caret line="15" column="26" selection-start-line="15" selection-start-column="26" selection-end-line="15" selection-end-column="26" />
+              <folding>
+                <element signature="e#0#21#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -243,36 +220,36 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>2z1XaOZMhjk</find>
-      <find>flow</find>
-      <find>moda</find>
-      <find>dura</find>
-      <find>optic</find>
-      <find>otpica</find>
-      <find>aud</find>
-      <find>audio</find>
-      <find>sa</find>
-      <find>optica</find>
-      <find>bui</find>
-      <find>resum</find>
-      <find>loader</find>
-      <find>eval</find>
-      <find>resume</find>
-      <find>best_prec</find>
-      <find>datapa</find>
-      <find>data</find>
+      <find>logdi</find>
+      <find>Summa</find>
+      <find>train</find>
+      <find>write</find>
+      <find>utils</find>
+      <find>writer</find>
+      <find>sche</find>
+      <find>Reduce</find>
+      <find>schedule</find>
+      <find>a63SJK07FbM_1314</find>
+      <find>a63SJK07FbM_1510</find>
+      <find>gel8aSLHoW</find>
+      <find>.t</find>
+      <find>gel8aSLHoWY</find>
+      <find>N1bRdiWni</find>
+      <find>4LLD8_3BHw4</find>
+      <find>heUmbkFfPWw</find>
+      <find>N1bRdiWnijM</find>
+      <find>qrw</find>
+      <find>DMm</find>
+      <find>sLkh5DPaGFs</find>
+      <find>_v6nTrYbiB8_</find>
+      <find>fiaNUmKiBTQ_</find>
+      <find>tap	sLkh5DPaGFs_038	301</find>
+      <find>pasodoble	fiaNUmKiBTQ_1350	251</find>
+      <find>quickstep	N1bRdiWnijM_1310	301</find>
+      <find>N1bRdiWnijM_</find>
+      <find>add_ima</find>
       <find>valida</find>
-      <find>multi</find>
-      <find>Acc@5</find>
-      <find>*</find>
-      <find>validate</find>
-      <find>name</find>
-      <find>Test</find>
-      <find>prin</find>
-      <find>arc</find>
-      <find>adjust_learning_rate</find>
-      <find>add</find>
-      <find>def ma</find>
+      <find>datapa</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -291,12 +268,6 @@
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
-        <option value="$PROJECT_DIR$/requirements.txt" />
-        <option value="$PROJECT_DIR$/src/two-stream-pytorch/datasets/letsdance_splits/classInd.txt" />
-        <option value="$PROJECT_DIR$/src/two-stream-pytorch/datasets/build_file_list.py" />
-        <option value="$PROJECT_DIR$/src/two-stream-pytorch/datasets/letsdance" />
-        <option value="$PROJECT_DIR$/src/two-stream-pytorch/main_cpu.py" />
-        <option value="$PROJECT_DIR$/src/two-stream-pytorch/scripts/main_three_stream.py" />
         <option value="$PROJECT_DIR$/src/two-stream-pytorch/models/rgb_alexnet.py" />
         <option value="$PROJECT_DIR$/src/two-stream-pytorch/models/late_fusion.py" />
         <option value="$PROJECT_DIR$/src/two-stream-pytorch/main.py" />
@@ -309,7 +280,6 @@
         <option value="&lt;091a619b-2247-4abc-9096-b057913f6057&gt;/home/mwysocz1/src/two-stream-pytorch/datasets/videos_list.txt" />
         <option value="$PROJECT_DIR$/src/two-stream-pytorch/datasets/list_videos.py" />
         <option value="$PROJECT_DIR$/src/two-stream-pytorch/datasets/settings/letsdance_split.py" />
-        <option value="$PROJECT_DIR$/src/notebooks/split_file.ipynb" />
         <option value="$PROJECT_DIR$/src/two-stream-pytorch/datasets/ucf101.py" />
         <option value="$PROJECT_DIR$/src/two-stream-pytorch/scripts/check_consistency" />
         <option value="$PROJECT_DIR$/src/two-stream-pytorch/datasets/letsdance_splits/train.csv" />
@@ -329,13 +299,26 @@
         <option value="$PROJECT_DIR$/src/two-stream-pytorch/models/three_stream_net.py" />
         <option value="$PROJECT_DIR$/src/two-stream-pytorch/datasets/letsdance.py" />
         <option value="$PROJECT_DIR$/src/two-stream-pytorch/main_single_gpu.py" />
-        <option value="$PROJECT_DIR$/src/multimodal_net/models/__init__.py" />
         <option value="&lt;11eaafb2-e8e7-4379-a82c-58cf8e61d72e&gt;/home/m.wysoczanska/Dance-Recognition/src/two-stream-pytorch/out_no_pretrained.txt" />
-        <option value="$PROJECT_DIR$/src/multimodal_net/main_three_stream.py" />
         <option value="$PROJECT_DIR$/src/preprocessing/mfcc_extraction.py" />
-        <option value="$PROJECT_DIR$/src/multimodal_net/datasets/letsdance.py" />
-        <option value="$PROJECT_DIR$/src/multimodal_net/models/my_alexnet.py" />
         <option value="$PROJECT_DIR$/src/multimodal_net/main_single_gpu.py" />
+        <option value="$PROJECT_DIR$/src/multimodal_net/models/rgb_vgg16.py" />
+        <option value="$PROJECT_DIR$/src/multimodal_net/scripts/eval.py" />
+        <option value="$PROJECT_DIR$/src/multimodal_net/check.py" />
+        <option value="$PROJECT_DIR$/src/notebooks/split_file.ipynb" />
+        <option value="$PROJECT_DIR$/src/multimodal_net/datasets/letsdance.py" />
+        <option value="$PROJECT_DIR$/src/multimodal_net/datasets/letsdance_splits/test.csv" />
+        <option value="$PROJECT_DIR$/src/multimodal_net/datasets/letsdance_splits/wrong_anotations.txt" />
+        <option value="$PROJECT_DIR$/src/multimodal_net/datasets/letsdance_splits/check.csv" />
+        <option value="$PROJECT_DIR$/src/multimodal_net/datasets/letsdance_splits/all_videos_complete.csv" />
+        <option value="$PROJECT_DIR$/src/multimodal_net/datasets/letsdance_splits/train.csv" />
+        <option value="$PROJECT_DIR$/src/multimodal_net/models/__init__.py" />
+        <option value="$PROJECT_DIR$/src/multimodal_net/models/my_alexnet.py" />
+        <option value="$PROJECT_DIR$/src/multimodal_net/visualization_utils.py" />
+        <option value="$PROJECT_DIR$/src/multimodal_net/models/audio_baseline_model.py" />
+        <option value="$PROJECT_DIR$/src/multimodal_net/main_audio.py" />
+        <option value="$PROJECT_DIR$/src/multimodal_net/main_three_stream.py" />
+        <option value="$PROJECT_DIR$/src/multimodal_net/eval.py" />
       </list>
     </option>
   </component>
@@ -356,48 +339,6 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="ProjectPane">
-        <subPane>
-          <expand>
-            <path>
-              <item name="Dance-Recognition" type="b2602c69:ProjectViewProjectNode" />
-              <item name="Dance-Recognition" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="Dance-Recognition" type="b2602c69:ProjectViewProjectNode" />
-              <item name="Dance-Recognition" type="462c0819:PsiDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="Dance-Recognition" type="b2602c69:ProjectViewProjectNode" />
-              <item name="Dance-Recognition" type="462c0819:PsiDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
-              <item name="multimodal_net" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="Dance-Recognition" type="b2602c69:ProjectViewProjectNode" />
-              <item name="Dance-Recognition" type="462c0819:PsiDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
-              <item name="multimodal_net" type="462c0819:PsiDirectoryNode" />
-              <item name="datasets" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="Dance-Recognition" type="b2602c69:ProjectViewProjectNode" />
-              <item name="Dance-Recognition" type="462c0819:PsiDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
-              <item name="multimodal_net" type="462c0819:PsiDirectoryNode" />
-              <item name="models" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="Dance-Recognition" type="b2602c69:ProjectViewProjectNode" />
-              <item name="Dance-Recognition" type="462c0819:PsiDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
-              <item name="preprocessing" type="462c0819:PsiDirectoryNode" />
-            </path>
-          </expand>
-          <select />
-        </subPane>
-      </pane>
       <pane id="Scope">
         <subPane subId="Scope 'Project Files'; set:Project Files; class com.intellij.psi.search.scope.ProjectFilesScope">
           <expand>
@@ -409,6 +350,38 @@
               <item name="Dance-Recognition" type="3d21c010:ScopeViewTreeModel$ProjectNode" />
               <item name="" type="442cc68d:ScopeViewTreeModel$RootNode" />
               <item name="src" type="9f88c78c:ScopeViewTreeModel$FileNode" />
+            </path>
+          </expand>
+          <select />
+        </subPane>
+      </pane>
+      <pane id="ProjectPane">
+        <subPane>
+          <expand>
+            <path>
+              <item name="Dance-Recognition" type="b2602c69:ProjectViewProjectNode" />
+              <item name="Dance-Recognition" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="Dance-Recognition" type="b2602c69:ProjectViewProjectNode" />
+              <item name="Dance-Recognition" type="462c0819:PsiDirectoryNode" />
+              <item name="runs" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="Dance-Recognition" type="b2602c69:ProjectViewProjectNode" />
+              <item name="Dance-Recognition" type="462c0819:PsiDirectoryNode" />
+              <item name="sample" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="Dance-Recognition" type="b2602c69:ProjectViewProjectNode" />
+              <item name="Dance-Recognition" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="Dance-Recognition" type="b2602c69:ProjectViewProjectNode" />
+              <item name="Dance-Recognition" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="multimodal_net" type="462c0819:PsiDirectoryNode" />
             </path>
           </expand>
           <select />
@@ -430,6 +403,7 @@
   </component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Users\user\Desktop\kto_ma_szkole_ten_ma_lzej\MGR\Dance-Recognition\src\multimodal_net" />
       <recent name="C:\Users\user\Desktop\kto_ma_szkole_ten_ma_lzej\MGR\Dance-Recognition\src\two-stream-pytorch" />
       <recent name="C:\Users\user\Desktop\kto_ma_szkole_ten_ma_lzej\MGR\Dance-Recognition\src\preprocessing" />
     </key>
@@ -446,7 +420,7 @@
       </list>
     </option>
   </component>
-  <component name="RunManager" selected="Python.mfcc_extraction">
+  <component name="RunManager" selected="Jupyter Notebook.dzupiterek">
     <configuration name="dzupiterek" type="JupiterNotebook" factoryName="Jupyter Notebook">
       <module name="Dance-Recognition" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -454,15 +428,15 @@
       <envs>
         <env name="PYTHONUNBUFFERED" value="1" />
       </envs>
-      <option name="SDK_HOME" value="" />
+      <option name="SDK_HOME" value="C:\Users\user\Desktop\kto_ma_szkole_ten_ma_lzej\Erasm\BigData\spark-flights\venv\Scripts\python.exe" />
       <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
-      <option name="IS_MODULE_SDK" value="true" />
+      <option name="IS_MODULE_SDK" value="false" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
       <option name="additionalOptions" value="" />
       <option name="ipnbHost" value="localhost" />
-      <option name="ipnbPort" value="6000" />
+      <option name="ipnbPort" value="7000" />
       <method v="2" />
     </configuration>
     <configuration name="mfcc_extraction" type="PythonConfigurationType" factoryName="Python" temporary="true">
@@ -592,7 +566,14 @@
       <option name="project" value="LOCAL" />
       <updated>1555397946932</updated>
     </task>
-    <option name="localTasksCounter" value="13" />
+    <task id="LOCAL-00013" summary="Refactor and added tensorboard logging">
+      <created>1556125401022</created>
+      <option name="number" value="00013" />
+      <option name="presentableId" value="LOCAL-00013" />
+      <option name="project" value="LOCAL" />
+      <updated>1556125401024</updated>
+    </task>
+    <option name="localTasksCounter" value="14" />
     <servers />
   </component>
   <component name="TodoView">
@@ -608,23 +589,23 @@
     <frame x="-8" y="-8" width="1382" height="784" extended-state="6" />
     <layout>
       <window_info id="Favorites" order="0" side_tool="true" />
-      <window_info active="true" content_ui="combo" id="Project" order="1" visible="true" weight="0.18683812" />
+      <window_info content_ui="combo" id="Project" order="1" visible="true" weight="0.20121029" />
       <window_info id="Structure" order="2" side_tool="true" weight="0.25" />
       <window_info anchor="bottom" id="Database Changes" order="0" show_stripe_button="false" />
-      <window_info anchor="bottom" id="Terminal" order="1" sideWeight="0.6149773" visible="true" weight="0.46615386" />
-      <window_info anchor="bottom" id="Event Log" order="2" sideWeight="0.3850227" side_tool="true" visible="true" weight="0.46615386" />
-      <window_info anchor="bottom" id="Version Control" order="3" sideWeight="0.49848714" weight="0.3276923" />
-      <window_info anchor="bottom" id="File Transfer" order="4" sideWeight="0.49394855" weight="0.3276923" />
+      <window_info active="true" anchor="bottom" id="Terminal" order="1" sideWeight="0.6051437" visible="true" weight="0.52" />
+      <window_info anchor="bottom" id="Event Log" order="2" sideWeight="0.39485627" side_tool="true" visible="true" weight="0.52" />
+      <window_info anchor="bottom" id="Version Control" order="3" sideWeight="0.4977307" weight="0.3276923" />
+      <window_info anchor="bottom" id="File Transfer" order="4" sideWeight="0.48940998" weight="0.3276923" />
       <window_info anchor="bottom" id="Python Console" order="5" sideWeight="0.49924356" weight="0.3276923" />
       <window_info anchor="bottom" id="Docker" order="6" show_stripe_button="false" />
       <window_info anchor="bottom" id="Message" order="7" />
       <window_info anchor="bottom" id="Find" order="8" sideWeight="0.49924356" weight="0.3276923" />
-      <window_info anchor="bottom" id="Run" order="9" sideWeight="0.49924356" weight="0.3276923" />
+      <window_info anchor="bottom" id="Run" order="9" sideWeight="0.4977307" weight="0.3276923" />
       <window_info anchor="bottom" id="Debug" order="10" sideWeight="0.49924356" weight="0.4" />
       <window_info anchor="bottom" id="Cvs" order="11" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="12" weight="0.4" />
       <window_info anchor="bottom" id="TODO" order="13" weight="0.32923076" />
-      <window_info anchor="right" id="Remote Host" order="0" visible="true" weight="0.25189108" />
+      <window_info anchor="right" id="Remote Host" order="0" visible="true" weight="0.25642964" />
       <window_info anchor="right" id="Commander" internal_type="SLIDING" order="1" type="SLIDING" weight="0.4" />
       <window_info anchor="right" id="Ant Build" order="2" weight="0.25" />
       <window_info anchor="right" content_ui="combo" id="Hierarchy" order="3" weight="0.25" />
@@ -691,73 +672,19 @@
     <MESSAGE value="Add BatchNorm" />
     <MESSAGE value="Fix forward" />
     <MESSAGE value="Add visualization notebooks" />
-    <option name="LAST_COMMIT_MESSAGE" value="Add visualization notebooks" />
+    <MESSAGE value="Refactor and added tensorboard logging" />
+    <option name="LAST_COMMIT_MESSAGE" value="Refactor and added tensorboard logging" />
+    <option name="REARRANGE_BEFORE_PROJECT_COMMIT" value="true" />
     <option name="GROUP_MULTIFILE_MERGE_BY_DIRECTORY" value="true" />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/.idea/webServers.xml">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/.idea/modules.xml">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/.idea/workspace.xml">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/.idea/vcs.xml">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/multimodal_net/models/flow_resnet.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-236" />
-      </provider>
-    </entry>
-    <entry file="file://$USER_HOME$/.PyCharm2018.2/system/remote_sources/825992662/319675167/torchvision/models/alexnet.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="123">
-          <caret line="31" selection-start-line="31" selection-end-line="39" selection-end-column="9" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/multimodal_net/models/flow_vgg16.py">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/two-stream-pytorch/models/my_alexnet.py" />
-    <entry file="file://$PROJECT_DIR$/letsdance/letsdance_split/train.txt">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="91">
-          <caret line="11" column="16" selection-start-line="11" selection-start-column="16" selection-end-line="11" selection-end-column="16" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/multimodal_net/datasets/build_file_list.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="255">
-          <caret line="19" column="19" selection-start-line="19" selection-start-column="19" selection-end-line="19" selection-end-column="19" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$USER_HOME$/.PyCharm2018.2/system/remote_sources/825992662/242176379/ntpath.py">
       <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/notebooks/audio.ipynb">
-      <provider selected="true" editor-type-id="ipnb-editor">
-        <state>
-          <selected id="0" />
-        </state>
-      </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/multimodal_net/datasets/build_file_list_letsdance.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="527">
           <caret line="33" column="51" selection-start-line="29" selection-start-column="15" selection-end-line="33" selection-end-column="51" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/notebooks/split_file.ipynb">
-      <provider selected="true" editor-type-id="ipnb-editor">
-        <state>
-          <selected id="5" />
         </state>
       </provider>
     </entry>
@@ -774,20 +701,8 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/multimodal_net/check_consistency.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="182">
-          <caret line="18" column="23" selection-end-line="114" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/multimodal_net/main_cpu.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="17">
-          <caret line="93" selection-start-line="93" selection-end-line="93" />
-        </state>
-      </provider>
-    </entry>
+    <entry file="file://$PROJECT_DIR$/src/multimodal_net/check_consistency.py" />
+    <entry file="file://$PROJECT_DIR$/src/multimodal_net/main_cpu.py" />
     <entry file="file://$PROJECT_DIR$/requirements.txt">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="170">
@@ -815,23 +730,7 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/multimodal_net/main.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="266">
-          <caret line="207" column="40" lean-forward="true" selection-start-line="207" selection-start-column="40" selection-end-line="207" selection-end-column="40" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/multimodal_net/datasets/letsdance_splits/train_audio.csv">
-      <provider editor-type-id="csv-table-editor">
-        <state showInfoPanel="true" fixedHeaders="false" rowLines="3" />
-      </provider>
-      <provider selected="true" editor-type-id="csv-text-editor">
-        <state relative-caret-position="68">
-          <caret line="4" column="15" lean-forward="true" selection-start-line="4" selection-start-column="15" selection-end-line="4" selection-end-column="15" />
-        </state>
-      </provider>
-    </entry>
+    <entry file="file://$PROJECT_DIR$/src/multimodal_net/main.py" />
     <entry file="file://$PROJECT_DIR$/src/multimodal_net/datasets/list_videos.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="221">
@@ -839,41 +738,10 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/multimodal_net/datasets/letsdance_splits/wrong_anotations.txt">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="156">
-          <caret line="82" column="14" selection-start-line="82" selection-start-column="14" selection-end-line="82" selection-end-column="14" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/multimodal_net/check.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="19">
-          <caret line="102" column="32" selection-start-line="102" selection-start-column="32" selection-end-line="102" selection-end-column="32" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/multimodal_net/datasets/letsdance_splits/test.csv">
-      <provider editor-type-id="csv-table-editor">
-        <state showInfoPanel="true" fixedHeaders="false" rowLines="3" />
-      </provider>
-      <provider selected="true" editor-type-id="csv-text-editor">
-        <state relative-caret-position="-383">
-          <caret line="6" column="29" lean-forward="true" selection-start-line="6" selection-start-column="29" selection-end-line="6" selection-end-column="29" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/multimodal_net/datasets/__init__.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="68">
           <caret line="4" lean-forward="true" selection-start-line="4" selection-end-line="4" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/multimodal_net/models/three_stream_net.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="65">
-          <caret line="18" column="9" lean-forward="true" selection-start-line="18" selection-start-column="9" selection-end-line="18" selection-end-column="9" />
         </state>
       </provider>
     </entry>
@@ -885,13 +753,6 @@
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/multimodal_net/datasets/settings/letsdance_split.py" />
-    <entry file="file://$PROJECT_DIR$/src/multimodal_net/models/rgb_vgg16.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="51">
-          <caret line="5" column="46" lean-forward="true" selection-start-line="5" selection-start-column="46" selection-end-line="5" selection-end-column="46" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/multimodal_net/models/rgb_resnet.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="2331">
@@ -906,76 +767,197 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/multimodal_net/datasets/letsdance_splits/val.csv">
-      <provider editor-type-id="csv-table-editor">
-        <state showInfoPanel="true" fixedHeaders="false" rowLines="3" />
-      </provider>
-      <provider selected="true" editor-type-id="csv-text-editor">
-        <state relative-caret-position="1479">
-          <caret line="87" column="7" selection-start-line="87" selection-start-column="7" selection-end-line="87" selection-end-column="7" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/multimodal_net/models/__init__.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="17">
-          <caret line="1" column="17" selection-start-line="1" selection-start-column="17" selection-end-line="1" selection-end-column="17" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/preprocessing/mfcc_extraction.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="127">
           <caret line="19" column="64" lean-forward="true" selection-start-line="19" selection-start-column="64" selection-end-line="19" selection-end-column="64" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/multimodal_net/scripts/eval_ucf101_pytorch/VideoSpatialPrediction.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="283">
+          <caret line="88" column="19" lean-forward="true" selection-start-line="88" selection-start-column="19" selection-end-line="88" selection-end-column="19" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/multimodal_net/scripts/eval_ucf101_pytorch/spatial_demo.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-629" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/notebooks/Data Exploration.html">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/multimodal_net/check.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-294">
+          <caret line="19" lean-forward="true" selection-start-line="19" selection-end-line="19" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/multimodal_net/LICENSE">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/notebooks/audio.ipynb">
+      <provider selected="true" editor-type-id="ipnb-editor">
+        <state>
+          <selected id="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/notebooks/split_file.ipynb">
+      <provider selected="true" editor-type-id="ipnb-editor">
+        <state>
+          <selected id="1" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/multimodal_net/datasets/letsdance_splits/train_final.csv" />
+    <entry file="file://$PROJECT_DIR$/src/multimodal_net/datasets/letsdance_splits/train_audio.csv" />
+    <entry file="file://$PROJECT_DIR$/src/multimodal_net/datasets/letsdance_splits/val.csv">
+      <provider selected="true" editor-type-id="csv-text-editor">
+        <state relative-caret-position="157">
+          <caret line="12" column="25" lean-forward="true" selection-start-line="12" selection-start-column="25" selection-end-line="12" selection-end-column="25" />
+        </state>
+      </provider>
+      <provider editor-type-id="csv-table-editor">
+        <state showInfoPanel="true" fixedHeaders="false" rowLines="3" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/multimodal_net/datasets/letsdance.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="205">
+          <caret line="86" selection-start-line="86" selection-end-line="86" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/multimodal_net/datasets/letsdance_splits/test.csv">
+      <provider selected="true" editor-type-id="csv-text-editor">
+        <state relative-caret-position="215">
+          <caret line="134" column="16" selection-start-line="134" selection-start-column="16" selection-end-line="134" selection-end-column="16" />
+        </state>
+      </provider>
+      <provider editor-type-id="csv-table-editor">
+        <state showInfoPanel="true" fixedHeaders="false" rowLines="3" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/multimodal_net/datasets/letsdance_splits/train.csv">
+      <provider selected="true" editor-type-id="csv-text-editor">
+        <state relative-caret-position="23">
+          <caret line="974" column="25" lean-forward="true" selection-start-line="974" selection-start-column="25" selection-end-line="974" selection-end-column="25" />
+        </state>
+      </provider>
+      <provider editor-type-id="csv-table-editor">
+        <state showInfoPanel="true" fixedHeaders="false" rowLines="3" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/multimodal_net/datasets/letsdance_splits/wrong_anotations.txt">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="278">
+          <caret line="96" lean-forward="true" selection-start-line="96" selection-end-line="96" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/multimodal_net/datasets/letsdance_splits/check.csv">
+      <provider selected="true" editor-type-id="csv-text-editor">
+        <state relative-caret-position="-639">
+          <caret line="1" column="16" selection-start-line="1" selection-start-column="16" selection-end-line="1" selection-end-column="16" />
+        </state>
+      </provider>
+      <provider editor-type-id="csv-table-editor">
+        <state showInfoPanel="true" fixedHeaders="false" rowLines="3" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/multimodal_net/models/__init__.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state>
+          <caret column="31" selection-start-column="31" selection-end-column="31" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/multimodal_net/datasets/letsdance_splits/all_videos_complete.csv">
+      <provider selected="true" editor-type-id="csv-text-editor">
+        <state relative-caret-position="22559">
+          <caret line="1327" column="23" selection-start-line="1327" selection-start-column="23" selection-end-line="1327" selection-end-column="23" />
+        </state>
+      </provider>
+      <provider editor-type-id="csv-table-editor">
+        <state showInfoPanel="true" fixedHeaders="false" rowLines="3" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/multimodal_net/models/my_alexnet.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="187">
+          <caret line="12" selection-start-line="12" selection-end-line="12" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/multimodal_net/main_audio.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="309">
+          <caret line="292" column="44" selection-start-line="292" selection-start-column="44" selection-end-line="292" selection-end-column="44" />
           <folding>
             <element signature="e#0#15#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/multimodal_net/datasets/letsdance_splits/train_final.csv">
-      <provider editor-type-id="csv-table-editor">
-        <state showInfoPanel="true" fixedHeaders="false" rowLines="3" />
-      </provider>
-      <provider selected="true" editor-type-id="csv-text-editor">
-        <state relative-caret-position="152">
-          <caret line="952" column="18" selection-start-line="952" selection-start-column="18" selection-end-line="952" selection-end-column="18" />
+    <entry file="file://$PROJECT_DIR$/src/multimodal_net/visualization_utils.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="34">
+          <caret line="2" selection-start-line="2" selection-end-line="2" />
+          <folding>
+            <marker date="1556483016809" expanded="true" signature="75:178" ph="..." />
+            <marker date="1556483016809" expanded="true" signature="177:178" ph="..." />
+          </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/multimodal_net/datasets/letsdance.py">
+    <entry file="file://$PROJECT_DIR$/src/multimodal_net/models/rgb_vgg16.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-3252">
-          <caret line="39" column="34" lean-forward="true" selection-start-line="39" selection-start-column="34" selection-end-line="39" selection-end-column="34" />
+        <state relative-caret-position="136">
+          <caret line="58" column="32" selection-start-line="58" selection-start-column="32" selection-end-line="58" selection-end-column="32" />
           <folding>
-            <element signature="e#0#11#0" expanded="true" />
+            <element signature="e#0#21#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/multimodal_net/models/three_stream_net.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="211">
+          <caret line="24" column="36" selection-start-line="24" selection-start-column="36" selection-end-line="24" selection-end-column="36" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/multimodal_net/models/audio_baseline_model.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="171">
+          <caret line="15" column="26" selection-start-line="15" selection-start-column="26" selection-end-line="15" selection-end-column="26" />
+          <folding>
+            <element signature="e#0#21#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/multimodal_net/main_three_stream.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="3995">
-          <caret line="235" column="33" selection-start-line="235" selection-start-column="33" selection-end-line="235" selection-end-column="33" />
+        <state relative-caret-position="178">
+          <caret line="16" column="54" lean-forward="true" selection-start-line="16" selection-start-column="54" selection-end-line="16" selection-end-column="54" />
           <folding>
             <element signature="e#0#15#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/multimodal_net/models/my_alexnet.py">
+    <entry file="file://$PROJECT_DIR$/src/multimodal_net/eval.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="163">
-          <caret line="12" column="38" lean-forward="true" selection-start-line="12" selection-start-column="38" selection-end-line="12" selection-end-column="38" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/multimodal_net/main_audio.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="85">
-          <caret line="83" column="38" selection-start-line="83" selection-start-column="38" selection-end-line="83" selection-end-column="38" />
+        <state relative-caret-position="397">
+          <caret line="189" column="29" selection-start-line="189" selection-start-column="29" selection-end-line="189" selection-end-column="29" />
           <folding>
-            <element signature="e#0#15#0" expanded="true" />
+            <element signature="e#0#37#0" expanded="true" />
+            <marker date="1556653919089" expanded="true" signature="4238:4239" ph="..." />
           </folding>
         </state>
       </provider>

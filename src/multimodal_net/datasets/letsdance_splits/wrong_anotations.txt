@@ -89,6 +89,11 @@ pasodoble	ui2IS3XCamw_2234	502
 latin	92xEvnbR-uQ_1310	301
 jive	kI5qKE4JTA8_1029	251
 ballet	9ZNFPk60yjE_232	301
+tap	sLkh5DPaGFs_038	301
+jive	_v6nTrYbiB8_1657	251
+pasodoble	fiaNUmKiBTQ_1350	251
+quickstep	N1bRdiWnijM_1310	301
+
 
 
 
