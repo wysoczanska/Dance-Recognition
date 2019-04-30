@@ -9,9 +9,10 @@ import os
 import torch.utils.data as data
 from nvidia.dali.pipeline import Pipeline
 
-rgb_dir = 'rgb/rgb'
+rgb_dir = 'rgb'
 flow_dir = 'flow_png'
 skeleton_dir = 'densepose/rgb'
+audio_dir = 'audio_png10'
 
 def find_classes(dir):
     c_dir = os.path.join(dir, rgb_dir)
@@ -33,18 +34,17 @@ def make_dataset(source, seg_length, audio=False):
             data = split_f.readlines()
             for line in data:
                 line_info = line.split()
-                if audio:
+                duration = int(line_info[2])
+                num_segments = int(math.floor(duration/seg_length))
+                for seg_id in range(0, num_segments):
+                    init_frame_id = seg_id * seg_length + 1
                     target = line_info[0]
-                    item = (line_info[1], target)
-                    clips.append(item)
-                else:
-                    duration = int(line_info[2])
-                    num_segments = int(math.floor(duration/seg_length))
-                    for seg_id in range(0, num_segments):
-                        init_frame_id = seg_id * seg_length + 1
-                        target = line_info[0]
+                    if audio:
+                        file_name = line_info[1][:11]+'_%02d' % seg_id
+                        item = (file_name, target)
+                    else:
                         item = (line_info[1], init_frame_id, target)
-                        clips.append(item)
+                    clips.append(item)
     return clips
 
 
@@ -67,19 +67,6 @@ def read_segment(clip_id, init_frame_id, root, target, seg_length, is_color, nam
         rgb_path = os.path.join(root, rgb_dir, target, frame_id + rgb_extension)
         flow_path = os.path.join(root, flow_dir, target, frame_id + rest_extension)
         skeleton_path = os.path.join(root, skeleton_dir, target, frame_id + rest_extension)
-
-        # if not os.path.isfile(rgb_path):
-        #     print("Could not load file rgb %s, %s" % (target, frame_id))
-        #     sys.exit()
-        #
-        # if not os.path.isfile(flow_path):
-        #     print("Could not load file flow %s, %s" % (target, frame_id))
-        #     sys.exit()
-        #
-        # if not os.path.isfile(skeleton_path):
-        #     print("Could not load file skeleton %s, %s" % (target, frame_id))
-        #     sys.exit()
-    #
         cv_img_origin = cv2.imread(rgb_path, cv_read_flag)
         cv_img_flow = cv2.imread(flow_path, cv_read_flag)
         cv_img_skeleton = cv2.imread(skeleton_path, cv_read_flag)
@@ -149,7 +136,6 @@ class Letsdance(data.Dataset):
         return len(self.clips)
 
 class Letsdance_audio(data.Dataset):
-
     def __init__(self,
                  root,
                  source,
@@ -183,12 +169,13 @@ class Letsdance_audio(data.Dataset):
     def __getitem__(self, index):
         clip_id, cls = self.clips[index]
         target = self.class_to_idx[cls]
-        file_name = self.name_pattern % (clip_id[:-4])
+        file_name = self.name_pattern % clip_id
 
-        clip_input = cv2.imread(os.path.join(self.root, 'audio_png', cls, file_name), cv2.IMREAD_COLOR)
+        clip_input = cv2.imread(os.path.join(self.root, audio_dir, cls, file_name), cv2.IMREAD_COLOR)
+        clip_input = cv2.cvtColor(clip_input, cv2.COLOR_BGR2RGB)
+
         if clip_input is None:
             print("Could not load file %s, %s" % (target, file_name))
-            clip_input = np.zeros((224,224, 3))
         if self.transform is not None:
             clip_input = self.transform(clip_input)
         if self.target_transform is not None:
@@ -201,10 +188,12 @@ class Letsdance_audio(data.Dataset):
     def __len__(self):
         return len(self.clips)
 
+
 class ModalityInputIterator(object):
-    def __init__(self, batch_size, file_list, new_length, extension):
+    def __init__(self, batch_size, root, file_list, new_length, extension):
         self.batch_size = batch_size
-        self.root = file_list
+        self.root = root
+        self.modal_dirs = {'rgb': rgb_dir, 'flow': flow_dir, 'skeleton': skeleton_dir}
         self.source = file_list
         clips = make_dataset(self.source, new_length)
 
@@ -212,22 +201,23 @@ class ModalityInputIterator(object):
         self.name_pattern = "%s_%04d"+extension
         self.seg_length = new_length
 
-
     def __iter__(self):
         self.i = 0
         self.n = len(self.clips)
         return self
 
     def __next__(self):
-        batch = []
+        batch = {}
         labels = []
         for _ in range(self.batch_size):
-            for l_id in range(self.seg_length):
-                clip_id, init_frame_id, label = self.clips[self.i]
-                file_name = self.name_pattern % (clip_id, init_frame_id + l_id)
-                f = open(os.path.join(self.root, label, file_name), 'rb')
-                batch.append(np.frombuffer(f.read(), dtype = np.uint8))
-            labels.append(np.array([label], dtype = np.uint8))
+            for modality, dir in self.modal_dirs.items():
+                batch[modality] = []
+                for l_id in range(self.seg_length):
+                    clip_id, init_frame_id, label = self.clips[self.i]
+                    file_name = self.name_pattern % (clip_id, init_frame_id + l_id)
+                    f = open(os.path.join(self.root, dir, label, file_name), 'rb')
+                    batch[modality].append(np.frombuffer(f.read(), dtype=np.uint8))
+            labels.append(np.array([label], dtype=np.uint8))
             self.i = (self.i + 1) % self.n
         return batch, labels
 
@@ -236,29 +226,22 @@ class ModalityInputIterator(object):
 
 class LetsDancePipeline(Pipeline):
     def __init__(self, batch_size, num_threads, device_id):
-        super(LetsDancePipeline, self).__init__(batch_size,
-                                      num_threads,
-                                      device_id,
-                                      seed=12)
-        self.input = ops.ExternalSource()
-        self.label = ops.ExternalSource()
-        self.decode = ops.nvJPEGDecoder(device = "mixed", output_type = types.RGB)
-        self.cast = ops.Cast(device = "gpu",
-                             dtype = types.INT32)
+        super(LetsDancePipeline, self).__init__(batch_size, num_threads, device_id, seed=12)
+        self.inputs = ops.ExternalSource()
+        self.input_label = ops.ExternalSource()
+        self.decode = ops.nvJPEGDecoder(device="mixed", output_type=types.RGB)
+        self.cast = ops.Cast(device="gpu",
+                             dtype=types.INT32)
+        self.iterator = iter(ModalityInputIterator(batch_size))
 
     def define_graph(self):
-        self.jpegs = self.input()
-        images = self.decode(self.jpegs)
-        self.flow_jpegs = self.flow()
-        self.skeleton_jpegs = self.skeleton()
+        self.batch = self.inputs()
         self.labels = self.input_label()
-        images_rgb = self.decode(self.jpegs)
-        images_flow = self.decode(self.jpegs)
-        images_flow = self.decode(self.jpegs)
-        output = self.cast(images)
-        return (output, self.labels)
+        images = [self.decode(modality) for modality in self.batch.values()]
+        output = [self.cast(out) for out in images]
+        return output, self.labels
 
-    # def iter_setup(self):
-    #     (images, labels) = iterator.next()
-    #     self.feed_input(self.jpegs, images)
-    #     self.feed_input(self.labels, labels)
+    def iter_setup(self):
+        (batch, labels) = self.iterator.next()
+        self.feed_input(self.batch, batch)
+        self.feed_input(self.labels, labels)

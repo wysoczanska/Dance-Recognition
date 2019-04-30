@@ -2,14 +2,14 @@
 <project version="4">
   <component name="PublishConfigData">
     <serverData>
-      <paths name="mwysocz1@localhost:6000">
+      <paths name="cold1">
         <serverdata>
           <mappings>
-            <mapping local="$PROJECT_DIR$" web="/" />
+            <mapping deploy="/home/m.wysoczanska/Dance-Recognition" local="$PROJECT_DIR$" web="/" />
           </mappings>
         </serverdata>
       </paths>
-      <paths name="mwysocz1@localhost:6000 (1)">
+      <paths name="mwysocz1@localhost:6000">
         <serverdata>
           <mappings>
             <mapping local="$PROJECT_DIR$" web="/" />

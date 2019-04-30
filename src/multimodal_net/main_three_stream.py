@@ -30,8 +30,10 @@ parser.add_argument('--test_split_file', metavar='DIR',
 parser.add_argument('--dataset', '-d', default='ucf101',
                     choices=["ucf101", "Letsdance"],
                     help='dataset: ucf101 | letsdance')
-parser.add_argument('--arch', '-a', metavar='ARCH', default='vgg16',
-                    help='model architecture (default: alexnet)')
+parser.add_argument('--out_dir', type=str, help='Directory with saved models', default='./checkpoints')
+parser.add_argument('--model_path', type=str, help='Absolute path to the checkpoint. Only valid when resume or eval'
+                                                   '', default='./checkpoints/model_best.pth.tar')
+parser.add_argument('--resume', dest='resume', help='Best model evaluation mode', action='store_true')
 parser.add_argument('-j', '--workers', default=4, type=int, metavar='N',
                     help='number of data loading workers (default: 4)')
 parser.add_argument('--epochs', default=250, type=int, metavar='N',
@@ -60,8 +62,6 @@ parser.add_argument('--print-freq', default=50, type=int,
                     metavar='N', help='print frequency (default: 50)')
 parser.add_argument('--save-freq', default=25, type=int,
                     metavar='N', help='save frequency (default: 25)')
-parser.add_argument('--resume', default='./checkpoints', type=str, metavar='PATH',
-                    help='path to latest checkpoint (default: none)')
 parser.add_argument('-e', '--evaluate', dest='evaluate', action='store_true',
                     help='evaluate model on validation set')
 
@@ -74,6 +74,7 @@ def main():
     global args, best_acc1
     args = parser.parse_args()
     num_classes = 16
+    start_epoch=0
 
     model = build_model(num_classes=num_classes, input_length=args.new_length*3)
 
@@ -81,15 +82,15 @@ def main():
 
     # create model
     print("Building model ... ")
-    if torch.cuda.device_count() > 1:
-        model.rgb.features = torch.nn.DataParallel(model.rgb.features)
-        model.skeleton.features = torch.nn.DataParallel(model.skeleton.features)
-        model.flow.features = torch.nn.DataParallel(model.flow.features)
+
+    model.rgb.features = torch.nn.DataParallel(model.rgb.features)
+    model.skeleton.features = torch.nn.DataParallel(model.skeleton.features)
+    model.flow.features = torch.nn.DataParallel(model.flow.features)
     model.cuda()
 
-    if not os.path.exists(args.resume):
-        os.makedirs(args.resume)
-    print("Saving everything to directory %s." % (args.resume))
+    if not os.path.exists(args.out_dir):
+        os.makedirs(args.out_dir)
+    print("Saving everything to directory %s." % (args.out_dir))
 
     # define loss function (criterion) and optimizer
     criterion = nn.CrossEntropyLoss().cuda()
@@ -98,9 +99,10 @@ def main():
                                 momentum=args.momentum,
                                 weight_decay=args.weight_decay)
 
-    if not os.path.exists(args.resume):
-        os.makedirs(args.resume)
-    print("Saving everything to directory %s." % (args.resume))
+    # if resume set to True, load the model and continue training
+    if args.resume:
+        if os.path.isfile(args.model_path):
+            model, optimizer, start_epoch, best_acc1 = load_checkpoint(model, optimizer, args.model_path)
 
     cudnn.benchmark = True
 
@@ -108,13 +110,6 @@ def main():
     scale_ratios = [1.0, 0.875, 0.75, 0.66]
     clip_mean = [0.485, 0.456, 0.406] * args.new_length
     clip_std = [0.229, 0.224, 0.225] * args.new_length
-    # elif args.modality == "flow":
-    #     is_color = False
-    #     scale_ratios = [1.0, 0.875, 0.75]
-    #     clip_mean = [0.5, 0.5] * args.new_length
-    #     clip_std = [0.226, 0.226] * args.new_length
-    # else:
-    #     print("No such modality. Only rgb and flow supported.")
 
     normalize = video_transforms.Normalize(mean=clip_mean,
                                            std=clip_std)
@@ -156,21 +151,21 @@ def main():
         num_workers=args.workers, pin_memory=True)
     val_loader = torch.utils.data.DataLoader(
         val_dataset,
-        batch_size=args.batch_size, shuffle=True,
+        batch_size=args.batch_size, shuffle=False,
         num_workers=args.workers, pin_memory=True)
 
     if args.evaluate:
         validate(val_loader, model, criterion)
         return
 
-    for epoch in range(args.start_epoch, args.epochs):
+    for epoch in range(start_epoch, args.epochs):
         adjust_learning_rate(optimizer, epoch, args)
 
         # train for one epoch
         train(train_loader, model, criterion, optimizer, epoch, args)
 
         # evaluate on validation set
-        acc1 = validate(val_loader, model, criterion, args)
+        acc1 = validate(val_loader, model, criterion)
 
         # remember best acc@1 and save checkpoint
         is_best = acc1 > best_acc1
@@ -178,11 +173,11 @@ def main():
 
         save_checkpoint({
                 'epoch': epoch + 1,
-                'arch': args.arch,
+                'arch': 'ThreeStreamTemporal',
                 'state_dict': model.state_dict(),
                 'best_acc1': best_acc1,
                 'optimizer': optimizer.state_dict(),
-            }, is_best, 'last_checkpoint.pth.tar', args.resume)
+            }, is_best, 'last_checkpoint.pth.tar', args.out_dir)
 
 
 def build_model(input_length, num_classes):
@@ -236,7 +231,7 @@ def train(train_loader, model, criterion, optimizer, epoch, args):
             progress.print(i)
 
 
-def validate(val_loader, model, criterion, args):
+def validate(val_loader, model, criterion):
     batch_time = AverageMeter('Time', ':6.3f')
     losses = AverageMeter('Loss', ':.4e')
     top1 = AverageMeter('Acc@1', ':6.2f')
@@ -276,6 +271,18 @@ def validate(val_loader, model, criterion, args):
 
     return top1.avg
 
+
+def load_checkpoint(model, optimizer, model_path):
+    print("=> loading checkpoint '{}'".format(model_path))
+    checkpoint = torch.load(model_path)
+    start_epoch = checkpoint['epoch']
+    best_acc1 = checkpoint['best_acc1']
+    model.load_state_dict(checkpoint['state_dict'])
+    optimizer.load_state_dict(checkpoint['optimizer'])
+    print("=> loaded checkpoint '{}' (epoch {})".format(model_path, checkpoint['epoch']))
+    return model, optimizer, start_epoch, best_acc1
+
+
 def save_checkpoint(state, is_best, filename, resume_path):
     cur_path = os.path.join(resume_path, filename)
     best_path = os.path.join(resume_path, 'model_best.pth.tar')
@@ -307,6 +314,7 @@ class AverageMeter(object):
         fmtstr = '{name} {val' + self.fmt + '} ({avg' + self.fmt + '})'
         return fmtstr.format(**self.__dict__)
 
+
 class ProgressMeter(object):
     def __init__(self, num_batches, *meters, prefix=""):
         self.batch_fmtstr = self._get_batch_fmtstr(num_batches)
@@ -329,6 +337,7 @@ def adjust_learning_rate(optimizer, epoch, args):
     lr = args.lr * (0.1 ** (epoch // 30))
     for param_group in optimizer.param_groups:
         param_group['lr'] = lr
+
 
 def accuracy(output, target, topk=(1,)):
     """Computes the accuracy over the k top predictions for the specified values of k"""
