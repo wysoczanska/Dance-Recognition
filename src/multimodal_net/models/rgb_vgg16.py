@@ -17,10 +17,10 @@ class VGG(nn.Module):
         self.classifier = nn.Sequential(
             nn.Linear(512 * 7 * 7, 4096),
             nn.ReLU(True),
-            nn.Dropout(p=0.9),
+            nn.Dropout(),
             nn.Linear(4096, 4096),
             nn.ReLU(True),
-            nn.Dropout(p=0.9),
+            nn.Dropout(),
         )
         # Change the dropout value to 0.9 and 0.9 for rgb model
         self.fc_action = nn.Linear(4096, num_classes)
@@ -79,7 +79,7 @@ def rgb_vgg16(pretrained=False, **kwargs):
     Args:
         pretrained (bool): If True, returns a model pre-trained on ImageNet
     """
-    model = VGG(make_layers(cfg['D']), **kwargs)
+    model = VGG(make_layers(cfg['A']), **kwargs)
     if pretrained:
         # model.load_state_dict(model_zoo.load_url(model_urls['vgg16']))
         pretrained_dict = model_zoo.load_url(model_urls['vgg16'])
@@ -99,5 +99,5 @@ def rgb_vgg16_bn(**kwargs):
     """VGG 16-layer model (configuration "D") with batch normalization
        No pretrained model available.
     """
-    return VGG(make_layers(cfg['D'], batch_norm=True), **kwargs)
+    return VGG(make_layers(cfg['A'], batch_norm=True), **kwargs)
 

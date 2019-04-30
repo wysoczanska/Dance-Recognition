@@ -14,6 +14,7 @@ flow_dir = 'flow_png'
 skeleton_dir = 'densepose/rgb'
 audio_dir = 'audio_png10'
 
+
 def find_classes(dir):
     c_dir = os.path.join(dir, rgb_dir)
     classes = [d for d in os.listdir(c_dir) if os.path.isdir(os.path.join(c_dir, d))]
@@ -97,7 +98,9 @@ class Letsdance(data.Dataset):
                  new_length=1,
                  transform=None,
                  target_transform=None,
-                 video_transform=None):
+                 video_transform=None,
+                 return_id=False
+                 ):
 
         classes, class_to_idx = find_classes(root)
         clips = make_dataset(source, new_length)
@@ -114,6 +117,7 @@ class Letsdance(data.Dataset):
         self.is_color = is_color
         self.name_pattern = "%s_%04d"
         self.seg_length = new_length
+        self.return_id = return_id
 
         self.transform = transform
         self.target_transform = target_transform
@@ -129,11 +133,14 @@ class Letsdance(data.Dataset):
             target = self.target_transform(target)
         if self.video_transform is not None:
             clip_input = self.video_transform(clip_input)
-
-        return clip_input, target
+        if self.return_id:
+            return clip_input, target, clip_id
+        else:
+            return clip_input, target
 
     def __len__(self):
         return len(self.clips)
+
 
 class Letsdance_audio(data.Dataset):
     def __init__(self,
@@ -172,10 +179,10 @@ class Letsdance_audio(data.Dataset):
         file_name = self.name_pattern % clip_id
 
         clip_input = cv2.imread(os.path.join(self.root, audio_dir, cls, file_name), cv2.IMREAD_COLOR)
-        clip_input = cv2.cvtColor(clip_input, cv2.COLOR_BGR2RGB)
-
         if clip_input is None:
             print("Could not load file %s, %s" % (target, file_name))
+        clip_input = cv2.cvtColor(clip_input, cv2.COLOR_BGR2RGB)
+
         if self.transform is not None:
             clip_input = self.transform(clip_input)
         if self.target_transform is not None:
