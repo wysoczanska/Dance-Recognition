@@ -148,14 +148,16 @@ def main():
                                                   return_id=True)
 
     val_loader = torch.utils.data.DataLoader(val_dataset,
-        batch_size=args.batch_size, shuffle=False,
+        batch_size=1, shuffle=False,
         num_workers=4, pin_memory=True)
     model.eval()
 
     with torch.no_grad():
-        targets = []
-        predictions = []
+        targets = {}
+        predictions = {}
+        sum_acc = 0.0
         clip_ids = []
+        decisions = {}
         for i, (input, target, clip_id) in enumerate(val_loader):
             for modality, data in input.items():
                 input[modality] = data.cuda(non_blocking=True)
@@ -167,35 +169,64 @@ def main():
             # measure accuracy and record loss
             prediction = output.max(1, keepdim=True)[1].view(-1)
 
-            targets.append(target.view_as(prediction).cpu().numpy())
-            predictions.append(prediction.cpu().numpy())
-            clip_ids += clip_id
-        unique_clips = Counter(clip_ids)
-        predictions = np.concatenate(predictions, axis=0)
-        targets = np.concatenate(targets, axis=0)
+            # targets = target.view_as(prediction).cpu().numpy()
+            # predictions += prediction.cpu().numpy()
+            if clip_id[0] not in decisions.keys():
+                decisions[clip_id[0]] = [prediction.cpu().numpy()[0]]
+                targets[clip_id[0]] = target.view_as(prediction).cpu().numpy()[0]
+            else:
+                decisions[clip_id[0]].append(prediction[0])
+                targets[clip_id[0]] = target.view_as(prediction).cpu().numpy()[0]
+
+
+            # clip_ids += clip_id
+        # unique_clips = Counter(clip_ids)
+        # predictions = np.concatenate(predictions, axis=0)
+        # targets = np.concatenate(targets, axis=0)
+        # print(predictions)
+        # print('len predictions' + str(len(predictions)))
 
         # max voting
-        final_preds = {}
-        decisions = {}
-        for clip, _ in unique_clips.items():
-            preds = []
-            for idx, x in enumerate(clip_ids):
-                if x == clip:
-                    preds.append(predictions[idx])
-                    target = targets[idx]
-            preds = Counter(preds)
-            decisions[clip] = np.array([preds.most_common(1)[0][0], target])
-            print('pred:' + str(preds.most_common(1)))
-            print('target '+ str(target))
+        final_preds = []
+        final_tars = []
+        for clip_id, predictions in decisions.items():
+            print('Video metrics: ')
+            print(get_metrics(targets[clip_id], predictions))
+            dec = Counter(predictions).most_common(1)[0][0]
+            print('Decision: ' + dec + ' Target: ' + targets[clip_id][0])
+            final_preds.append(dec)
+            final_tars.append(targets[clip_id][0])
+        #
+        # for clip in unique_clips.keys():
+        #     preds = []
+        #     tars = []
+        #     for idx, x in enumerate(clip_ids):
+        #         if x == clip:
+        #             preds.append(predictions[idx])
+        #             tars.append(targets[idx])
+        #     print(get_metrics(tars, preds))
+        #     sum_acc+=accuracy_score(tars, preds)
+        #     preds = Counter(preds)
+        #     decisions[clip] = np.array([preds.most_common(1)[0][0], tars[0]])
+        #     print('pred:' + str(preds.most_common()))
+        #     print('target ' + str(tars))
+        #
+        #     print(clip)
+        #     print()
             # final_targets[clip] = target
-        decisions = np.array(list(decisions.values())).reshape(-1, 2)
+        # decisions = np.array(list(decisions.values())).reshape(-1, 2)
 
         # final_preds = np.fromiter(final_preds.values(), dtype=int)
         # final_targets = np.fromiter(final_targets.values(), dtype=int)
         # print(decisions)
         # print(final_targets.reshape(1, -1))
-        print(get_metrics(decisions[:, 1], decisions[:, 0]))
-        plot_confusion_matrix(decisions[:, 1], decisions[:, 0], np.arange(0, 16), title='conf').savefig('conf.png')
+        # print(get_metrics(decisions[:, 1], decisions[:, 0]))
+        # print('per video acc: ' + str(sum_acc/len(unique_clips)))
+        print(get_metrics(final_tars, final_preds))
+        plot_confusion_matrix(final_tars, final_preds, np.arange(0, 16), title='conf').savefig('conf.png')
+
+
+        # plot_confusion_matrix(decisions[:, 1], decisions[:, 0], np.arange(0, 16), title='conf').savefig('conf.png')
 
 if __name__ == '__main__':
     main()

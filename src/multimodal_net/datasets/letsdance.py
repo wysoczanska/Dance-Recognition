@@ -3,13 +3,13 @@ import sys
 
 import cv2
 import numpy as np
-import nvidia.dali.ops as ops
-import nvidia.dali.types as types
+# import nvidia.dali.ops as ops
+# import nvidia.dali.types as types
 import os
 import torch.utils.data as data
-from nvidia.dali.pipeline import Pipeline
+# from nvidia.dali.pipeline import Pipeline
 
-rgb_dir = 'rgb'
+rgb_dir = 'rgb/rgb'
 flow_dir = 'flow_png'
 skeleton_dir = 'densepose/rgb'
 audio_dir = 'audio_png10'
@@ -231,24 +231,24 @@ class ModalityInputIterator(object):
     next = __next__
 
 
-class LetsDancePipeline(Pipeline):
-    def __init__(self, batch_size, num_threads, device_id):
-        super(LetsDancePipeline, self).__init__(batch_size, num_threads, device_id, seed=12)
-        self.inputs = ops.ExternalSource()
-        self.input_label = ops.ExternalSource()
-        self.decode = ops.nvJPEGDecoder(device="mixed", output_type=types.RGB)
-        self.cast = ops.Cast(device="gpu",
-                             dtype=types.INT32)
-        self.iterator = iter(ModalityInputIterator(batch_size))
-
-    def define_graph(self):
-        self.batch = self.inputs()
-        self.labels = self.input_label()
-        images = [self.decode(modality) for modality in self.batch.values()]
-        output = [self.cast(out) for out in images]
-        return output, self.labels
-
-    def iter_setup(self):
-        (batch, labels) = self.iterator.next()
-        self.feed_input(self.batch, batch)
-        self.feed_input(self.labels, labels)
+# class LetsDancePipeline(Pipeline):
+#     def __init__(self, batch_size, num_threads, device_id):
+#         super(LetsDancePipeline, self).__init__(batch_size, num_threads, device_id, seed=12)
+#         self.inputs = ops.ExternalSource()
+#         self.input_label = ops.ExternalSource()
+#         self.decode = ops.nvJPEGDecoder(device="mixed", output_type=types.RGB)
+#         self.cast = ops.Cast(device="gpu",
+#                              dtype=types.INT32)
+#         self.iterator = iter(ModalityInputIterator(batch_size))
+#
+#     def define_graph(self):
+#         self.batch = self.inputs()
+#         self.labels = self.input_label()
+#         images = [self.decode(modality) for modality in self.batch.values()]
+#         output = [self.cast(out) for out in images]
+#         return output, self.labels
+#
+#     def iter_setup(self):
+#         (batch, labels) = self.iterator.next()
+#         self.feed_input(self.batch, batch)
+#         self.feed_input(self.labels, labels)

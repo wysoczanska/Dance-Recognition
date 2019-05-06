@@ -138,16 +138,16 @@ def main():
 
     train_transform = transforms.Compose([
             # video_transforms.Scale((256)),
-            video_transforms.Resize((96, 44)),
+            video_transforms.Resize((96, 11)),
             video_transforms.ToTensor(),
-            normalize,
+            # normalize,
         ])
 
     val_transform = transforms.Compose([
             # video_transforms.Scale((256)),
-            video_transforms.Resize((96, 44)),
+            video_transforms.Resize((96, 11)),
             video_transforms.ToTensor(),
-            normalize,
+            # normalize,
         ])
 
     train_dataset = datasets.__dict__[args.dataset](root=args.data,
@@ -294,7 +294,7 @@ def validate(val_loader, model, criterion, writer, epoch):
         writer.add_scalar('Test/Acc1', top1.avg, epoch)
         writer.add_scalar('Test/Acc3', top3.avg, epoch)
         writer.add_scalar('Test/Loss', losses.avg, epoch)
-        vis.visualize_filter(list(model.children())[0], writer, epoch)
+        # vis.visualize_filter(model.module.features[0], writer, epoch)
 
     return top1.avg
 

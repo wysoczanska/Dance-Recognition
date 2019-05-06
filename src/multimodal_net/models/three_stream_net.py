@@ -12,7 +12,7 @@ class ThreeStreamNet(nn.Module):
         self.flow = my_alexnet(pretrained=True)
         self.skeleton = my_alexnet(pretrained=True)
         self.classifier = nn.Sequential(
-            nn.Dropout(),
+            nn.Dropout(0.9),
             nn.Linear(4096*3, 4096),
             nn.ReLU(inplace=True),
             nn.Linear(4096, num_classes)

@@ -15,6 +15,7 @@ import torch.utils.data
 import torch.utils.data.distributed
 import video_transforms
 from torch.optim.lr_scheduler import ReduceLROnPlateau
+from sklearn.metrics import f1_score, recall_score, precision_score, accuracy_score
 
 
 model_names = sorted(name for name in models.__dict__
@@ -107,7 +108,7 @@ def main():
     scheduler = ReduceLROnPlateau(optimizer, 'max')
 
     # if resume set to True, load the model and continue training
-    if args.resume:
+    if args.resume or args.evaluate:
         if os.path.isfile(args.model_path):
             model, optimizer, start_epoch, best_acc1 = load_checkpoint(model, optimizer, args.model_path)
 
@@ -280,15 +281,19 @@ def validate(val_loader, model, criterion, epoch, writer):
             # measure elapsed time
             batch_time.update(time.time() - end)
             end = time.time()
+            prediction = output.max(1, keepdim=True)[1].view(-1)
+            targets = target.view_as(prediction).cpu().numpy()
 
             if i % args.print_freq == 0:
                 progress.print(i)
+            print('SKlearn acc: ' + str(accuracy_score(targets, prediction.cpu().numpy())))
 
         print(' * Acc@1 {top1.avg:.3f} Acc@3 {top3.avg:.3f}'
               .format(top1=top1, top3=top3))
         writer.add_scalar('Test/Acc1', top1.avg, epoch)
         writer.add_scalar('Test/Acc3', top3.avg, epoch)
         writer.add_scalar('Test/Loss', losses.avg, epoch)
+
 
     return top1.avg
 

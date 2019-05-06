@@ -347,7 +347,7 @@ class Resize(object):
 
     def __call__(self, clips):
         h, w, c = clips.shape
-        clips = cv2.resize(clips, (self.height, self.width), interpolation=self.interpolation)
+        clips = cv2.resize(clips, (self.width, self.height), interpolation=self.interpolation)
         return clips
 
 
