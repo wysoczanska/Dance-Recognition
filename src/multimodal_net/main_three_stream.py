@@ -16,6 +16,8 @@ import torch.utils.data.distributed
 import video_transforms
 from torch.optim.lr_scheduler import ReduceLROnPlateau
 from sklearn.metrics import f1_score, recall_score, precision_score, accuracy_score
+import numpy as np
+import eval
 
 
 model_names = sorted(name for name in models.__dict__
@@ -147,7 +149,8 @@ def main():
                                                   phase="val",
                                                   is_color=is_color,
                                                   new_length=args.new_length,
-                                                  video_transform=val_transform)
+                                                  video_transform=val_transform,
+                                                  return_id=True)
 
     print('{} samples found, {} train samples and {} test samples.'.format(len(val_dataset)+len(train_dataset),
                                                                            len(train_dataset),
@@ -257,13 +260,15 @@ def validate(val_loader, model, criterion, epoch, writer):
     top3 = AverageMeter('Acc@3', ':6.2f')
     progress = ProgressMeter(len(val_loader), batch_time, losses, top1, top3,
                              prefix='Test: ')
+    decisions={}
+    targets_per_clip={}
 
     # switch to evaluate mode
     model.eval()
 
     with torch.no_grad():
         end = time.time()
-        for i, (input, target) in enumerate(val_loader):
+        for i, (input, target, clip_id) in enumerate(val_loader):
             for modality, data in input.items():
                 input[modality] = data.cuda(non_blocking=True)
             target = target.cuda(non_blocking=True)
@@ -284,16 +289,22 @@ def validate(val_loader, model, criterion, epoch, writer):
             prediction = output.max(1, keepdim=True)[1].view(-1)
             targets = target.view_as(prediction).cpu().numpy()
 
+            if clip_id[0] not in decisions.keys():
+                decisions[clip_id[0]] = prediction.cpu().numpy()
+                targets_per_clip[clip_id[0]] = targets
+            else:
+                decisions[clip_id[0]]=np.append(decisions[clip_id[0]], prediction.cpu().numpy())
+                targets_per_clip[clip_id[0]]=np.append(targets_per_clip[clip_id[0]], targets)
+
             if i % args.print_freq == 0:
                 progress.print(i)
-            print('SKlearn acc: ' + str(accuracy_score(targets, prediction.cpu().numpy())))
+        eval.max_voting(decisions, targets_per_clip)
 
         print(' * Acc@1 {top1.avg:.3f} Acc@3 {top3.avg:.3f}'
               .format(top1=top1, top3=top3))
         writer.add_scalar('Test/Acc1', top1.avg, epoch)
         writer.add_scalar('Test/Acc3', top3.avg, epoch)
         writer.add_scalar('Test/Loss', losses.avg, epoch)
-
 
     return top1.avg
 

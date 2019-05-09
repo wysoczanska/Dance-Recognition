@@ -16,6 +16,7 @@ import torch.utils.data
 import torch.utils.data.distributed
 import video_transforms
 from main_three_stream import build_model
+import pickle
 
 model_names = sorted(name for name in models.__dict__
     if name.islower() and not name.startswith("__")
@@ -107,6 +108,21 @@ def plot_confusion_matrix(y_true, y_pred, classes,
     return fig
 
 
+def max_voting(decisions_per_clip, targets_per_clip):
+    final_preds = []
+    final_tars = []
+    for clip_id, predictions in decisions_per_clip.items():
+        print('Video metrics: ')
+        print(get_metrics(targets_per_clip[clip_id], predictions))
+        dec = Counter(predictions).most_common(1)[0][0]
+        print('Decision: ' + str(dec) + ' Target: ' + str(targets_per_clip[clip_id][0]))
+        final_preds.append(dec)
+        final_tars.append(targets_per_clip[clip_id][0])
+    print('voting metrics')
+    print(get_metrics(final_tars, final_preds))
+    # plot_confusion_matrix(final_tars, final_preds, np.arange(0, 16), title='conf').savefig('conf.png')
+
+
 def main():
     num_classes = 16
     args = parser.parse_args()
@@ -158,6 +174,7 @@ def main():
         sum_acc = 0.0
         clip_ids = []
         decisions = {}
+        correct=0
         for i, (input, target, clip_id) in enumerate(val_loader):
             for modality, data in input.items():
                 input[modality] = data.cuda(non_blocking=True)
@@ -165,18 +182,24 @@ def main():
 
             # compute output
             output = model(input)
+            # fl = open('eval'+str(i)+'.pkl', 'wb')
+            # pickle.dump(output, fl)
 
             # measure accuracy and record loss
-            prediction = output.max(1, keepdim=True)[1].view(-1)
+            _, pred = output.topk(1, 1, True, True)
+            prediction = pred.t()
+            target = target.view(1, -1).expand_as(pred)
+            correct += prediction.eq(target).float().sum(0, keepdim=True)
+            # prediction = output.max(1, keepdim=True)[1].view(-1)
 
             # targets = target.view_as(prediction).cpu().numpy()
             # predictions += prediction.cpu().numpy()
             if clip_id[0] not in decisions.keys():
-                decisions[clip_id[0]] = [prediction.cpu().numpy()[0]]
-                targets[clip_id[0]] = target.view_as(prediction).cpu().numpy()[0]
+                decisions[clip_id[0]] = prediction.cpu().numpy()
+                targets[clip_id[0]] = target.cpu().numpy()
             else:
-                decisions[clip_id[0]].append(prediction[0])
-                targets[clip_id[0]] = target.view_as(prediction).cpu().numpy()[0]
+                decisions[clip_id[0]]=np.append(decisions[clip_id[0]], prediction.cpu().numpy())
+                targets[clip_id[0]]=np.append(targets[clip_id[0]], target.cpu().numpy())
 
 
             # clip_ids += clip_id
@@ -187,13 +210,15 @@ def main():
         # print('len predictions' + str(len(predictions)))
 
         # max voting
+        # outfile = open('decisions', 'wb')
+        # pickle.dump(decisions, outfile)
         final_preds = []
         final_tars = []
         for clip_id, predictions in decisions.items():
             print('Video metrics: ')
             print(get_metrics(targets[clip_id], predictions))
             dec = Counter(predictions).most_common(1)[0][0]
-            print('Decision: ' + dec + ' Target: ' + targets[clip_id][0])
+            print('Decision: ' + str(dec) + ' Target: ' + str(targets[clip_id][0]))
             final_preds.append(dec)
             final_tars.append(targets[clip_id][0])
         #
@@ -222,11 +247,15 @@ def main():
         # print(final_targets.reshape(1, -1))
         # print(get_metrics(decisions[:, 1], decisions[:, 0]))
         # print('per video acc: ' + str(sum_acc/len(unique_clips)))
+        print('voting metrics')
         print(get_metrics(final_tars, final_preds))
+        print('final acc ' + str(correct.cpu().numpy()/len(val_loader)))
         plot_confusion_matrix(final_tars, final_preds, np.arange(0, 16), title='conf').savefig('conf.png')
 
 
         # plot_confusion_matrix(decisions[:, 1], decisions[:, 0], np.arange(0, 16), title='conf').savefig('conf.png')
+
+
 
 if __name__ == '__main__':
     main()

@@ -30,9 +30,6 @@ parser.add_argument('--train_split_file', metavar='DIR',
                     help='path to train files list')
 parser.add_argument('--test_split_file', metavar='DIR',
                     help='path to test files list')
-parser.add_argument('--modality', '-m', metavar='MODALITY', default='rgb',
-                    choices=["rgb", "flow"],
-                    help='modality: rgb | flow')
 parser.add_argument('--dataset', '-d', default='ucf101',
                     help='dataset: ucf101 | hmdb51 | letsdance')
 parser.add_argument('--arch', '-a', metavar='ARCH', default='vgg16',
@@ -73,14 +70,11 @@ parser.add_argument('-e', '--evaluate', dest='evaluate', action='store_true',
                     help='evaluate model on validation set')
 
 best_prec1 = 0
-device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
-
-os.environ["CUDA_DEVICE_ORDER"]="PCI_BUS_ID"   
-os.environ["CUDA_VISIBLE_DEVICES"]="0"
+device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 
 def build_model(num_classes, model_name):
-    model = models.__dict__[model_name]( num_classes=1000)
+    model = models.__dict__[model_name](3, num_classes=1000)
     # model.fc_action = nn.Linear(4096, num_classes)
     if args.arch.endswith('alexnet') or args.arch.startswith('vgg'):
         model.features = torch.nn.DataParallel(model.features)
@@ -100,7 +94,7 @@ def main():
     model = build_model(num_classes=16, model_name=args.arch)
     model = model.to(device)
     print(model)
-    print("Model %s is loaded. " % ( args.arch))
+    print("Model %s is loaded. " % (args.arch))
 
     if not os.path.exists(args.resume):
         os.makedirs(args.resume)
@@ -109,9 +103,11 @@ def main():
     # define loss function (criterion) and optimizer
     criterion = nn.CrossEntropyLoss().cuda()
 
-    optimizer = torch.optim.SGD(model.parameters(), args.lr,
-                                momentum=args.momentum,
-                                weight_decay=args.weight_decay)
+    # optimizer = torch.optim.SGD(model.parameters(), args.lr,
+    #                             momentum=args.momentum,
+    #                             weight_decay=args.weight_decay)
+
+    optimizer =torch.optim.Adam(model.parameters(), lr=args.lr)
 
     if not os.path.exists(args.resume):
         os.makedirs(args.resume)
@@ -119,33 +115,16 @@ def main():
 
     cudnn.benchmark = True
 
-    # Data transforming
-    if args.modality == "rgb":
-        is_color = True
-        scale_ratios = [1.0, 0.875, 0.75, 0.66]
-        clip_mean = [0.5, 0.5, 0.5]
-        clip_std = [0.25, 0.25, 0.25]
-    elif args.modality == "flow":
-        is_color = False
-        scale_ratios = [1.0, 0.875, 0.75]
-        clip_mean = [0.5, 0.5] * args.new_length
-        clip_std = [0.226, 0.226] * args.new_length
-    else:
-        print("No such modality. Only rgb and flow supported.")
-
-    normalize = video_transforms.Normalize(mean=clip_mean,
-                                           std=clip_std)
-
     train_transform = transforms.Compose([
             # video_transforms.Scale((256)),
-            video_transforms.Resize((96, 11)),
+            video_transforms.Resize((args.new_height, args.new_width)),
             video_transforms.ToTensor(),
             # normalize,
         ])
 
     val_transform = transforms.Compose([
             # video_transforms.Scale((256)),
-            video_transforms.Resize((96, 11)),
+            video_transforms.Resize((args.new_height, args.new_width)),
             video_transforms.ToTensor(),
             # normalize,
         ])
@@ -153,13 +132,13 @@ def main():
     train_dataset = datasets.__dict__[args.dataset](root=args.data,
                                                     source=args.train_split_file,
                                                     phase="train",
-                                                    is_color=is_color,
+                                                    is_color=True,
                                                     new_length=args.new_length,
                                                     video_transform=train_transform)
     val_dataset = datasets.__dict__[args.dataset](root=args.data,
                                                   source=args.test_split_file,
                                                   phase="val",
-                                                  is_color=is_color,
+                                                  is_color=True,
                                                   new_length=args.new_length,
                                                   video_transform=val_transform)
 
@@ -181,7 +160,7 @@ def main():
         return
 
     for epoch in range(args.start_epoch, args.epochs):
-        adjust_learning_rate(optimizer, epoch, args)
+        # adjust_learning_rate(optimizer, epoch, args)
 
         # train for one epoch
         train(train_loader, model, criterion, optimizer, epoch, writer)

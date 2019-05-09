@@ -4,7 +4,7 @@ __all__ = ['alexnet_bn']
 
 
 def alexnet_bn(input_channels, num_classes):
-    model = models.alexnet(pretrained=True, num_classes=1000)
+    model = models.alexnet(pretrained=False, num_classes=1000)
     model.features[0] = nn.Conv2d(input_channels, 64, kernel_size=11, stride=4, padding=2)
     modules = list(model.features.children())
     modules.insert(3, nn.BatchNorm2d(64))
