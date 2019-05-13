@@ -61,23 +61,30 @@ def generate_histogram(sample, root_dir, out_dir):
 
 def generate_spectrogram(sample, root_dir, out_dir):
 
-    start_time = int(sample.filename[-2:])+int(sample.filename[-3])*60
-    y, sr = librosa.load(os.path.join(root_dir, sample.target, sample.filename[:-4] + '.wav'), offset=start_time,
-                         duration=sample.duration/30)
-    splits = librosa.util.frame(y, frame_length=int(sr/2), hop_length=512)
+    # start_time = int(sample.filename[-2:])+int(sample.filename[-3])*60
+    y, sr = librosa.load(os.path.join(root_dir, sample.target, sample.filename[:-4] + '.wav'))
+    # splits = librosa.util.frame(y, frame_length=int(sr/2), hop_length=512)
     if not os.path.exists(os.path.join(out_dir, sample.target)):
         os.mkdir(os.path.join(out_dir, sample.target))
     # librosa.output.write_wav(os.path.join(out_dir, sample.target, sample.filename[:-4] + '.wav'), y, sr)
+    S = librosa.feature.melspectrogram(y=y, n_mels=128,  hop_length=1024)
+    librosa.display.specshow(librosa.power_to_db(S, ref=np.max), fmax=8000)
+    plt.draw()
+    plt.subplots_adjust(left=0, right=1, top=1, bottom=0)
+    file_name = sample.filename[:-4] + '.png'
+    plt.savefig(os.path.join(out_dir, sample.target, file_name), dpi=100, bbox_inches=0)
+    plt.close()
+    print(sample.target + '/' + file_name)
 
-    for i in range(splits.shape[-1]):
-        S = librosa.feature.melspectrogram(y=splits[:,i], sr=sr, n_mels=96)
-        librosa.display.specshow(librosa.power_to_db(S, ref=np.max), fmax=8000)
-        plt.draw()
-        plt.subplots_adjust(left=0, right=1, top=1, bottom=0)
-        file_name = sample.filename[:-4] + '_%02d.png' % i
-        plt.savefig(os.path.join(out_dir, sample.target, file_name), dpi=100, bbox_inches=0)
-        plt.close()
-        print(sample.target + '/' + file_name)
+    # for i in range(splits.shape[-1]):
+    #     S = librosa.feature.melspectrogram(y=splits[:,i], sr=sr, n_mels=96)
+    #     librosa.display.specshow(librosa.power_to_db(S, ref=np.max), fmax=8000)
+    #     plt.draw()
+    #     plt.subplots_adjust(left=0, right=1, top=1, bottom=0)
+    #     file_name = sample.filename[:-4] + '_%02d.png' % i
+    #     plt.savefig(os.path.join(out_dir, sample.target, file_name), dpi=100, bbox_inches=0)
+    #     plt.close()
+    #     print(sample.target + '/' + file_name)
 
 
 def main(root_dir, out_dir, durations_df_dir, type_features):

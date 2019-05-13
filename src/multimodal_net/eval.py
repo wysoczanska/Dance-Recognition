@@ -17,6 +17,7 @@ import torch.utils.data.distributed
 import video_transforms
 from main_three_stream import build_model
 import pickle
+plt.rcParams.update({'font.size': 22})
 
 model_names = sorted(name for name in models.__dict__
     if name.islower() and not name.startswith("__")
@@ -73,7 +74,8 @@ def plot_confusion_matrix(y_true, y_pred, classes,
     # Compute confusion matrix
     cm = confusion_matrix(y_true, y_pred)
     # Only use the labels that appear in the data
-    classes = classes[unique_labels(y_true, y_pred)]
+    classes_idx=np.arange(0,16)
+    classes_idx = classes_idx[unique_labels(y_true, y_pred)]
     if normalize:
         cm = cm.astype('float') / cm.sum(axis=1)[:, np.newaxis]
         print("Normalized confusion matrix")
@@ -89,8 +91,8 @@ def plot_confusion_matrix(y_true, y_pred, classes,
            # ... and label them with the respective list entries
            xticklabels=classes, yticklabels=classes,
            title=title,
-           ylabel='True label',
-           xlabel='Predicted label')
+           ylabel='Prawdziwe klasy',
+           xlabel='Przewidywane klasy')
 
     # Rotate the tick labels and set their alignment.
     plt.setp(ax.get_xticklabels(), rotation=45, ha="right",
@@ -104,11 +106,11 @@ def plot_confusion_matrix(y_true, y_pred, classes,
             ax.text(j, i, format(cm[i, j], fmt),
                     ha="center", va="center",
                     color="white" if cm[i, j] > thresh else "black")
-#     fig.tight_layout()
+    fig.tight_layout()
     return fig
 
 
-def max_voting(decisions_per_clip, targets_per_clip):
+def max_voting(decisions_per_clip, targets_per_clip, classes):
     final_preds = []
     final_tars = []
     for clip_id, predictions in decisions_per_clip.items():
@@ -120,7 +122,10 @@ def max_voting(decisions_per_clip, targets_per_clip):
         final_tars.append(targets_per_clip[clip_id][0])
     print('voting metrics')
     print(get_metrics(final_tars, final_preds))
-    # plot_confusion_matrix(final_tars, final_preds, np.arange(0, 16), title='conf').savefig('conf.png')
+
+    plot_confusion_matrix(final_tars, final_preds, classes, title='conf').savefig('conf.png')
+    pickle.dump(final_tars, open('final_targets.pkl', 'wb'))
+    pickle.dump(final_preds, open('final_preds.pkl', 'wb'))
 
 
 def main():
@@ -250,12 +255,13 @@ def main():
         print('voting metrics')
         print(get_metrics(final_tars, final_preds))
         print('final acc ' + str(correct.cpu().numpy()/len(val_loader)))
-        plot_confusion_matrix(final_tars, final_preds, np.arange(0, 16), title='conf').savefig('conf.png')
+        plot_confusion_matrix(final_tars, final_preds, np.arange(0, 16), title='Macierz konfuzji').savefig('conf.png')
+
+        pickle.dump(final_tars, open('final_targets.pkl', 'w'))
+        pickle.dump(final_preds, open('final_preds.pkl', 'w'))
 
 
         # plot_confusion_matrix(decisions[:, 1], decisions[:, 0], np.arange(0, 16), title='conf').savefig('conf.png')
-
-
 
 if __name__ == '__main__':
     main()

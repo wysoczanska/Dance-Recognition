@@ -166,7 +166,8 @@ def main():
         num_workers=args.workers, pin_memory=True)
 
     if args.evaluate:
-        validate(val_loader, model, criterion, epoch=0, writer=writer)
+
+        validate(val_loader, model, criterion, epoch=0, writer=writer, classes=val_dataset.classes)
         return
 
     for epoch in range(start_epoch, args.epochs):
@@ -177,7 +178,7 @@ def main():
 
         # evaluate on validation set
         acc1 = validate(val_loader, model, criterion, epoch, writer)
-        scheduler.step(acc1)
+        scheduler.step(acc1, epoch=epoch)
 
         # remember best acc@1 and save checkpoint
         is_best = acc1 > best_acc1
@@ -189,6 +190,7 @@ def main():
                 'state_dict': model.state_dict(),
                 'best_acc1': best_acc1,
                 'optimizer': optimizer.state_dict(),
+                'scheduler': scheduler.state_dict(),
             }, is_best, 'last_checkpoint.pth.tar', args.out_dir)
 
     writer.close()
@@ -253,7 +255,7 @@ def train(train_loader, model, criterion, optimizer, epoch, args, writer):
         writer.add_image('Input Skeleton', utils.make_grid(input['skeleton'][0].view(15,3,224, 224)).cpu(), epoch)
 
 
-def validate(val_loader, model, criterion, epoch, writer):
+def validate(val_loader, model, criterion, epoch, writer, classes=None):
     batch_time = AverageMeter('Time', ':6.3f')
     losses = AverageMeter('Loss', ':.4e')
     top1 = AverageMeter('Acc@1', ':6.2f')
@@ -298,7 +300,8 @@ def validate(val_loader, model, criterion, epoch, writer):
 
             if i % args.print_freq == 0:
                 progress.print(i)
-        eval.max_voting(decisions, targets_per_clip)
+        eval.max_voting(decisions, targets_per_clip, classes)
+
 
         print(' * Acc@1 {top1.avg:.3f} Acc@3 {top3.avg:.3f}'
               .format(top1=top1, top3=top3))

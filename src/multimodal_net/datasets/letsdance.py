@@ -12,7 +12,7 @@ import torch.utils.data as data
 rgb_dir = 'rgb/rgb'
 flow_dir = 'flow_png'
 skeleton_dir = 'densepose/rgb'
-audio_dir = 'audio_beat_mfcc'
+audio_dir = 'audio_png10'
 
 
 def find_classes(dir):
@@ -38,24 +38,28 @@ def make_dataset(source, seg_length, audio=False):
                 duration = int(line_info[2])
                 num_segments = int(math.floor(duration/seg_length))
                 if audio:
-                    file_name = line_info[1][:11]
-                    print(file_name)
-                    target = line_info[0]
+                    for seg_id in range(0, num_segments):
+                        init_frame_id = seg_id * seg_length + 1
+                        target = line_info[0]
+                        file_name = line_info[1][:11]+'_%02d' % seg_id
+                        # file_name = line_info[1][:11]
+                        print(file_name)
+                        item = (file_name, target)
+                        clips.append(item)
 
-                    item = (file_name, target)
                 else:
                     for seg_id in range(0, num_segments):
                         init_frame_id = seg_id * seg_length + 1
                         target = line_info[0]
                         if audio:
-                            # file_name = line_info[1][:11]+'_%02d' % seg_id
-                            file_name = line_info[1][:11]
+                            file_name = line_info[1][:11]+'_%02d' % seg_id
+                            # file_name = line_info[1][:11]
                             print(file_name)
 
                             item = (file_name, target)
                         else:
                             item = (line_info[1], init_frame_id, target)
-                clips.append(item)
+                        clips.append(item)
     return clips
 
 

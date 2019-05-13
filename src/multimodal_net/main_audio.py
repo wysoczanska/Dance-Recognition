@@ -12,8 +12,11 @@ import torch.nn.parallel
 import torch.optim
 import torch.utils.data
 import video_transforms
+from torch.optim.lr_scheduler import ReduceLROnPlateau
 import visualization_utils as vis
 from torchvision import transforms, utils
+import eval
+import numpy as np
 
 model_names = sorted(name for name in models.__dict__
     if name.islower() and not name.startswith("__")
@@ -32,6 +35,7 @@ parser.add_argument('--test_split_file', metavar='DIR',
                     help='path to test files list')
 parser.add_argument('--dataset', '-d', default='ucf101',
                     help='dataset: ucf101 | hmdb51 | letsdance')
+parser.add_argument('--model_path')
 parser.add_argument('--arch', '-a', metavar='ARCH', default='vgg16',
                     help='model architecture (default: alexnet)')
 parser.add_argument('-s', '--split', default=1, type=int, metavar='S',
@@ -73,8 +77,18 @@ best_prec1 = 0
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 
+def load_checkpoint(model, optimizer, model_path):
+    print("=> loading checkpoint '{}'".format(model_path))
+    checkpoint = torch.load(model_path)
+    start_epoch = checkpoint['epoch']
+    model.load_state_dict(checkpoint['state_dict'])
+    optimizer.load_state_dict(checkpoint['optimizer'])
+    print("=> loaded checkpoint '{}' (epoch {})".format(model_path, checkpoint['epoch']))
+    return model, optimizer, start_epoch, 0
+
+
 def build_model(num_classes, model_name):
-    model = models.__dict__[model_name](3, num_classes=1000)
+    model = models.__dict__[model_name](3)
     # model.fc_action = nn.Linear(4096, num_classes)
     if args.arch.endswith('alexnet') or args.arch.startswith('vgg'):
         model.features = torch.nn.DataParallel(model.features)
@@ -107,7 +121,9 @@ def main():
     #                             momentum=args.momentum,
     #                             weight_decay=args.weight_decay)
 
-    optimizer =torch.optim.Adam(model.parameters(), lr=args.lr)
+    # optimizer =torch.optim.SGD(model.parameters(), lr=args.lr, momentum=args.momentum, weight_decay=args.weight_decay)
+    optimizer = torch.optim.Adam(model.parameters(), lr=args.lr)
+    scheduler = ReduceLROnPlateau(optimizer, 'max', patience=3, factor=0.5)
 
     if not os.path.exists(args.resume):
         os.makedirs(args.resume)
@@ -154,10 +170,13 @@ def main():
         val_dataset,
         batch_size=args.batch_size, shuffle=True,
         num_workers=args.workers, pin_memory=True)
-
     if args.evaluate:
-        validate(val_loader, model, criterion, writer, epoch=0)
+        if os.path.isfile(args.model_path):
+            model, optimizer, start_epoch, best_acc1 = load_checkpoint(model, optimizer, args.model_path)
+        validate(val_loader, model, criterion, writer, epoch=0, classes=val_dataset.classes)
         return
+    # if args.resume:
+    #     model, optimizer, start_epoch, best_acc1 = load_checkpoint(model, optimizer, os.path.join(args.resume, 'last_checkpoint.pth.tar'))
 
     for epoch in range(args.start_epoch, args.epochs):
         # adjust_learning_rate(optimizer, epoch, args)
@@ -168,7 +187,8 @@ def main():
         # evaluate on validation set
         prec1 = 0.0
         if (epoch + 1) % args.save_freq == 0:
-            prec1 = validate(val_loader, model, criterion, writer, epoch)
+            prec1 = validate(val_loader, model, criterion, writer, epoch, val_dataset.classes)
+            scheduler.step(prec1, epoch=epoch)
 
         # remember best prec@1 and save checkpoint
         is_best = prec1 > best_prec1
@@ -230,10 +250,11 @@ def train(train_loader, model, criterion, optimizer, epoch, writer):
 
         if i % args.print_freq == 0:
             progress.print(i)
-    writer.add_image('Input', utils.make_grid(input), epoch)
+    if epoch < 2:
+        writer.add_image('Input', utils.make_grid(input), epoch)
 
 
-def validate(val_loader, model, criterion, writer, epoch):
+def validate(val_loader, model, criterion, writer, epoch, classes):
     batch_time = AverageMeter('Time', ':6.3f')
     losses = AverageMeter('Loss', ':.4e')
     top1 = AverageMeter('Acc@1', ':6.2f')
@@ -243,6 +264,8 @@ def validate(val_loader, model, criterion, writer, epoch):
 
     # switch to evaluate mode
     model.eval()
+    predictions = []
+    targets = []
 
     with torch.no_grad():
         end = time.time()
@@ -265,6 +288,11 @@ def validate(val_loader, model, criterion, writer, epoch):
             batch_time.update(time.time() - end)
             end = time.time()
 
+            prediction = output.max(1, keepdim=True)[1].view(-1)
+            target = target.view_as(prediction).cpu().numpy()
+            predictions.append(prediction.cpu().numpy())
+            targets.append(target)
+
             if i % args.print_freq == 0:
                 progress.print(i)
 
@@ -273,6 +301,10 @@ def validate(val_loader, model, criterion, writer, epoch):
         writer.add_scalar('Test/Acc1', top1.avg, epoch)
         writer.add_scalar('Test/Acc3', top3.avg, epoch)
         writer.add_scalar('Test/Loss', losses.avg, epoch)
+        # print(eval.get_metrics(np.concatenate(targets), np.concatenate(predictions)))
+
+        # eval.plot_confusion_matrix(np.concatenate(targets), np.concatenate(predictions), classes, title='Macierz konfuzji').savefig('conf_audio.png')
+
         # vis.visualize_filter(model.module.features[0], writer, epoch)
 
     return top1.avg
