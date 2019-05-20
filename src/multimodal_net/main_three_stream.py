@@ -85,16 +85,17 @@ def main():
     start_epoch=0
     writer = SummaryWriter(args.logdir)
 
-    model = build_model(num_classes=num_classes, input_length=args.new_length*3)
+    model = build_model(num_classes=num_classes, input_length=args.new_length)
 
     print(model)
 
     # create model
     print("Building model ... ")
 
-    model.rgb.features = torch.nn.DataParallel(model.rgb.features)
-    model.skeleton.features = torch.nn.DataParallel(model.skeleton.features)
-    model.flow.features = torch.nn.DataParallel(model.flow.features)
+    # model.rgb = torch.nn.DataParallel(model.rgb)
+    # model.skeleton = torch.nn.DataParallel(model.skeleton)
+    # model.flow = torch.nn.DataParallel(model.flow)
+    model = torch.nn.DataParallel(model)
     model.cuda()
 
     if not os.path.exists(args.out_dir):
@@ -125,7 +126,7 @@ def main():
                                            std=clip_std)
     train_transform = video_transforms.Compose([
             # video_transforms.Scale((256)),
-            video_transforms.Resize((224, 224)),
+            video_transforms.Resize((args.new_width, args.new_height)),
             # video_transforms.RandomHorizontalFlip(),
             video_transforms.ToTensor(),
             normalize,
@@ -133,7 +134,7 @@ def main():
 
     val_transform = video_transforms.Compose([
             # video_transforms.Scale((256)),
-            video_transforms.Resize((224, 224)),
+            video_transforms.Resize((args.new_width, args.new_height)),
             video_transforms.ToTensor(),
             normalize,
         ])
@@ -197,10 +198,7 @@ def main():
 
 
 def build_model(input_length, num_classes):
-    model = models.three_stream_net(num_classes=num_classes)
-    model.rgb.features[0] = nn.Conv2d(input_length, 64, kernel_size=11, stride=4, padding=2)
-    model.flow.features[0] = nn.Conv2d(input_length, 64, kernel_size=11, stride=4, padding=2)
-    model.skeleton.features[0] = nn.Conv2d(input_length, 64, kernel_size=11, stride=4, padding=2)
+    model = models.three_stream_net(num_classes=num_classes, input_length=input_length)
     return model
 
 
@@ -250,10 +248,9 @@ def train(train_loader, model, criterion, optimizer, epoch, args, writer):
         if i % args.print_freq == 0:
             progress.print(i)
     if epoch < 1:
-        writer.add_image('Input RGB', utils.make_grid(input['rgb'][0].view(15,3,224, 224)).cpu(), epoch)
-        writer.add_image('Input Flow', utils.make_grid(input['flow'][0].view(15,3,224, 224)).cpu(), epoch)
-        writer.add_image('Input Skeleton', utils.make_grid(input['skeleton'][0].view(15,3,224, 224)).cpu(), epoch)
-
+        writer.add_image('Input RGB', utils.make_grid(input['rgb'][0].view(args.new_length,3,args.new_width, args.new_height)).cpu(), epoch)
+        writer.add_image('Input Flow', utils.make_grid(input['flow'][0].view(args.new_length,3,args.new_width, args.new_height)).cpu(), epoch)
+        writer.add_image('Input Skeleton', utils.make_grid(input['skeleton'][0].view(args.new_length,3,args.new_width, args.new_height)).cpu(), epoch)
 
 def validate(val_loader, model, criterion, epoch, writer, classes=None):
     batch_time = AverageMeter('Time', ':6.3f')
@@ -291,16 +288,16 @@ def validate(val_loader, model, criterion, epoch, writer, classes=None):
             prediction = output.max(1, keepdim=True)[1].view(-1)
             targets = target.view_as(prediction).cpu().numpy()
 
-            if clip_id[0] not in decisions.keys():
-                decisions[clip_id[0]] = prediction.cpu().numpy()
-                targets_per_clip[clip_id[0]] = targets
-            else:
-                decisions[clip_id[0]]=np.append(decisions[clip_id[0]], prediction.cpu().numpy())
-                targets_per_clip[clip_id[0]]=np.append(targets_per_clip[clip_id[0]], targets)
+            # if clip_id[0] not in decisions.keys():
+            #     decisions[clip_id[0]] = prediction.cpu().numpy()
+            #     targets_per_clip[clip_id[0]] = targets
+            # else:
+            #     decisions[clip_id[0]]=np.append(decisions[clip_id[0]], prediction.cpu().numpy())
+            #     targets_per_clip[clip_id[0]]=np.append(targets_per_clip[clip_id[0]], targets)
 
             if i % args.print_freq == 0:
                 progress.print(i)
-        eval.max_voting(decisions, targets_per_clip, classes)
+        # eval.max_voting(decisions, targets_per_clip, classes)
 
 
         print(' * Acc@1 {top1.avg:.3f} Acc@3 {top3.avg:.3f}'

@@ -98,10 +98,10 @@ class Bottleneck(nn.Module):
 
 class ResNet(nn.Module):
 
-    def __init__(self, block, layers, num_classes=1000):
+    def __init__(self, block, layers, in_channels):
         self.inplanes = 64
         super(ResNet, self).__init__()
-        self.conv1 = nn.Conv2d(20, 64, kernel_size=7, stride=2, padding=3,
+        self.conv1 = nn.Conv2d(in_channels, 64, kernel_size=7, stride=2, padding=3,
                                bias=False)
         self.bn1 = nn.BatchNorm2d(64)
         self.relu = nn.ReLU(inplace=True)
@@ -112,8 +112,8 @@ class ResNet(nn.Module):
         self.layer4 = self._make_layer(block, 512, layers[3], stride=2)
         self.avgpool = nn.AvgPool2d(7)
         # self.fc_aux = nn.Linear(512 * block.expansion, 101)
-        self.dp = nn.Dropout(p=0.7)
-        self.fc_action = nn.Linear(512 * block.expansion, num_classes)
+        # self.dp = nn.Dropout(p=0.7)
+        # self.fc_action = nn.Linear(512 * block.expansion, num_classes)
         # self.bn_final = nn.BatchNorm1d(num_classes)
         # self.fc2 = nn.Linear(num_classes, num_classes)
         # self.fc_final = nn.Linear(num_classes, 101)
@@ -156,8 +156,8 @@ class ResNet(nn.Module):
 
         x = self.avgpool(x)
         x = x.view(x.size(0), -1)
-        x = self.dp(x)
-        x = self.fc_action(x)
+        # x = self.dp(x)
+        # x = self.fc_action(x)
         # x = self.bn_final(x)
         # x = self.fc2(x)
         # x = self.fc_final(x)
@@ -175,7 +175,7 @@ def change_key_names(old_params, in_channels):
         else:
             if layer_count == 0:
                 rgb_weight = old_params[layer_key]
-                # print(type(rgb_weight))
+                print(type(rgb_weight))
                 rgb_weight_mean = torch.mean(rgb_weight, dim=1)
                 # TODO: ugly fix here, why torch.mean() turn tensor to Variable
                 # print(type(rgb_weight_mean))
@@ -190,16 +190,16 @@ def change_key_names(old_params, in_channels):
     
     return new_params
 
-def flow_resnet18(pretrained=False, **kwargs):
+
+def flow_resnet18(pretrained=False, in_channels=3):
     """Constructs a ResNet-18 model.
 
     Args:
         pretrained (bool): If True, returns a model pre-trained on ImageNet
     """
-    model = ResNet(BasicBlock, [2, 2, 2, 2], **kwargs)
+    model = ResNet(BasicBlock, [2, 2, 2, 2], in_channels)
     if pretrained:
         # model.load_state_dict(model_zoo.load_url(model_urls['resnet18']))
-        in_channels = 20
         pretrained_dict = model_zoo.load_url(model_urls['resnet18'])
         model_dict = model.state_dict()
 

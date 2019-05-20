@@ -3,6 +3,8 @@ import multiprocessing as mp
 
 import librosa
 import librosa.display
+import matplotlib
+matplotlib.use('Agg') # No pictures displayed
 import matplotlib.pyplot as plt
 import numpy as np
 import os
@@ -62,17 +64,25 @@ def generate_histogram(sample, root_dir, out_dir):
 def generate_spectrogram(sample, root_dir, out_dir):
 
     # start_time = int(sample.filename[-2:])+int(sample.filename[-3])*60
-    y, sr = librosa.load(os.path.join(root_dir, sample.target, sample.filename[:-4] + '.wav'))
+    y, sr = librosa.load(os.path.join(root_dir, sample.target, sample.filename[:-4] + '.wav'), duration=8)
     # splits = librosa.util.frame(y, frame_length=int(sr/2), hop_length=512)
     if not os.path.exists(os.path.join(out_dir, sample.target)):
         os.mkdir(os.path.join(out_dir, sample.target))
     # librosa.output.write_wav(os.path.join(out_dir, sample.target, sample.filename[:-4] + '.wav'), y, sr)
+    figsize = 1.76, 1.28
+    plt.rcParams["figure.figsize"] = figsize
+
     S = librosa.feature.melspectrogram(y=y, n_mels=128,  hop_length=1024)
+
     librosa.display.specshow(librosa.power_to_db(S, ref=np.max), fmax=8000)
+    dpi = 100
+    # What size does the figure need to be in inches to fit the image?
+
     plt.draw()
     plt.subplots_adjust(left=0, right=1, top=1, bottom=0)
     file_name = sample.filename[:-4] + '.png'
-    plt.savefig(os.path.join(out_dir, sample.target, file_name), dpi=100, bbox_inches=0)
+
+    plt.savefig(os.path.join(out_dir, sample.target, file_name), dpi=dpi, bbox_inches=0)
     plt.close()
     print(sample.target + '/' + file_name)
 

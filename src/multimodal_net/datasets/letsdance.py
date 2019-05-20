@@ -1,6 +1,5 @@
 import math
 import sys
-
 import cv2
 import numpy as np
 # import nvidia.dali.ops as ops
@@ -12,7 +11,7 @@ import torch.utils.data as data
 rgb_dir = 'rgb/rgb'
 flow_dir = 'flow_png'
 skeleton_dir = 'densepose/rgb'
-audio_dir = 'audio_png10'
+audio_dir = 'audio_mfcc'
 
 
 def find_classes(dir):
@@ -38,27 +37,25 @@ def make_dataset(source, seg_length, audio=False):
                 duration = int(line_info[2])
                 num_segments = int(math.floor(duration/seg_length))
                 if audio:
-                    for seg_id in range(0, num_segments):
-                        init_frame_id = seg_id * seg_length + 1
-                        target = line_info[0]
-                        file_name = line_info[1][:11]+'_%02d' % seg_id
-                        # file_name = line_info[1][:11]
-                        print(file_name)
-                        item = (file_name, target)
-                        clips.append(item)
+                    target = line_info[0]
+                    file_name = line_info[1][:11]
+                    print(file_name)
+                    item = (file_name, target)
+                    clips.append(item)
+                    # for seg_id in range(0, num_segments):
+                    #     init_frame_id = seg_id * seg_length + 1
+                    #     target = line_info[0]
+                    #     file_name = line_info[1][:11]+'_%02d' % seg_id
+                    #     # file_name = line_info[1][:11]
+                    #     print(file_name)
+                    #     item = (file_name, target)
+                    #     clips.append(item)
 
                 else:
                     for seg_id in range(0, num_segments):
                         init_frame_id = seg_id * seg_length + 1
                         target = line_info[0]
-                        if audio:
-                            file_name = line_info[1][:11]+'_%02d' % seg_id
-                            # file_name = line_info[1][:11]
-                            print(file_name)
-
-                            item = (file_name, target)
-                        else:
-                            item = (line_info[1], init_frame_id, target)
+                        item = (line_info[1], init_frame_id, target)
                         clips.append(item)
     return clips
 
@@ -98,7 +95,6 @@ def read_segment(clip_id, init_frame_id, root, target, seg_length, is_color, nam
 
     clip_input = {'rgb': np.concatenate(sampled_list_rgb, axis=2), 'flow': np.concatenate(sampled_list_flow, axis=2),
                   'skeleton': np.concatenate(sampled_list_skeleton, axis=2)}
-
     return clip_input
 
 
@@ -141,6 +137,7 @@ class Letsdance(data.Dataset):
         clip_id, init_frame_id, cls = self.clips[index]
         target = self.class_to_idx[cls]
         clip_input = read_segment(clip_id, init_frame_id, self.root, cls, self.seg_length, self.is_color, self.name_pattern)
+        print
         if self.transform is not None:
             clip_input = self.transform(clip_input)
         if self.target_transform is not None:
@@ -198,13 +195,11 @@ class Letsdance_audio(data.Dataset):
         clip_input = cv2.cvtColor(clip_input, cv2.COLOR_BGR2RGB)
 
         if self.transform is not None:
-            clip_input = self.transform(clip_input)
+            sample = self.transform(clip_input)
         if self.target_transform is not None:
             target = self.target_transform(target)
-        if self.video_transform is not None:
-            clip_input = self.video_transform(clip_input)
 
-        return clip_input, target
+        return sample, target
 
     def __len__(self):
         return len(self.clips)

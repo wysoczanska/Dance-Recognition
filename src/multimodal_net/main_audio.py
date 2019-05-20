@@ -150,13 +150,13 @@ def main():
                                                     phase="train",
                                                     is_color=True,
                                                     new_length=args.new_length,
-                                                    video_transform=train_transform)
+                                                    transform=train_transform)
     val_dataset = datasets.__dict__[args.dataset](root=args.data,
                                                   source=args.test_split_file,
                                                   phase="val",
                                                   is_color=True,
                                                   new_length=args.new_length,
-                                                  video_transform=val_transform)
+                                                  transform=val_transform)
 
     print('{} samples found, {} train samples and {} test samples.'.format(len(val_dataset)+len(train_dataset),
                                                                            len(train_dataset),

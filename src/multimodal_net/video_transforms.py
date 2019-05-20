@@ -2,7 +2,7 @@ from __future__ import division
 
 import math
 import numbers
-
+import librosa
 import cv2
 import numpy as np
 import random
@@ -349,6 +349,65 @@ class Resize(object):
         h, w, c = clips.shape
         clips = cv2.resize(clips, (self.width, self.height), interpolation=self.interpolation)
         return clips
+
+
+class MEL(object):
+    def __init__(self, sr=22050, n_mels=128, hop_length=1024):
+        self.n_mels = n_mels
+        self.sr = sr
+        self.hop_length = hop_length
+
+    def __call__(self, tensor):
+        L = []
+        for i in range(tensor.size(1)):
+            nparr = tensor[:, i].numpy()  # (samples, )
+            sgram = librosa.feature.melspectrogram(nparr, n_mels=self.n_mels, hop_length=self.hop_length)  # (n_mels, hops)
+            L.append(sgram)
+        L = np.stack(L, 2)  # (n_mels, hops, channels)
+        tensor = torch.from_numpy(L).type_as(tensor)
+
+        return tensor
+
+
+class PadTrim(object):
+    """Pad/Trim a 1d-Tensor (Signal or Labels)
+
+    Args:
+        tensor (Tensor): Tensor of audio of size (n x c) or (c x n)
+        max_len (int): Length to which the tensor will be padded
+        channels_first (bool): Pad for channels first tensors.  Default: `True`
+
+    """
+
+    def __init__(self, max_len, fill_value=0, channels_first=True):
+        self.max_len = max_len
+        self.fill_value = fill_value
+        self.len_dim, self.ch_dim = int(channels_first), int(not channels_first)
+
+    def __call__(self, tensor):
+        """
+
+        Returns:
+            Tensor: (c x Ln or (n x c)
+
+        """
+
+        tensor = torch.from_numpy(tensor.reshape(1, -1))
+        assert tensor.size(self.ch_dim) < 128, \
+               "Too many channels ({}) detected, look at channels_first param.".format(tensor.size(self.ch_dim))
+        if self.max_len > tensor.size(self.len_dim):
+
+            padding_size = [self.max_len - tensor.size(self.len_dim) if i == self.len_dim
+                            else tensor.size(self.ch_dim)
+                            for i in range(2)]
+            pad = torch.empty(padding_size, dtype=tensor.dtype).fill_(self.fill_value)
+            tensor = torch.cat((tensor, pad), dim=self.len_dim)
+        elif self.max_len < tensor.size(self.len_dim):
+            tensor = tensor.narrow(self.len_dim, 0, self.max_len)
+        return tensor
+
+    def __repr__(self):
+        return self.__class__.__name__ + '(max_len={0})'.format(self.max_len)
 
 
 
