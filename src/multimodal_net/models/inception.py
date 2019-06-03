@@ -39,14 +39,32 @@ def inception_v3(pretrained=False, progress=True, input_length=1, **kwargs):
         else:
             original_aux_logits = True
         model = Inception3(input_length=input_length, **kwargs)
-        state_dict = model_zoo.load_url(model_urls['inception_v3_google'],
+        pretrained_dict = model_zoo.load_url(model_urls['inception_v3_google'],
                                               progress=progress)
-        new_pretrained_dict = change_key_names(state_dict, input_length)
 
-        model.load_state_dict(new_pretrained_dict)
+        model_dict = model.state_dict()
+
+        new_pretrained_dict = change_key_names(pretrained_dict, input_length)
+        # 1. filter out unnecessary keys
+        new_pretrained_dict = {k: v for k, v in new_pretrained_dict.items() if k in model_dict}
+        # 2. overwrite entries in the existing state dict
+        model_dict.update(new_pretrained_dict)
+        # 3. load the new state dict
+        model.load_state_dict(model_dict)
         # freeze params
-        for p in model.parameters():
-            p.requires_grad = False
+        for i, param in model.named_parameters():
+            param.requires_grad = False
+        ct = []
+        for name, child in model.named_modules():
+            if "Mixed_5d" in ct:
+                for params in child.parameters():
+                    params.requires_grad = True
+            ct.append(name)
+
+        # To view which layers are frozen and which layers are not frozen:
+        # for name, child in model.named_modules():
+        #     for name_2, params in child.named_parameters():
+        #         print(name_2, params.requires_grad)
         model.AuxLogits.fc = nn.Linear(768, 16)
         if not original_aux_logits:
             model.aux_logits = False
@@ -80,7 +98,7 @@ class Inception3(nn.Module):
         self.Mixed_7a = InceptionD(768)
         self.Mixed_7b = InceptionE(1280)
         self.Mixed_7c = InceptionE(2048)
-        # self.fc = nn.Linear(2048, num_classes)
+        self.fc = nn.Linear(2048, num_classes)
 
         for m in self.modules():
             if isinstance(m, nn.Conv2d) or isinstance(m, nn.Linear):
@@ -132,8 +150,8 @@ class Inception3(nn.Module):
         # N x 768 x 17 x 17
         x = self.Mixed_6e(x)
         # N x 768 x 17 x 17
-        # if self.training and self.aux_logits:
-        #     aux = self.AuxLogits(x)
+        if self.training and self.aux_logits:
+            aux = self.AuxLogits(x)
         # N x 768 x 17 x 17
         x = self.Mixed_7a(x)
         # N x 1280 x 8 x 8
@@ -148,10 +166,10 @@ class Inception3(nn.Module):
         # N x 2048 x 1 x 1
         x = x.view(x.size(0), -1)
         # N x 2048
-        # x = self.fc(x)
+        x = self.fc(x)
         # N x 1000 (num_classes)
-        # if self.training and self.aux_logits:
-        # return _InceptionOuputs(x, aux)
+        if self.training and self.aux_logits:
+            return _InceptionOuputs(x, aux)
         return x
 
 

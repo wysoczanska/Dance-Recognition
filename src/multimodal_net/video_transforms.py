@@ -29,7 +29,7 @@ class Compose(object):
     def __call__(self, clips):
         for t in self.video_transforms:
             for modality, frames in clips.items():
-                clips[modality] = t(frames)
+                clips[modality] = t(frames, modality)
             # clips = t(clips)
         return clips
 
@@ -47,7 +47,7 @@ class ToTensor(object):
     [0, 255] to a torch.FloatTensor of shape (C x H x W) in the range [0.0, 1.0].
     """
 
-    def __call__(self, clips):
+    def __call__(self, clips, modality):
         if isinstance(clips, np.ndarray):
             # handle numpy array
             clips = torch.from_numpy(clips.transpose((2, 0, 1)))
@@ -67,9 +67,9 @@ class Normalize(object):
         self.mean = mean
         self.std = std
 
-    def __call__(self, tensor):
+    def __call__(self, tensor, modality):
         # TODO: make efficient
-        for t, m, s in zip(tensor, self.mean, self.std):
+        for t, m, s in zip(tensor, self.mean[modality], self.std[modality]):
             t.sub_(m).div_(s)
         return tensor
 
@@ -345,8 +345,7 @@ class Resize(object):
         self.width = size[1]
         self.interpolation = interpolation
 
-    def __call__(self, clips):
-        h, w, c = clips.shape
+    def __call__(self, clips, modality):
         clips = cv2.resize(clips, (self.width, self.height), interpolation=self.interpolation)
         return clips
 

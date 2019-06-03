@@ -4,9 +4,12 @@ import cv2
 import numpy as np
 # import nvidia.dali.ops as ops
 # import nvidia.dali.types as types
+import video_transforms as transforms
 import os
-import torch.utils.data as data
+import torch.utils.data as data_flow
+import torch.utils.data
 # from nvidia.dali.pipeline import Pipeline
+import tqdm
 
 rgb_dir = 'rgb/rgb'
 flow_dir = 'flow_png'
@@ -85,7 +88,6 @@ def read_segment(clip_id, init_frame_id, root, target, seg_length, is_color, nam
 
         if cv_img_origin is None or cv_img_flow is None or cv_img_skeleton is None:
             print("Could not load file %s, %s" % (target, frame_id))
-            sys.exit()
         cv_img_rgb = cv2.cvtColor(cv_img_origin, cv2.COLOR_BGR2RGB)
         cv_img_flow = cv2.cvtColor(cv_img_flow, cv2.COLOR_BGR2RGB)
         cv_img_skeleton = cv2.cvtColor(cv_img_skeleton, cv2.COLOR_BGR2RGB)
@@ -98,7 +100,7 @@ def read_segment(clip_id, init_frame_id, root, target, seg_length, is_color, nam
     return clip_input
 
 
-class Letsdance(data.Dataset):
+class Letsdance(data_flow.Dataset):
 
     def __init__(self,
                  root,
@@ -137,13 +139,14 @@ class Letsdance(data.Dataset):
         clip_id, init_frame_id, cls = self.clips[index]
         target = self.class_to_idx[cls]
         clip_input = read_segment(clip_id, init_frame_id, self.root, cls, self.seg_length, self.is_color, self.name_pattern)
-        print
+
         if self.transform is not None:
             clip_input = self.transform(clip_input)
         if self.target_transform is not None:
             target = self.target_transform(target)
         if self.video_transform is not None:
             clip_input = self.video_transform(clip_input)
+
         if self.return_id:
             return clip_input, target, clip_id
         else:
@@ -153,7 +156,7 @@ class Letsdance(data.Dataset):
         return len(self.clips)
 
 
-class Letsdance_audio(data.Dataset):
+class Letsdance_audio(data_flow.Dataset):
     def __init__(self,
                  root,
                  source,
@@ -261,3 +264,53 @@ class ModalityInputIterator(object):
 #         (batch, labels) = self.iterator.next()
 #         self.feed_input(self.batch, batch)
 #         self.feed_input(self.labels, labels)
+
+if __name__ == '__main__':
+    data_flow= '/data/inputs/jersey_number_recognition/letsdance/'
+    train_split_file='/home/m.wysoczanska/Dance-Recognition/src/multimodal_net/datasets/letsdance_splits/train.csv'
+    train_transform = transforms.Compose([
+            # video_transforms.Scale((256)),
+            transforms.Resize((299, 299)),
+            # video_transforms.RandomHorizontalFlip(),
+            transforms.ToTensor(),
+            # normalize,
+        ])
+    train_dataset = Letsdance(data_flow, source=train_split_file,
+                              phase="train",
+                              is_color=True,
+                              new_length=1,
+                              video_transform=train_transform)
+    mean_flow = 0.
+    std_flow = 0.
+    mean_s = 0.
+    std_s = 0.
+    nb_samples = 0.
+    loader = torch.utils.data.DataLoader(
+        train_dataset,
+        batch_size=120,
+        num_workers=30,
+        shuffle=False
+    )
+    print(len(loader))
+    for i, (data, target) in tqdm.tqdm(enumerate(loader)):
+        data_flow=data['flow']
+        data_skeleton=data['skeleton']
+        batch_samples = data_flow.size(0)
+        data_flow = data_flow.view(batch_samples, data_flow.size(1), -1)
+        mean_flow += data_flow.mean(2).sum(0)
+        std_flow += data_flow.std(2).sum(0)
+        mean_s += data_skeleton.mean(2).sum(0)
+        std_s += data_skeleton.std(2).sum(0)
+        nb_samples += batch_samples
+
+    mean_flow /= nb_samples
+    std_flow /= nb_samples
+
+    mean_s /= nb_samples
+    std_s /= nb_samples
+
+    print(mean_flow)
+    print(std_flow)
+
+    print(mean_s)
+    print(std_s)

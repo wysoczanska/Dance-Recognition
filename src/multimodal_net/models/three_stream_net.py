@@ -14,7 +14,7 @@ class ThreeStreamNet(nn.Module):
         self.flow = inception_v3(pretrained=True, input_length=input_length)
         self.skeleton = inception_v3(pretrained=True, input_length=input_length)
         self.classifier = nn.Sequential(
-            nn.Linear(2048*3, 2048),
+            nn.Linear(1000*3, 2048),
             nn.ReLU(inplace=True),
             nn.Linear(2048, num_classes)
         )
@@ -23,10 +23,16 @@ class ThreeStreamNet(nn.Module):
         x1 = self.rgb(x['rgb'])
         x2 = self.flow(x['flow'])
         x3 = self.skeleton(x['skeleton'])
-        x = torch.stack((x1, x2, x3), dim=2)
-        x = x.view(x.size(0), -1)
-        x = self.classifier(x)
-        return x
+        if self.training:
+            x = torch.stack((x1[0], x2[0], x3[0]), dim=2)
+            x = x.view(x.size(0), -1)
+            x = self.classifier(x)
+            return x, [x1[1], x2[1], x3[1]]
+        else:
+            x = torch.stack((x1, x2, x3), dim=2)
+            x = x.view(x.size(0), -1)
+            x = self.classifier(x)
+            return x
 
 
 def my_alexnet(pretrained=True):

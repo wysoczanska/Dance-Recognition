@@ -108,7 +108,7 @@ def main():
     optimizer = torch.optim.SGD(model.parameters(), args.lr,
                                 momentum=args.momentum,
                                 weight_decay=args.weight_decay)
-    scheduler = ReduceLROnPlateau(optimizer, 'max')
+    scheduler = ReduceLROnPlateau(optimizer, verbose=True, patience=4)
 
     # if resume set to True, load the model and continue training
     if args.resume or args.evaluate:
@@ -118,9 +118,11 @@ def main():
     cudnn.benchmark = True
 
     is_color = True
-    scale_ratios = [1.0, 0.875, 0.75, 0.66]
-    clip_mean = [0.485, 0.456, 0.406] * args.new_length
-    clip_std = [0.229, 0.224, 0.225] * args.new_length
+    # scale_ratios = [1.0, 0.875, 0.75, 0.66]
+    clip_mean = {'rgb': [0.485, 0.456, 0.406] * args.new_length, 'flow': [0.9432, 0.9359, 0.9511] *args.new_length,
+                 'skeleton': [0.0071, 0.0078, 0.0079]*args.new_length}
+    clip_std = {'rgb': [0.229, 0.224, 0.225] * args.new_length, 'flow': [0.0788, 0.0753, 0.0683] * args.new_length,
+                'skeleton': [0.0581, 0.0621, 0.0623] * args.new_length}
 
     normalize = video_transforms.Normalize(mean=clip_mean,
                                            std=clip_std)
@@ -178,8 +180,8 @@ def main():
         train(train_loader, model, criterion, optimizer, epoch, args, writer)
 
         # evaluate on validation set
-        acc1 = validate(val_loader, model, criterion, epoch, writer)
-        scheduler.step(acc1, epoch=epoch)
+        acc1, loss = validate(val_loader, model, criterion, epoch, writer)
+        scheduler.step(loss, epoch=epoch)
 
         # remember best acc@1 and save checkpoint
         is_best = acc1 > best_acc1
@@ -224,8 +226,10 @@ def train(train_loader, model, criterion, optimizer, epoch, args, writer):
         target = target.cuda(non_blocking=True)
 
         # compute output
-        output = model(input)
+        output, aux_outputs = model(input)
         loss = criterion(output, target)
+        loss2 = sum([criterion(aux_output, target) for aux_output in aux_outputs])
+        loss = loss + 0.4 * loss2
 
         # measure accuracy and record loss
         acc1, acc3 = accuracy(output, target, topk=(1, 3))
@@ -299,14 +303,13 @@ def validate(val_loader, model, criterion, epoch, writer, classes=None):
                 progress.print(i)
         # eval.max_voting(decisions, targets_per_clip, classes)
 
-
         print(' * Acc@1 {top1.avg:.3f} Acc@3 {top3.avg:.3f}'
               .format(top1=top1, top3=top3))
         writer.add_scalar('Test/Acc1', top1.avg, epoch)
         writer.add_scalar('Test/Acc3', top3.avg, epoch)
         writer.add_scalar('Test/Loss', losses.avg, epoch)
 
-    return top1.avg
+    return top1.avg, loss.item()
 
 
 def load_checkpoint(model, optimizer, model_path):
