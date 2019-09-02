@@ -2,13 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="d41d8c1f-8823-440c-8339-3f7a51fe88d1" name="Default Changelist" comment="Cleaning">
-      <change afterPath="$PROJECT_DIR$/.idea/markdown-exported-files.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/multimodal_net/eval.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/multimodal_net/eval.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/multimodal_net/main_audio.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/multimodal_net/main_audio.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/multimodal_net/main_three_stream.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/multimodal_net/main_three_stream.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/multimodal_net/skorch_audio.py" beforeDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -56,6 +50,7 @@
       </map>
     </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+    <option name="RESET_MODE" value="HARD" />
   </component>
   <component name="ProjectId" id="1OalcDTqeXp6KS84AKcxToQGjgS" />
   <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
@@ -458,6 +453,17 @@
     <option name="LAST_COMMIT_MESSAGE" value="Cleaning" />
     <option name="REARRANGE_BEFORE_PROJECT_COMMIT" value="true" />
     <option name="GROUP_MULTIFILE_MERGE_BY_DIRECTORY" value="true" />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/src/multimodal_net/eval.py</url>
+          <line>20</line>
+          <option name="timeStamp" value="1" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
     <SUITE FILE_PATH="coverage/Dance_Recognition$eval.coverage" NAME="eval Coverage Results" MODIFIED="1557079602208" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/src/multimodal_net" />
