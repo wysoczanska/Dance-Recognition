@@ -11,12 +11,13 @@ import torch.nn as nn
 import torch.nn.parallel
 import torch.optim
 import torch.utils.data
-import video_transforms
+import audio_transforms
 from torch.optim.lr_scheduler import ReduceLROnPlateau
 import visualization_utils as vis
 from torchvision import transforms, utils
 import eval
 import numpy as np
+import pickle
 
 model_names = sorted(name for name in models.__dict__
     if name.islower() and not name.startswith("__")
@@ -33,13 +34,9 @@ parser.add_argument('--train_split_file', metavar='DIR',
                     help='path to train files list')
 parser.add_argument('--test_split_file', metavar='DIR',
                     help='path to test files list')
-parser.add_argument('--dataset', '-d', default='ucf101',
-                    help='dataset: ucf101 | hmdb51 | letsdance')
+parser.add_argument('--dataset', '-d', default='Letsdance')
 parser.add_argument('--model_path')
-parser.add_argument('--arch', '-a', metavar='ARCH', default='vgg16',
-                    help='model architecture (default: alexnet)')
-parser.add_argument('-s', '--split', default=1, type=int, metavar='S',
-                    help='which split of data to work on (default: 1)')
+parser.add_argument('--arch', '-a', metavar='ARCH', default='BBNN')
 parser.add_argument('-j', '--workers', default=4, type=int, metavar='N',
                     help='number of data loading workers (default: 4)')
 parser.add_argument('--epochs', default=250, type=int, metavar='N',
@@ -60,8 +57,6 @@ parser.add_argument('--lr', '--learning-rate', default=0.001, type=float,
                     metavar='LR', help='initial learning rate')
 parser.add_argument('--lr_steps', default=[50, 100, 150, 200], type=float, nargs="+",
                     metavar='LRSteps', help='epochs to decay learning rate by 10')
-parser.add_argument('--momentum', default=0.9, type=float, metavar='M',
-                    help='momentum')
 parser.add_argument('--weight-decay', '--wd', default=5e-4, type=float,
                     metavar='W', help='weight decay (default: 5e-4)')
 parser.add_argument('--print-freq', default=50, type=int,
@@ -123,7 +118,7 @@ def main():
 
     # optimizer =torch.optim.SGD(model.parameters(), lr=args.lr, momentum=args.momentum, weight_decay=args.weight_decay)
     optimizer = torch.optim.Adam(model.parameters(), lr=args.lr)
-    scheduler = ReduceLROnPlateau(optimizer, 'max', patience=3, factor=0.5)
+    scheduler = ReduceLROnPlateau(optimizer, 'max', patience=3, factor=0.5, verbose=True)
 
     if not os.path.exists(args.resume):
         os.makedirs(args.resume)
@@ -133,15 +128,15 @@ def main():
 
     train_transform = transforms.Compose([
             # video_transforms.Scale((256)),
-            video_transforms.Resize((args.new_height, args.new_width)),
-            video_transforms.ToTensor(),
+            audio_transforms.Resize((args.new_height, args.new_width)),
+            audio_transforms.ToTensor(),
             # normalize,
         ])
 
     val_transform = transforms.Compose([
             # video_transforms.Scale((256)),
-            video_transforms.Resize((args.new_height, args.new_width)),
-            video_transforms.ToTensor(),
+            audio_transforms.Resize((args.new_height, args.new_width)),
+            audio_transforms.ToTensor(),
             # normalize,
         ])
 
@@ -156,7 +151,8 @@ def main():
                                                   phase="val",
                                                   is_color=True,
                                                   new_length=args.new_length,
-                                                  transform=val_transform)
+                                                  transform=val_transform,
+                                                  return_id=True)
 
     print('{} samples found, {} train samples and {} test samples.'.format(len(val_dataset)+len(train_dataset),
                                                                            len(train_dataset),
@@ -266,11 +262,12 @@ def validate(val_loader, model, criterion, writer, epoch, classes):
     model.eval()
     predictions = []
     targets = []
+    decisions_per_clip = {}
 
     with torch.no_grad():
         end = time.time()
 
-        for i, (input, target) in enumerate(val_loader):
+        for i, (input, target, clip_id) in enumerate(val_loader):
             input = input.cuda(async=True)
             target = target.cuda(async=True)
 
@@ -292,6 +289,8 @@ def validate(val_loader, model, criterion, writer, epoch, classes):
             target = target.view_as(prediction).cpu().numpy()
             predictions.append(prediction.cpu().numpy())
             targets.append(target)
+            decisions_per_clip[clip_id[0]] = output.view(-1).cpu().numpy()
+            print(clip_id[0])
 
             if i % args.print_freq == 0:
                 progress.print(i)
@@ -301,9 +300,12 @@ def validate(val_loader, model, criterion, writer, epoch, classes):
         writer.add_scalar('Test/Acc1', top1.avg, epoch)
         writer.add_scalar('Test/Acc3', top3.avg, epoch)
         writer.add_scalar('Test/Loss', losses.avg, epoch)
-        # print(eval.get_metrics(np.concatenate(targets), np.concatenate(predictions)))
+        print(eval.get_metrics(np.concatenate(targets), np.concatenate(predictions)))
+        # pickle.dump(decisions_per_clip, open('audio_predictions_val.pkl', 'wb'))
+        print(len(decisions_per_clip))
 
-        # eval.plot_confusion_matrix(np.concatenate(targets), np.concatenate(predictions), classes, title='Macierz konfuzji').savefig('conf_audio.png')
+        #
+        eval.plot_confusion_matrix(np.concatenate(targets), np.concatenate(predictions), classes, title='Confusion matrix').savefig('conf_audio.png')
 
         # vis.visualize_filter(model.module.features[0], writer, epoch)
 

@@ -18,6 +18,7 @@ from torch.optim.lr_scheduler import ReduceLROnPlateau
 from sklearn.metrics import f1_score, recall_score, precision_score, accuracy_score
 import numpy as np
 import eval
+import pickle
 
 
 model_names = sorted(name for name in models.__dict__
@@ -33,9 +34,7 @@ parser.add_argument('--train_split_file', metavar='DIR',
                     help='path to train files list')
 parser.add_argument('--test_split_file', metavar='DIR',
                     help='path to test files list')
-parser.add_argument('--dataset', '-d', default='ucf101',
-                    choices=["ucf101", "Letsdance"],
-                    help='dataset: ucf101 | letsdance')
+parser.add_argument('--dataset', '-d', default='Letsdance')
 parser.add_argument('--logdir',
                     help='tensorboard log directory')
 parser.add_argument('--out_dir', type=str, help='Directory with saved models', default='./checkpoints')
@@ -47,7 +46,7 @@ parser.add_argument('-j', '--workers', default=4, type=int, metavar='N',
 parser.add_argument('--epochs', default=250, type=int, metavar='N',
                     help='number of total epochs to run')
 parser.add_argument('--start-epoch', default=0, type=int, metavar='N',
-                    help='tmanual epoch number (useful on restarts)')
+                    help='manual epoch number (useful on restarts)')
 parser.add_argument('-b', '--batch-size', default=25, type=int,
                     metavar='N', help='mini-batch size (default: 50)')
 parser.add_argument('--iter-size', default=5, type=int,
@@ -92,9 +91,6 @@ def main():
     # create model
     print("Building model ... ")
 
-    # model.rgb = torch.nn.DataParallel(model.rgb)
-    # model.skeleton = torch.nn.DataParallel(model.skeleton)
-    # model.flow = torch.nn.DataParallel(model.flow)
     model = torch.nn.DataParallel(model)
     model.cuda()
 
@@ -127,15 +123,12 @@ def main():
     normalize = video_transforms.Normalize(mean=clip_mean,
                                            std=clip_std)
     train_transform = video_transforms.Compose([
-            # video_transforms.Scale((256)),
             video_transforms.Resize((args.new_width, args.new_height)),
-            # video_transforms.RandomHorizontalFlip(),
             video_transforms.ToTensor(),
             normalize,
         ])
 
     val_transform = video_transforms.Compose([
-            # video_transforms.Scale((256)),
             video_transforms.Resize((args.new_width, args.new_height)),
             video_transforms.ToTensor(),
             normalize,
@@ -228,8 +221,6 @@ def train(train_loader, model, criterion, optimizer, epoch, args, writer):
         # compute output
         output, aux_outputs = model(input)
         loss = criterion(output, target)
-        loss2 = sum([criterion(aux_output, target) for aux_output in aux_outputs])
-        loss = loss + 0.4 * loss2
 
         # measure accuracy and record loss
         acc1, acc3 = accuracy(output, target, topk=(1, 3))
@@ -256,6 +247,7 @@ def train(train_loader, model, criterion, optimizer, epoch, args, writer):
         writer.add_image('Input Flow', utils.make_grid(input['flow'][0].view(args.new_length,3,args.new_width, args.new_height)).cpu(), epoch)
         writer.add_image('Input Skeleton', utils.make_grid(input['skeleton'][0].view(args.new_length,3,args.new_width, args.new_height)).cpu(), epoch)
 
+
 def validate(val_loader, model, criterion, epoch, writer, classes=None):
     batch_time = AverageMeter('Time', ':6.3f')
     losses = AverageMeter('Loss', ':.4e')
@@ -265,6 +257,7 @@ def validate(val_loader, model, criterion, epoch, writer, classes=None):
                              prefix='Test: ')
     decisions={}
     targets_per_clip={}
+    outputs_clip ={}
 
     # switch to evaluate mode
     model.eval()
@@ -292,16 +285,21 @@ def validate(val_loader, model, criterion, epoch, writer, classes=None):
             prediction = output.max(1, keepdim=True)[1].view(-1)
             targets = target.view_as(prediction).cpu().numpy()
 
-            # if clip_id[0] not in decisions.keys():
-            #     decisions[clip_id[0]] = prediction.cpu().numpy()
-            #     targets_per_clip[clip_id[0]] = targets
-            # else:
-            #     decisions[clip_id[0]]=np.append(decisions[clip_id[0]], prediction.cpu().numpy())
-            #     targets_per_clip[clip_id[0]]=np.append(targets_per_clip[clip_id[0]], targets)
+            if clip_id[0] not in decisions.keys():
+                decisions[clip_id[0]] = prediction.cpu().numpy()
+                targets_per_clip[clip_id[0]] = targets
+                outputs_clip[clip_id[0]] = output.view(-1).cpu().numpy()
+            else:
+                decisions[clip_id[0]] = np.append(decisions[clip_id[0]], prediction.cpu().numpy())
+                targets_per_clip[clip_id[0]] = np.append(targets_per_clip[clip_id[0]], targets)
+                outputs_clip[clip_id[0]] = np.append(outputs_clip[clip_id[0]], output.view(-1).cpu().numpy())
+
+
 
             if i % args.print_freq == 0:
                 progress.print(i)
-        # eval.max_voting(decisions, targets_per_clip, classes)
+        eval.max_voting(decisions, targets_per_clip, classes)
+        # pickle.dump(outputs_clip, open('final_outs_train_vis.pkl', 'wb'))
 
         print(' * Acc@1 {top1.avg:.3f} Acc@3 {top3.avg:.3f}'
               .format(top1=top1, top3=top3))

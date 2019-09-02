@@ -11,7 +11,9 @@ model_urls = {
 
 
 def alexnet(input_length, num_classes):
+
     model = models.alexnet(pretrained=True, num_classes=1000)
+    model.features[0] = nn.Conv2d(3*input_length, 64, kernel_size=11, stride=4, padding=2)
     model.classifier[-1] = nn.Linear(4096, num_classes)
 
     pretrained_dict = model_zoo.load_url(model_urls['alexnet'])
@@ -25,6 +27,13 @@ def alexnet(input_length, num_classes):
     model_dict.update(new_pretrained_dict)
     # 3. load the new state dict
     model.load_state_dict(model_dict)
+
+    for p in model.features.parameters():
+        p.requires_grad = False
+
+    # remove final layer
+    modules = list(model.classifier.children())[:-4]
+    model.classifier = nn.Sequential(*modules)
 
     return model
 

@@ -2,6 +2,7 @@ import torch
 import torch.nn as nn
 from torchvision import models
 from .inception import inception_v3
+from .my_alexnet import alexnet
 
 __all__ = ['three_stream_net']
 
