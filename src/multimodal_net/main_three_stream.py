@@ -18,6 +18,7 @@ from torch.optim.lr_scheduler import ReduceLROnPlateau
 from sklearn.metrics import f1_score, recall_score, precision_score, accuracy_score
 import numpy as np
 import eval
+import pickle
 
 
 model_names = sorted(name for name in models.__dict__
@@ -33,9 +34,7 @@ parser.add_argument('--train_split_file', metavar='DIR',
                     help='path to train files list')
 parser.add_argument('--test_split_file', metavar='DIR',
                     help='path to test files list')
-parser.add_argument('--dataset', '-d', default='ucf101',
-                    choices=["ucf101", "Letsdance"],
-                    help='dataset: ucf101 | letsdance')
+parser.add_argument('--dataset', '-d', default='Letsdance')
 parser.add_argument('--logdir',
                     help='tensorboard log directory')
 parser.add_argument('--out_dir', type=str, help='Directory with saved models', default='./checkpoints')
@@ -47,7 +46,7 @@ parser.add_argument('-j', '--workers', default=4, type=int, metavar='N',
 parser.add_argument('--epochs', default=250, type=int, metavar='N',
                     help='number of total epochs to run')
 parser.add_argument('--start-epoch', default=0, type=int, metavar='N',
-                    help='tmanual epoch number (useful on restarts)')
+                    help='manual epoch number (useful on restarts)')
 parser.add_argument('-b', '--batch-size', default=25, type=int,
                     metavar='N', help='mini-batch size (default: 50)')
 parser.add_argument('--iter-size', default=5, type=int,
@@ -85,16 +84,14 @@ def main():
     start_epoch=0
     writer = SummaryWriter(args.logdir)
 
-    model = build_model(num_classes=num_classes, input_length=args.new_length*3)
+    model = build_model(num_classes=num_classes, input_length=args.new_length)
 
     print(model)
 
     # create model
     print("Building model ... ")
 
-    model.rgb.features = torch.nn.DataParallel(model.rgb.features)
-    model.skeleton.features = torch.nn.DataParallel(model.skeleton.features)
-    model.flow.features = torch.nn.DataParallel(model.flow.features)
+    model = torch.nn.DataParallel(model)
     model.cuda()
 
     if not os.path.exists(args.out_dir):
@@ -107,7 +104,7 @@ def main():
     optimizer = torch.optim.SGD(model.parameters(), args.lr,
                                 momentum=args.momentum,
                                 weight_decay=args.weight_decay)
-    scheduler = ReduceLROnPlateau(optimizer, 'max')
+    scheduler = ReduceLROnPlateau(optimizer, verbose=True, patience=4)
 
     # if resume set to True, load the model and continue training
     if args.resume or args.evaluate:
@@ -117,23 +114,22 @@ def main():
     cudnn.benchmark = True
 
     is_color = True
-    scale_ratios = [1.0, 0.875, 0.75, 0.66]
-    clip_mean = [0.485, 0.456, 0.406] * args.new_length
-    clip_std = [0.229, 0.224, 0.225] * args.new_length
+    # scale_ratios = [1.0, 0.875, 0.75, 0.66]
+    clip_mean = {'rgb': [0.485, 0.456, 0.406] * args.new_length, 'flow': [0.9432, 0.9359, 0.9511] *args.new_length,
+                 'skeleton': [0.0071, 0.0078, 0.0079]*args.new_length}
+    clip_std = {'rgb': [0.229, 0.224, 0.225] * args.new_length, 'flow': [0.0788, 0.0753, 0.0683] * args.new_length,
+                'skeleton': [0.0581, 0.0621, 0.0623] * args.new_length}
 
     normalize = video_transforms.Normalize(mean=clip_mean,
                                            std=clip_std)
     train_transform = video_transforms.Compose([
-            # video_transforms.Scale((256)),
-            video_transforms.Resize((224, 224)),
-            # video_transforms.RandomHorizontalFlip(),
+            video_transforms.Resize((args.new_width, args.new_height)),
             video_transforms.ToTensor(),
             normalize,
         ])
 
     val_transform = video_transforms.Compose([
-            # video_transforms.Scale((256)),
-            video_transforms.Resize((224, 224)),
+            video_transforms.Resize((args.new_width, args.new_height)),
             video_transforms.ToTensor(),
             normalize,
         ])
@@ -177,8 +173,8 @@ def main():
         train(train_loader, model, criterion, optimizer, epoch, args, writer)
 
         # evaluate on validation set
-        acc1 = validate(val_loader, model, criterion, epoch, writer)
-        scheduler.step(acc1, epoch=epoch)
+        acc1, loss = validate(val_loader, model, criterion, epoch, writer)
+        scheduler.step(loss, epoch=epoch)
 
         # remember best acc@1 and save checkpoint
         is_best = acc1 > best_acc1
@@ -197,10 +193,7 @@ def main():
 
 
 def build_model(input_length, num_classes):
-    model = models.three_stream_net(num_classes=num_classes)
-    model.rgb.features[0] = nn.Conv2d(input_length, 64, kernel_size=11, stride=4, padding=2)
-    model.flow.features[0] = nn.Conv2d(input_length, 64, kernel_size=11, stride=4, padding=2)
-    model.skeleton.features[0] = nn.Conv2d(input_length, 64, kernel_size=11, stride=4, padding=2)
+    model = models.three_stream_net(num_classes=num_classes, input_length=input_length)
     return model
 
 
@@ -226,7 +219,7 @@ def train(train_loader, model, criterion, optimizer, epoch, args, writer):
         target = target.cuda(non_blocking=True)
 
         # compute output
-        output = model(input)
+        output, aux_outputs = model(input)
         loss = criterion(output, target)
 
         # measure accuracy and record loss
@@ -250,9 +243,9 @@ def train(train_loader, model, criterion, optimizer, epoch, args, writer):
         if i % args.print_freq == 0:
             progress.print(i)
     if epoch < 1:
-        writer.add_image('Input RGB', utils.make_grid(input['rgb'][0].view(15,3,224, 224)).cpu(), epoch)
-        writer.add_image('Input Flow', utils.make_grid(input['flow'][0].view(15,3,224, 224)).cpu(), epoch)
-        writer.add_image('Input Skeleton', utils.make_grid(input['skeleton'][0].view(15,3,224, 224)).cpu(), epoch)
+        writer.add_image('Input RGB', utils.make_grid(input['rgb'][0].view(args.new_length,3,args.new_width, args.new_height)).cpu(), epoch)
+        writer.add_image('Input Flow', utils.make_grid(input['flow'][0].view(args.new_length,3,args.new_width, args.new_height)).cpu(), epoch)
+        writer.add_image('Input Skeleton', utils.make_grid(input['skeleton'][0].view(args.new_length,3,args.new_width, args.new_height)).cpu(), epoch)
 
 
 def validate(val_loader, model, criterion, epoch, writer, classes=None):
@@ -264,6 +257,7 @@ def validate(val_loader, model, criterion, epoch, writer, classes=None):
                              prefix='Test: ')
     decisions={}
     targets_per_clip={}
+    outputs_clip ={}
 
     # switch to evaluate mode
     model.eval()
@@ -294,14 +288,18 @@ def validate(val_loader, model, criterion, epoch, writer, classes=None):
             if clip_id[0] not in decisions.keys():
                 decisions[clip_id[0]] = prediction.cpu().numpy()
                 targets_per_clip[clip_id[0]] = targets
+                outputs_clip[clip_id[0]] = output.view(-1).cpu().numpy()
             else:
-                decisions[clip_id[0]]=np.append(decisions[clip_id[0]], prediction.cpu().numpy())
-                targets_per_clip[clip_id[0]]=np.append(targets_per_clip[clip_id[0]], targets)
+                decisions[clip_id[0]] = np.append(decisions[clip_id[0]], prediction.cpu().numpy())
+                targets_per_clip[clip_id[0]] = np.append(targets_per_clip[clip_id[0]], targets)
+                outputs_clip[clip_id[0]] = np.append(outputs_clip[clip_id[0]], output.view(-1).cpu().numpy())
+
+
 
             if i % args.print_freq == 0:
                 progress.print(i)
         eval.max_voting(decisions, targets_per_clip, classes)
-
+        # pickle.dump(outputs_clip, open('final_outs_train_vis.pkl', 'wb'))
 
         print(' * Acc@1 {top1.avg:.3f} Acc@3 {top3.avg:.3f}'
               .format(top1=top1, top3=top3))
@@ -309,7 +307,7 @@ def validate(val_loader, model, criterion, epoch, writer, classes=None):
         writer.add_scalar('Test/Acc3', top3.avg, epoch)
         writer.add_scalar('Test/Loss', losses.avg, epoch)
 
-    return top1.avg
+    return top1.avg, loss.item()
 
 
 def load_checkpoint(model, optimizer, model_path):

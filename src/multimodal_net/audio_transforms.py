@@ -47,7 +47,7 @@ class ToTensor(object):
     [0, 255] to a torch.FloatTensor of shape (C x H x W) in the range [0.0, 1.0].
     """
 
-    def __call__(self, clips, modality):
+    def __call__(self, clips):
         if isinstance(clips, np.ndarray):
             # handle numpy array
             clips = torch.from_numpy(clips.transpose((2, 0, 1)))
@@ -345,7 +345,7 @@ class Resize(object):
         self.width = size[1]
         self.interpolation = interpolation
 
-    def __call__(self, clips, modality):
+    def __call__(self, clips ):
         clips = cv2.resize(clips, (self.width, self.height), interpolation=self.interpolation)
         return clips
 

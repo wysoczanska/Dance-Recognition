@@ -1,30 +1,39 @@
 import torch
 import torch.nn as nn
 from torchvision import models
+from .inception import inception_v3
+from .my_alexnet import alexnet
 
 __all__ = ['three_stream_net']
 
 
 class ThreeStreamNet(nn.Module):
-    def __init__(self, num_classes):
+    def __init__(self, num_classes, input_length=15):
         super(ThreeStreamNet, self).__init__()
-        self.rgb = my_alexnet(pretrained=True)
-        self.flow = my_alexnet(pretrained=True)
-        self.skeleton = my_alexnet(pretrained=True)
+        self.rgb = inception_v3(pretrained=True, input_length=input_length)
+
+        self.flow = inception_v3(pretrained=True, input_length=input_length)
+        self.skeleton = inception_v3(pretrained=True, input_length=input_length)
         self.classifier = nn.Sequential(
-            nn.Dropout(0.9),
-            nn.Linear(4096*3, 4096),
+            nn.Linear(1000*3, 2048),
             nn.ReLU(inplace=True),
-            nn.Linear(4096, num_classes)
+            nn.Linear(2048, num_classes)
         )
 
     def forward(self, x):
         x1 = self.rgb(x['rgb'])
         x2 = self.flow(x['flow'])
         x3 = self.skeleton(x['skeleton'])
-        x = torch.cat((x1, x2, x3), 1)
-        x = self.classifier(x)
-        return x
+        if self.training:
+            x = torch.stack((x1[0], x2[0], x3[0]), dim=2)
+            x = x.view(x.size(0), -1)
+            x = self.classifier(x)
+            return x, [x1[1], x2[1], x3[1]]
+        else:
+            x = torch.stack((x1, x2, x3), dim=2)
+            x = x.view(x.size(0), -1)
+            x = self.classifier(x)
+            return x
 
 
 def my_alexnet(pretrained=True):
@@ -33,11 +42,6 @@ def my_alexnet(pretrained=True):
     # freeze features layers
     for p in alexnet.features.parameters():
         p.requires_grad = False
-    # add batch norm layers
-    modules = list(alexnet.features.children())
-    modules.insert(3, nn.BatchNorm2d(64))
-    modules.insert(7, nn.BatchNorm2d(192))
-    alexnet.features = nn.Sequential(*modules)
 
     # remove final layer
     modules = list(alexnet.classifier.children())[:-4]
@@ -47,12 +51,8 @@ def my_alexnet(pretrained=True):
 
 
 def three_stream_net(**kwargs):
-    r"""AlexNet model architecture from the
-    `"One weird trick..." <https://arxiv.org/abs/1404.5997>`_ paper.
 
-    Args:
-        pretrained (bool): If True, returns a model pre-trained on ImageNet
-    """
     model = ThreeStreamNet(**kwargs)
 
     return model
+

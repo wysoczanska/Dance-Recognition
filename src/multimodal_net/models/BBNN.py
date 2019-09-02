@@ -42,6 +42,7 @@ class BBNN(nn.Module):
         x = self.dl(x)
         x = x.view(x.size(0), -1)
         x = self.fc(x)
+        # return F.log_softmax(x, dim=1)
         return x
 
 
