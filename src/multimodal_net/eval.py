@@ -3,36 +3,11 @@ from __future__ import print_function
 from sklearn.metrics import f1_score, recall_score, precision_score, accuracy_score
 from sklearn.metrics import confusion_matrix
 from sklearn.utils.multiclass import unique_labels
-import argparse
-import datasets
-import models
 from collections import Counter
 import numpy as np
 import matplotlib.pyplot as plt
 
 plt.rcParams.update({'font.size': 22})
-
-model_names = sorted(name for name in models.__dict__
-    if name.islower() and not name.startswith("__")
-    and callable(models.__dict__[name]))
-
-dataset_names = sorted(name for name in datasets.__all__)
-
-
-parser = argparse.ArgumentParser(description='Three stream eval ')
-parser.add_argument('data', metavar='DIR',
-                    help='path to dataset')
-parser.add_argument('--new_length', default=1, type=int,
-                    metavar='N', help='length of sampled video frames (default: 1)')
-parser.add_argument('--test_split_file', metavar='DIR',
-                    help='path to test files list')
-parser.add_argument('--dataset', '-d', default='ucf101',
-                    choices=["Letsdance"])
-parser.add_argument('--out_dir', type=str, help='Directory with saved models', default='./checkpoints')
-parser.add_argument('--model_path', type=str, help='Absolute path to the checkpoint. Only valid when resume or eval'
-                                                   '', default='./checkpoints/model_best.pth.tar')
-parser.add_argument('-b', '--batch-size', default=25, type=int,
-                    metavar='N', help='mini-batch size (default: 50)')
 
 
 def get_metrics(target, prediction):
