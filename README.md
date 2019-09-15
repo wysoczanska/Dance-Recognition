@@ -29,7 +29,7 @@ skeleton visualization scripts
 
   To train ThreeStreamTemporal Inception core model, in `src/multimodal_net` directory run:
   
-  `python main_three_stream.py [path_to_letsdance_dir] --train_split_file datasets/letsdance_splits/train.csv --d Letsdance --test_split_file datasets/letsdance_splits/test.csv --lr 0.01`
+> `python main_three_stream.py [path_to_letsdance_dir] --train_split_file datasets/letsdance_splits/train.csv --d Letsdance --test_split_file datasets/letsdance_splits/test.csv --lr 0.01`
   
   To evaluate: 
   
