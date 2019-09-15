@@ -24,6 +24,19 @@ skeleton visualization scripts
   * main_audio.py - trains and evaluates BBNN, audio representation
   * svm_fusion.py - extracts visual and audio representations, trains SVM fusion model and evaluates it
 
+## Installation
+
+#### Requirements
+Although it is possible to train and infer models without GPU support, we recommend to run our scripts an Nvidia GPU device with at least **4GB**  available. 
+We tested our networks in the following environment:
+* Ubuntu 18
+* Cuda 10.1
+* PyTorch 1.1
+
+As we do not provide any dockerized version, we recommend to set up your virtual environment. 
+Then:
+> pip install requirements.txt -r
+
 ## Training and testing
 #### Visual representations
 
