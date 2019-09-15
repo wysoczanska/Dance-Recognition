@@ -1,6 +1,12 @@
 # Multimodal Dance-Recognition 
 
-Repository for master thesis project.
+![alt text](images/ballet.png )
+
+Repository for Master Thesis project. We propose the multimodal approach for dance video classification with the following pipeline:
+
+![alt text](images/overall.png)
+
+
 
 Project structure:
 

@@ -5,15 +5,6 @@
       <change afterPath="$PROJECT_DIR$/src/multimodal_net/config.txt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/requirements.txt" beforeDir="false" afterPath="$PROJECT_DIR$/requirements.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/multimodal_net/datasets/letsdance.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/multimodal_net/datasets/letsdance.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/multimodal_net/main_audio.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/multimodal_net/main_audio.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/multimodal_net/main_three_stream.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/multimodal_net/main_three_stream.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/multimodal_net/svm_search.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/multimodal_net/svm_fusion.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/multimodal_net/video_transforms.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/multimodal_net/video_transforms.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/notebooks/Data Exploration.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/src/notebooks/Data Exploration.ipynb" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/notebooks/Voting fusion.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/src/notebooks/Voting fusion.ipynb" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/preprocessing/mfcc_extraction.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/preprocessing/mfcc_extraction.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -269,7 +260,7 @@
       <workItem from="1568186117542" duration="25700000" />
       <workItem from="1568363119090" duration="7503000" />
       <workItem from="1568383261058" duration="1185000" />
-      <workItem from="1568464421726" duration="12222000" />
+      <workItem from="1568464421726" duration="12996000" />
     </task>
     <task id="LOCAL-00001" summary="Create Letsdance data loader. Add files consistency checks.">
       <created>1550573724795</created>
@@ -411,7 +402,14 @@
       <option name="project" value="LOCAL" />
       <updated>1567450059947</updated>
     </task>
-    <option name="localTasksCounter" value="21" />
+    <task id="LOCAL-00021" summary="Refactor, clean, comment and update README.">
+      <created>1568547527503</created>
+      <option name="number" value="00021" />
+      <option name="presentableId" value="LOCAL-00021" />
+      <option name="project" value="LOCAL" />
+      <updated>1568547527503</updated>
+    </task>
+    <option name="localTasksCounter" value="22" />
     <servers />
   </component>
   <component name="TodoView">
@@ -500,7 +498,9 @@
     <MESSAGE value="Inception v3 5d with additional layer" />
     <MESSAGE value="Cleaning" />
     <MESSAGE value="Add split files" />
-    <option name="LAST_COMMIT_MESSAGE" value="Add split files" />
+    <MESSAGE value="Refactor, clean, comment and update README." />
+    <option name="LAST_COMMIT_MESSAGE" value="Refactor, clean, comment and update README." />
+    <option name="OPTIMIZE_IMPORTS_BEFORE_PROJECT_COMMIT" value="true" />
     <option name="REARRANGE_BEFORE_PROJECT_COMMIT" value="true" />
     <option name="GROUP_MULTIFILE_MERGE_BY_DIRECTORY" value="true" />
   </component>
