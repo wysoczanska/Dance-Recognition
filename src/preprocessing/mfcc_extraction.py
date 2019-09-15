@@ -1,15 +1,14 @@
 import argparse
-import multiprocessing as mp
 
 import librosa
 import librosa.display
 import matplotlib
+
 matplotlib.use('Agg') # No pictures displayed
 import matplotlib.pyplot as plt
 import numpy as np
 import os
 import pandas as pd
-import math
 
 
 def generate_histogram(sample, root_dir, out_dir):
@@ -34,32 +33,11 @@ def generate_histogram(sample, root_dir, out_dir):
     splits = librosa.util.frame(y, frame_length=int(sr / 2), hop_length=int(sr / 2))
     if not os.path.exists(os.path.join(out_dir, sample.target)):
         os.mkdir(os.path.join(out_dir, sample.target))
-    # oenv = librosa.onset.onset_strength(y=y, sr=sr, hop_length=hop_length)
-    # tempogram = librosa.feature.tempogram(onset_envelope=oenv, sr=sr,hop_length = hop_length)
-    # librosa.display.specshow(tempogram, sr=sr, hop_length=hop_length, x_axis='time',y_axis='tempo')
-    # plt.draw()
-    # tempo = librosa.beat.tempo(onset_envelope=oenv, sr=sr, hop_length = hop_length)[0]
-    # print(tempo)
-    # plt.subplots_adjust(left=0, right=1, top=1, bottom=0)
     file_name = sample.filename[:-4] + '.png'
-    # plt.set_cmap('inferno')
     plt.savefig(os.path.join(out_dir, sample.target, file_name), dpi=100, bbox_inches=0)
     plt.close()
     print(sample.target + '/' + file_name)
 
-    # for i in range(splits.shape[-1]):
-    #     print(splits.shape)
-    #     oenv = librosa.onset.onset_strength(y=splits[:,i], sr=sr, hop_length=hop_length)
-    #
-    #     tempogram = librosa.feature.tempogram(onset_envelope=oenv, sr=sr, hop_length=hop_length)
-    #     librosa.display.specshow(tempogram, sr=sr, hop_length=hop_length, x_axis='time', y_axis='tempo')
-    #     plt.draw()
-    #     plt.set_cmap('inferno')
-    #     plt.subplots_adjust(left=0, right=1, top=1, bottom=0)
-    #     file_name = sample.filename[:-4] + '_%02d.png' % i
-    #     plt.savefig(os.path.join(out_dir, sample.target, file_name), dpi=100, bbox_inches=0)
-    #     plt.close()
-    #     print(sample.target + '/' + file_name)
 
 def generate_spectrogram(sample, root_dir, out_dir):
     file_name = sample.filename + '.png'
@@ -68,10 +46,8 @@ def generate_spectrogram(sample, root_dir, out_dir):
 
         start_time = int(sample.filename[-2:])+int(sample.filename[-3])*60
         y, sr = librosa.load(os.path.join(root_dir, sample.target, sample.filename[:-4] + '.wav'), duration=8, offset=start_time)
-        # splits = librosa.util.frame(y, frame_length=int(sr/2), hop_length=512)
         if not os.path.exists(os.path.join(out_dir, sample.target)):
             os.mkdir(os.path.join(out_dir, sample.target))
-        # librosa.output.write_wav(os.path.join(out_dir, sample.target, sample.filename[:-4] + '.wav'), y, sr)
         figsize = 1.76, 1.28
         plt.rcParams["figure.figsize"] = figsize
 
@@ -79,8 +55,6 @@ def generate_spectrogram(sample, root_dir, out_dir):
 
         librosa.display.specshow(librosa.power_to_db(S, ref=np.max), fmax=8000)
         dpi = 100
-        # What size does the figure need to be in inches to fit the image?
-
         plt.draw()
         plt.subplots_adjust(left=0, right=1, top=1, bottom=0)
 
@@ -110,12 +84,12 @@ def main(root_dir, out_dir, durations_df_dir, type_features):
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('--root_dir',
-                        help="root directory for the whole data set's txt poses files")
+                        help="root directory for audio files")
     parser.add_argument('--output_dir',
                         help='root directory for output images')
     parser.add_argument('--csv_file',
                         help='CSV file with duration')
-    parser.add_argument('--features', choices=('beat', 'mfcc'))
+    parser.add_argument('--features', choices=('beat', 'mfcc'), default='mfcc')
 
     args = parser.parse_args()
     main(args.root_dir, args.output_dir, args.csv_file, args.features)

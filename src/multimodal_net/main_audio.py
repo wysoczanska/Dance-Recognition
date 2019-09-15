@@ -1,23 +1,20 @@
 import argparse
-import time
-import models
-import datasets
-from tensorboardX import SummaryWriter
 import os
 import shutil
+import time
+
+import audio_transforms
+import datasets
+import models
 import torch
 import torch.backends.cudnn as cudnn
 import torch.nn as nn
 import torch.nn.parallel
 import torch.optim
 import torch.utils.data
-import audio_transforms
+from tensorboardX import SummaryWriter
 from torch.optim.lr_scheduler import ReduceLROnPlateau
-import visualization_utils as vis
 from torchvision import transforms, utils
-import eval
-import numpy as np
-import pickle
 
 model_names = sorted(name for name in models.__dict__
     if name.islower() and not name.startswith("__")
@@ -34,7 +31,7 @@ parser.add_argument('--train_split_file', metavar='DIR',
                     help='path to train files list')
 parser.add_argument('--test_split_file', metavar='DIR',
                     help='path to test files list')
-parser.add_argument('--dataset', '-d', default='Letsdance')
+parser.add_argument('--dataset', '-d', default='Letsdance_audio')
 parser.add_argument('--model_path')
 parser.add_argument('--arch', '-a', metavar='ARCH', default='BBNN')
 parser.add_argument('-j', '--workers', default=4, type=int, metavar='N',
@@ -48,13 +45,11 @@ parser.add_argument('-b', '--batch-size', default=25, type=int,
 parser.add_argument('--new_length', default=1, type=int,
                     metavar='N', help='length of sampled video frames (default: 1)')
 parser.add_argument('--new_width', default=224, type=int,
-                    metavar='N', help='resize width (default: 340)')
+                    metavar='N', help='resize width )')
 parser.add_argument('--new_height', default=224, type=int,
-                    metavar='N', help='resize height (default: 256)')
+                    metavar='N', help='resize height ')
 parser.add_argument('--lr', '--learning-rate', default=0.001, type=float,
                     metavar='LR', help='initial learning rate')
-parser.add_argument('--lr_steps', default=[50, 100, 150, 200], type=float, nargs="+",
-                    metavar='LRSteps', help='epochs to decay learning rate by 10')
 parser.add_argument('--weight-decay', '--wd', default=5e-4, type=float,
                     metavar='W', help='weight decay (default: 5e-4)')
 parser.add_argument('--print-freq', default=50, type=int,
@@ -66,7 +61,7 @@ parser.add_argument('--resume', default='./checkpoints_bbnn', type=str, metavar=
 parser.add_argument('-e', '--evaluate', dest='evaluate', action='store_true',
                     help='evaluate model on validation set')
 
-best_prec1 = 0
+best_prec1 = 0.0
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 
@@ -82,11 +77,7 @@ def load_checkpoint(model, optimizer, model_path):
 
 def build_model(num_classes, model_name):
     model = models.__dict__[model_name](3)
-    # model.fc_action = nn.Linear(4096, num_classes)
-    if args.arch.endswith('alexnet') or args.arch.startswith('vgg'):
-        model.features = torch.nn.DataParallel(model.features)
-    else:
-        model = torch.nn.DataParallel(model)
+    model = torch.nn.DataParallel(model)
     return model
 
 
@@ -109,12 +100,6 @@ def main():
 
     # define loss function (criterion) and optimizer
     criterion = nn.CrossEntropyLoss().cuda()
-
-    # optimizer = torch.optim.SGD(model.parameters(), args.lr,
-    #                             momentum=args.momentum,
-    #                             weight_decay=args.weight_decay)
-
-    # optimizer =torch.optim.SGD(model.parameters(), lr=args.lr, momentum=args.momentum, weight_decay=args.weight_decay)
     optimizer = torch.optim.Adam(model.parameters(), lr=args.lr)
     scheduler = ReduceLROnPlateau(optimizer, 'max', patience=3, factor=0.5, verbose=True)
 
@@ -125,17 +110,13 @@ def main():
     cudnn.benchmark = True
 
     train_transform = transforms.Compose([
-            # video_transforms.Scale((256)),
             audio_transforms.Resize((args.new_height, args.new_width)),
             audio_transforms.ToTensor(),
-            # normalize,
         ])
 
     val_transform = transforms.Compose([
-            # video_transforms.Scale((256)),
             audio_transforms.Resize((args.new_height, args.new_width)),
             audio_transforms.ToTensor(),
-            # normalize,
         ])
 
     train_dataset = datasets.__dict__[args.dataset](root=args.data,
@@ -169,12 +150,8 @@ def main():
             model, optimizer, start_epoch, best_acc1 = load_checkpoint(model, optimizer, args.model_path)
         validate(val_loader, model, criterion, writer, epoch=0, classes=val_dataset.classes)
         return
-    # if args.resume:
-    #     model, optimizer, start_epoch, best_acc1 = load_checkpoint(model, optimizer, os.path.join(args.resume, 'last_checkpoint.pth.tar'))
 
     for epoch in range(args.start_epoch, args.epochs):
-        # adjust_learning_rate(optimizer, epoch, args)
-
         # train for one epoch
         train(train_loader, model, criterion, optimizer, epoch, writer)
 
@@ -257,10 +234,6 @@ def validate(val_loader, model, criterion, writer, epoch, classes):
                              prefix='Test: ')
 
     # switch to evaluate mode
-    model.eval()
-    predictions = []
-    targets = []
-    decisions_per_clip = {}
 
     with torch.no_grad():
         end = time.time()
@@ -285,27 +258,16 @@ def validate(val_loader, model, criterion, writer, epoch, classes):
 
             prediction = output.max(1, keepdim=True)[1].view(-1)
             target = target.view_as(prediction).cpu().numpy()
-            predictions.append(prediction.cpu().numpy())
-            targets.append(target)
-            decisions_per_clip[clip_id[0]] = output.view(-1).cpu().numpy()
-            print(clip_id[0])
 
             if i % args.print_freq == 0:
                 progress.print(i)
 
         print(' * Acc@1 {top1.avg:.3f} Acc@3 {top3.avg:.3f}'
               .format(top1=top1, top3=top3))
-        writer.add_scalar('Test/Acc1', top1.avg, epoch)
-        writer.add_scalar('Test/Acc3', top3.avg, epoch)
-        writer.add_scalar('Test/Loss', losses.avg, epoch)
-        print(eval.get_metrics(np.concatenate(targets), np.concatenate(predictions)))
-        # pickle.dump(decisions_per_clip, open('audio_predictions_val.pkl', 'wb'))
-        print(len(decisions_per_clip))
-
-        #
-        eval.plot_confusion_matrix(np.concatenate(targets), np.concatenate(predictions), classes, title='Confusion matrix').savefig('conf_audio.png')
-
-        # vis.visualize_filter(model.module.features[0], writer, epoch)
+        if writer:
+            writer.add_scalar('Test/Acc1', top1.avg, epoch)
+            writer.add_scalar('Test/Acc3', top3.avg, epoch)
+            writer.add_scalar('Test/Loss', losses.avg, epoch)
 
     return top1.avg
 

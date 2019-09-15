@@ -1,16 +1,17 @@
 import math
+import os
+import pickle
 import sys
+
 import cv2
 import numpy as np
-import os
-import torch.utils.data as data_flow
 import skorch
-import pickle
+import torch.utils.data as data_flow
 
-rgb_dir = 'rgb/rgb'
+rgb_dir = 'rgb'
 flow_dir = 'flow_png'
 skeleton_dir = 'densepose/rgb'
-audio_dir = 'audio_mfcc_new'
+audio_dir = 'audio_mfcc'
 
 
 def find_classes(dir):
@@ -38,8 +39,9 @@ def make_dataset(source, seg_length, audio=False):
                 if audio:
                     target = line_info[0]
                     file_name = line_info[1]
-                    print(file_name)
                     item = (file_name, target)
+                    clips.append(item)
+
                 else:
                     for seg_id in range(0, num_segments):
                         init_frame_id = seg_id * seg_length + 1
@@ -172,8 +174,6 @@ class Letsdance_audio(skorch.dataset.Dataset):
         self.name_pattern = "%s.png"
         self.seg_length = new_length
         self.return_id = return_id
-
-
         self.transform = transform
         self.target_transform = target_transform
         self.video_transform = video_transform

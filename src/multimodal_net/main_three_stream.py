@@ -1,11 +1,10 @@
 import argparse
-import time
-from tensorboardX import SummaryWriter
-from torchvision import transforms, utils
-import datasets
-import models
 import os
 import shutil
+import time
+
+import datasets
+import models
 import torch
 import torch.backends.cudnn as cudnn
 import torch.nn as nn
@@ -14,12 +13,9 @@ import torch.optim
 import torch.utils.data
 import torch.utils.data.distributed
 import video_transforms
+from tensorboardX import SummaryWriter
 from torch.optim.lr_scheduler import ReduceLROnPlateau
-from sklearn.metrics import f1_score, recall_score, precision_score, accuracy_score
-import numpy as np
-import eval
-import pickle
-
+from torchvision import utils
 
 model_names = sorted(name for name in models.__dict__
     if name.islower() and not name.startswith("__")
@@ -57,8 +53,6 @@ parser.add_argument('--new_height', default=256, type=int,
                     metavar='N', help='resize height (default: 256)')
 parser.add_argument('--lr', '--learning-rate', default=0.001, type=float,
                     metavar='LR', help='initial learning rate')
-parser.add_argument('--lr_steps', default=[100, 200], type=float, nargs="+",
-                    metavar='LRSteps', help='epochs to decay learning rate by 10')
 parser.add_argument('--momentum', default=0.9, type=float, metavar='M',
                     help='momentum')
 parser.add_argument('--weight-decay', '--wd', default=5e-4, type=float,
@@ -69,6 +63,8 @@ parser.add_argument('--save-freq', default=25, type=int,
                     metavar='N', help='save frequency (default: 25)')
 parser.add_argument('-e', '--evaluate', dest='evaluate', action='store_true',
                     help='evaluate model on validation set')
+parser.add_argument('--num_classes', default=16,
+                    help='Number of classes in dataset')
 
 
 best_acc1 = 0
@@ -78,7 +74,7 @@ ngpus = torch.cuda.device_count()
 def main():
     global args, best_acc1
     args = parser.parse_args()
-    num_classes = 16
+    num_classes = args.num_classes
     start_epoch=0
     writer = SummaryWriter(args.logdir)
 
@@ -107,7 +103,7 @@ def main():
     # if resume set to True, load the model and continue training
     if args.resume or args.evaluate:
         if os.path.isfile(args.model_path):
-            model, optimizer, start_epoch, best_acc1 = load_checkpoint(model, optimizer, args.model_path)
+            model, optimizer, start_epoch = load_checkpoint(model, optimizer, args.model_path)
 
     cudnn.benchmark = True
 
@@ -165,8 +161,6 @@ def main():
         return
 
     for epoch in range(start_epoch, args.epochs):
-        # adjust_learning_rate(optimizer, epoch, args)
-
         # train for one epoch
         train(train_loader, model, criterion, optimizer, epoch, args, writer)
 
@@ -246,7 +240,7 @@ def train(train_loader, model, criterion, optimizer, epoch, args, writer):
         writer.add_image('Input Skeleton', utils.make_grid(input['skeleton'][0].view(args.new_length,3,args.new_width, args.new_height)).cpu(), epoch)
 
 
-def validate(val_loader, model, criterion, epoch, writer, classes=None):
+def validate(val_loader, model, criterion, epoch, writer=None, classes=None):
     batch_time = AverageMeter('Time', ':6.3f')
     losses = AverageMeter('Loss', ':.4e')
     top1 = AverageMeter('Acc@1', ':6.2f')
@@ -280,30 +274,16 @@ def validate(val_loader, model, criterion, epoch, writer, classes=None):
             # measure elapsed time
             batch_time.update(time.time() - end)
             end = time.time()
-            prediction = output.max(1, keepdim=True)[1].view(-1)
-            targets = target.view_as(prediction).cpu().numpy()
-
-            if clip_id[0] not in decisions.keys():
-                decisions[clip_id[0]] = prediction.cpu().numpy()
-                targets_per_clip[clip_id[0]] = targets
-                outputs_clip[clip_id[0]] = output.view(-1).cpu().numpy()
-            else:
-                decisions[clip_id[0]] = np.append(decisions[clip_id[0]], prediction.cpu().numpy())
-                targets_per_clip[clip_id[0]] = np.append(targets_per_clip[clip_id[0]], targets)
-                outputs_clip[clip_id[0]] = np.append(outputs_clip[clip_id[0]], output.view(-1).cpu().numpy())
-
-
 
             if i % args.print_freq == 0:
                 progress.print(i)
-        eval.max_voting(decisions, targets_per_clip, classes)
-        # pickle.dump(outputs_clip, open('final_outs_train_vis.pkl', 'wb'))
 
         print(' * Acc@1 {top1.avg:.3f} Acc@3 {top3.avg:.3f}'
               .format(top1=top1, top3=top3))
-        writer.add_scalar('Test/Acc1', top1.avg, epoch)
-        writer.add_scalar('Test/Acc3', top3.avg, epoch)
-        writer.add_scalar('Test/Loss', losses.avg, epoch)
+        if writer:
+            writer.add_scalar('Test/Acc1', top1.avg, epoch)
+            writer.add_scalar('Test/Acc3', top3.avg, epoch)
+            writer.add_scalar('Test/Loss', losses.avg, epoch)
 
     return top1.avg, loss.item()
 
@@ -312,11 +292,11 @@ def load_checkpoint(model, optimizer, model_path):
     print("=> loading checkpoint '{}'".format(model_path))
     checkpoint = torch.load(model_path)
     start_epoch = checkpoint['epoch']
-    best_acc1 = checkpoint['best_acc1']
     model.load_state_dict(checkpoint['state_dict'])
-    optimizer.load_state_dict(checkpoint['optimizer'])
+    if optimizer:
+        optimizer.load_state_dict(checkpoint['optimizer'])
     print("=> loaded checkpoint '{}' (epoch {})".format(model_path, checkpoint['epoch']))
-    return model, optimizer, start_epoch, best_acc1
+    return model, optimizer, start_epoch
 
 
 def save_checkpoint(state, is_best, filename, resume_path):
@@ -325,7 +305,6 @@ def save_checkpoint(state, is_best, filename, resume_path):
     torch.save(state, cur_path)
     if is_best:
         shutil.copyfile(cur_path, best_path)
-
 
 class AverageMeter(object):
     """Computes and stores the average and current value"""
@@ -366,13 +345,6 @@ class ProgressMeter(object):
         num_digits = len(str(num_batches // 1))
         fmt = '{:' + str(num_digits) + 'd}'
         return '[' + fmt + '/' + fmt.format(num_batches) + ']'
-
-
-def adjust_learning_rate(optimizer, epoch, args):
-    """Sets the learning rate to the initial LR decayed by 10 every 30 epochs"""
-    lr = args.lr * (0.1 ** (epoch // 30))
-    for param_group in optimizer.param_groups:
-        param_group['lr'] = lr
 
 
 def accuracy(output, target, topk=(1,)):

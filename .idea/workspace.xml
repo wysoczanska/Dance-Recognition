@@ -1,8 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="d41d8c1f-8823-440c-8339-3f7a51fe88d1" name="Default Changelist" comment="Cleaning">
+    <list default="true" id="d41d8c1f-8823-440c-8339-3f7a51fe88d1" name="Default Changelist" comment="Add split files">
+      <change afterPath="$PROJECT_DIR$/src/multimodal_net/config.txt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/requirements.txt" beforeDir="false" afterPath="$PROJECT_DIR$/requirements.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/multimodal_net/datasets/letsdance.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/multimodal_net/datasets/letsdance.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/multimodal_net/main_audio.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/multimodal_net/main_audio.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/multimodal_net/main_three_stream.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/multimodal_net/main_three_stream.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/multimodal_net/svm_search.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/multimodal_net/svm_fusion.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/multimodal_net/video_transforms.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/multimodal_net/video_transforms.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/notebooks/Data Exploration.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/src/notebooks/Data Exploration.ipynb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/notebooks/Voting fusion.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/src/notebooks/Voting fusion.ipynb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/preprocessing/mfcc_extraction.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/preprocessing/mfcc_extraction.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -64,19 +75,20 @@
     <property name="WebServerToolWindowPanel.toolwindow.show.date" value="false" />
     <property name="WebServerToolWindowPanel.toolwindow.show.permissions" value="false" />
     <property name="WebServerToolWindowPanel.toolwindow.show.size" value="false" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+    <property name="last_opened_file_path" value="$USER_HOME$/workspace/flownet2/models/FlowNet2/FlowNet2_deploy.prototxt.template" />
     <property name="settings.editor.selected.configurable" value="preferences.sourceCode" />
   </component>
   <component name="RecentsManager">
-    <key name="MoveFile.RECENT_KEYS">
-      <recent name="$PROJECT_DIR$/src/multimodal_net" />
-      <recent name="C:\Users\user\Desktop\kto_ma_szkole_ten_ma_lzej\MGR\Dance-Recognition\src\multimodal_net" />
-      <recent name="C:\Users\user\Desktop\kto_ma_szkole_ten_ma_lzej\MGR\Dance-Recognition\src\two-stream-pytorch" />
-      <recent name="C:\Users\user\Desktop\kto_ma_szkole_ten_ma_lzej\MGR\Dance-Recognition\src\preprocessing" />
-    </key>
     <key name="CopyFile.RECENT_KEYS">
       <recent name="$PROJECT_DIR$/src/multimodal_net" />
       <recent name="$PROJECT_DIR$/src/multimodal_net/datasets" />
+    </key>
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/src/multimodal_net/datasets" />
+      <recent name="$PROJECT_DIR$/src/multimodal_net/extracted_representations" />
+      <recent name="$PROJECT_DIR$/src/multimodal_net" />
+      <recent name="C:\Users\user\Desktop\kto_ma_szkole_ten_ma_lzej\MGR\Dance-Recognition\src\multimodal_net" />
+      <recent name="C:\Users\user\Desktop\kto_ma_szkole_ten_ma_lzej\MGR\Dance-Recognition\src\two-stream-pytorch" />
     </key>
   </component>
   <component name="RunDashboard">
@@ -91,7 +103,7 @@
       </list>
     </option>
   </component>
-  <component name="RunManager" selected="Python.eval">
+  <component name="RunManager" selected="Python.svm_fusion">
     <configuration name="dzupiterek" type="JupiterNotebook" factoryName="Jupyter Notebook">
       <module name="Dance-Recognition" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -154,12 +166,36 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
+    <configuration name="svm_fusion" type="PythonConfigurationType" factoryName="Python" temporary="true">
+      <module name="Dance-Recognition" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/src/multimodal_net" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/src/multimodal_net/svm_fusion.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
     <list>
       <item itemvalue="Python.eval" />
       <item itemvalue="Python.mfcc_extraction" />
+      <item itemvalue="Python.svm_fusion" />
     </list>
     <recent_temporary>
       <list>
+        <item itemvalue="Python.svm_fusion" />
         <item itemvalue="Python.eval" />
         <item itemvalue="Python.mfcc_extraction" />
         <item itemvalue="Python.eval" />
@@ -230,6 +266,10 @@
       <workItem from="1566322029788" duration="9301000" />
       <workItem from="1567410618927" duration="2600000" />
       <workItem from="1567446058309" duration="2755000" />
+      <workItem from="1568186117542" duration="25700000" />
+      <workItem from="1568363119090" duration="7503000" />
+      <workItem from="1568383261058" duration="1185000" />
+      <workItem from="1568464421726" duration="12222000" />
     </task>
     <task id="LOCAL-00001" summary="Create Letsdance data loader. Add files consistency checks.">
       <created>1550573724795</created>
@@ -364,7 +404,14 @@
       <option name="project" value="LOCAL" />
       <updated>1567445024694</updated>
     </task>
-    <option name="localTasksCounter" value="20" />
+    <task id="LOCAL-00020" summary="Add split files">
+      <created>1567450059947</created>
+      <option name="number" value="00020" />
+      <option name="presentableId" value="LOCAL-00020" />
+      <option name="project" value="LOCAL" />
+      <updated>1567450059947</updated>
+    </task>
+    <option name="localTasksCounter" value="21" />
     <servers />
   </component>
   <component name="TodoView">
@@ -378,6 +425,9 @@
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="1" />
+  </component>
+  <component name="UnknownFeatures">
+    <option featureType="com.intellij.fileTypeFactory" implementationName="*.template" />
   </component>
   <component name="Vcs.Log.History.Properties">
     <option name="COLUMN_ORDER">
@@ -436,7 +486,6 @@
     <MESSAGE value="Three stream non temporal full training. letsdance dataloader changes." />
     <MESSAGE value="Validation bug fixed" />
     <MESSAGE value="Bug fixes, mfccs spectrogram script." />
-    <MESSAGE value="Add split files" />
     <MESSAGE value="Add normalization. Loop changes" />
     <MESSAGE value="Fix acccuracy bug" />
     <MESSAGE value="Fix saving bug" />
@@ -450,22 +499,13 @@
     <MESSAGE value="Inception v3 only classifier" />
     <MESSAGE value="Inception v3 5d with additional layer" />
     <MESSAGE value="Cleaning" />
-    <option name="LAST_COMMIT_MESSAGE" value="Cleaning" />
+    <MESSAGE value="Add split files" />
+    <option name="LAST_COMMIT_MESSAGE" value="Add split files" />
     <option name="REARRANGE_BEFORE_PROJECT_COMMIT" value="true" />
     <option name="GROUP_MULTIFILE_MERGE_BY_DIRECTORY" value="true" />
   </component>
-  <component name="XDebuggerManager">
-    <breakpoint-manager>
-      <breakpoints>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/src/multimodal_net/eval.py</url>
-          <line>20</line>
-          <option name="timeStamp" value="1" />
-        </line-breakpoint>
-      </breakpoints>
-    </breakpoint-manager>
-  </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
     <SUITE FILE_PATH="coverage/Dance_Recognition$eval.coverage" NAME="eval Coverage Results" MODIFIED="1557079602208" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/src/multimodal_net" />
+    <SUITE FILE_PATH="coverage/Dance_Recognition$svm_fusion.coverage" NAME="svm_fusion Coverage Results" MODIFIED="1568214081501" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/src/multimodal_net" />
   </component>
 </project>
