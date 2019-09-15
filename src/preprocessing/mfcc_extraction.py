@@ -44,8 +44,7 @@ def generate_spectrogram(sample, root_dir, out_dir):
 
     if not os.path.exists(os.path.join(out_dir, sample.target, file_name)):
 
-        start_time = int(sample.filename[-2:])+int(sample.filename[-3])*60
-        y, sr = librosa.load(os.path.join(root_dir, sample.target, sample.filename[:-4] + '.wav'), duration=8, offset=start_time)
+        y, sr = librosa.load(os.path.join(root_dir, sample.target, sample.filename[:-4] + '.wav'), duration=8)
         if not os.path.exists(os.path.join(out_dir, sample.target)):
             os.mkdir(os.path.join(out_dir, sample.target))
         figsize = 1.76, 1.28
