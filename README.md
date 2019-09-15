@@ -75,14 +75,14 @@ RGB frames files naming convention:
 where `frame_number` should be in format: `%04d`, starting from `0000`.
 
 1. Prepare your dataset ROOT_Dir as according to the pattern given below:
-
+```
     ├── rgb                         # RGB frames
         |── [class1..]
         |── [class2..]
     ├── flow_png                    # Flow frames
     ├── audio_mfcc                  # Mel_spectrograms
     ├── densepose                   # Visualised skeletons
-
+```
 Alternatively you can write your own dataloader add modify it according to your needs.
 
 #### Extract Flow frames
