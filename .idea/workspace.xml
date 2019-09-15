@@ -260,7 +260,7 @@
       <workItem from="1568186117542" duration="25700000" />
       <workItem from="1568363119090" duration="7503000" />
       <workItem from="1568383261058" duration="1185000" />
-      <workItem from="1568464421726" duration="13706000" />
+      <workItem from="1568464421726" duration="14016000" />
     </task>
     <task id="LOCAL-00001" summary="Create Letsdance data loader. Add files consistency checks.">
       <created>1550573724795</created>
@@ -416,7 +416,14 @@
       <option name="project" value="LOCAL" />
       <updated>1568548283377</updated>
     </task>
-    <option name="localTasksCounter" value="23" />
+    <task id="LOCAL-00023" summary="Remove hardcoded offsets">
+      <created>1568549629175</created>
+      <option name="number" value="00023" />
+      <option name="presentableId" value="LOCAL-00023" />
+      <option name="project" value="LOCAL" />
+      <updated>1568549629175</updated>
+    </task>
+    <option name="localTasksCounter" value="24" />
     <servers />
   </component>
   <component name="TodoView">
@@ -507,7 +514,8 @@
     <MESSAGE value="Add split files" />
     <MESSAGE value="Refactor, clean, comment and update README." />
     <MESSAGE value="Readme beautify" />
-    <option name="LAST_COMMIT_MESSAGE" value="Readme beautify" />
+    <MESSAGE value="Remove hardcoded offsets" />
+    <option name="LAST_COMMIT_MESSAGE" value="Remove hardcoded offsets" />
     <option name="OPTIMIZE_IMPORTS_BEFORE_PROJECT_COMMIT" value="true" />
     <option name="REARRANGE_BEFORE_PROJECT_COMMIT" value="true" />
     <option name="GROUP_MULTIFILE_MERGE_BY_DIRECTORY" value="true" />

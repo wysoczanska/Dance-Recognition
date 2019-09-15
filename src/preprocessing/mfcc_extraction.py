@@ -11,8 +11,8 @@ import os
 import pandas as pd
 
 
-def generate_histogram(sample, root_dir, out_dir):
-    y, sr = librosa.load(os.path.join(root_dir, sample.target, sample.filename[:-4] + '.wav'))
+def generate_histogram(sample, root_dir, out_dir, audio_format):
+    y, sr = librosa.load(os.path.join(root_dir, sample.target, sample.filename[:-4] + audio_format))
     hop_length = 512
     S = librosa.feature.melspectrogram(y, sr=sr, n_mels=128)
 
@@ -39,12 +39,12 @@ def generate_histogram(sample, root_dir, out_dir):
     print(sample.target + '/' + file_name)
 
 
-def generate_spectrogram(sample, root_dir, out_dir):
+def generate_spectrogram(sample, root_dir, out_dir, audio_format):
     file_name = sample.filename + '.png'
 
     if not os.path.exists(os.path.join(out_dir, sample.target, file_name)):
 
-        y, sr = librosa.load(os.path.join(root_dir, sample.target, sample.filename[:-4] + '.wav'), duration=8)
+        y, sr = librosa.load(os.path.join(root_dir, sample.target, sample.filename[:-4] + audio_format), duration=8)
         if not os.path.exists(os.path.join(out_dir, sample.target)):
             os.mkdir(os.path.join(out_dir, sample.target))
         figsize = 1.76, 1.28
@@ -72,12 +72,12 @@ def generate_spectrogram(sample, root_dir, out_dir):
     #     print(sample.target + '/' + file_name)
 
 
-def main(root_dir, out_dir, durations_df_dir, type_features):
+def main(root_dir, out_dir, durations_df_dir, type_features, audio_format):
     durations_df=pd.read_csv(durations_df_dir, sep='\t', names=['target', 'filename', 'duration'])
     if type_features == 'mfcc':
-        durations_df.apply(generate_spectrogram, args=(root_dir, out_dir), axis=1)
+        durations_df.apply(generate_spectrogram, args=(root_dir, out_dir, audio_format), axis=1)
     else:
-        durations_df.apply(generate_histogram, args=(root_dir, out_dir), axis=1)
+        durations_df.apply(generate_histogram, args=(root_dir, out_dir, audio_format), axis=1)
 
 
 if __name__ == '__main__':
@@ -88,10 +88,12 @@ if __name__ == '__main__':
                         help='root directory for output images')
     parser.add_argument('--csv_file',
                         help='CSV file with duration')
+    parser.add_argument('--audio_format',
+                        help='Input file format. Default is .wav', default='.wav')
     parser.add_argument('--features', choices=('beat', 'mfcc'), default='mfcc')
 
     args = parser.parse_args()
-    main(args.root_dir, args.output_dir, args.csv_file, args.features)
+    main(args.root_dir, args.output_dir, args.csv_file, args.features, args.audio_format)
     # output = mp.Queue()
     # classes = ['rumba', 'flamenco']
     # processes = [mp.Process(target=main, args=(args.root_dir, args.output_dir, classes[x])) for x in range(2)]
